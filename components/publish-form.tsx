@@ -179,10 +179,19 @@ export function PublishForm() {
       <div className="mt-5 rounded-lg border border-dashed border-pokemonYellow/30 bg-pokemonYellow/5 p-4 text-sm text-slate-300">
         <CheckCircle2 className="mb-2 h-5 w-5 text-pokemonYellow" />
         {selectedCard ? (
-          <span>
-            Carta oficial seleccionada:
-            <span className="font-semibold text-white"> {selectedCard.name}</span>
-          </span>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <span>
+              Carta oficial seleccionada:
+              <span className="font-semibold text-white"> {selectedCard.name}</span>
+            </span>
+            <button
+              className="rounded-md border border-white/15 bg-white/10 px-3 py-2 text-xs font-bold text-white transition hover:border-pokemonYellow/60"
+              onClick={handleSearch}
+              type="button"
+            >
+              Cambiar carta
+            </button>
+          </div>
         ) : (
           <span>
             Busca una carta oficial. La publicacion no puede continuar con cartas inventadas.
@@ -209,6 +218,7 @@ export function PublishForm() {
               key={card.id}
               onClick={() => {
                 setSelectedCard(card);
+                setCards([]);
                 setError(null);
               }}
               type="button"
