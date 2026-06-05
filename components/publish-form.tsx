@@ -261,24 +261,39 @@ export function PublishForm() {
           <p className="text-xs font-black uppercase tracking-[0.2em] text-pokemonYellow">
             Datos bloqueados desde Pokemon TCG API
           </p>
-          <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
-            <div>
-              <dt className="font-semibold text-slate-400">Nombre oficial</dt>
-              <dd className="mt-1 font-bold text-white">{selectedCard.name}</dd>
+          <div className="mt-4 grid gap-5 sm:grid-cols-[150px_1fr] sm:items-start">
+            <div className="relative mx-auto aspect-[0.72] w-[150px] overflow-hidden rounded-md bg-slate-950 shadow-foil sm:mx-0">
+              <Image
+                alt={selectedCard.name}
+                className="object-contain"
+                fill
+                sizes="150px"
+                src={selectedCard.images.large}
+              />
             </div>
-            <div>
-              <dt className="font-semibold text-slate-400">Set</dt>
-              <dd className="mt-1 font-bold text-white">{selectedCard.set.name}</dd>
-            </div>
-            <div>
-              <dt className="font-semibold text-slate-400">Rareza</dt>
-              <dd className="mt-1 font-bold text-white">{selectedCard.rarity ?? "N/D"}</dd>
-            </div>
-            <div>
-              <dt className="font-semibold text-slate-400">Numero</dt>
-              <dd className="mt-1 font-bold text-white">{selectedCard.number ?? "N/D"}</dd>
-            </div>
-          </dl>
+            <dl className="grid gap-3 text-sm sm:grid-cols-2">
+              <div>
+                <dt className="font-semibold text-slate-400">Nombre oficial</dt>
+                <dd className="mt-1 font-bold text-white">{selectedCard.name}</dd>
+              </div>
+              <div>
+                <dt className="font-semibold text-slate-400">Set</dt>
+                <dd className="mt-1 font-bold text-white">{selectedCard.set.name}</dd>
+              </div>
+              <div>
+                <dt className="font-semibold text-slate-400">Rareza</dt>
+                <dd className="mt-1 font-bold text-white">{selectedCard.rarity ?? "N/D"}</dd>
+              </div>
+              <div>
+                <dt className="font-semibold text-slate-400">Numero</dt>
+                <dd className="mt-1 font-bold text-white">{selectedCard.number ?? "N/D"}</dd>
+              </div>
+              <div className="sm:col-span-2">
+                <dt className="font-semibold text-slate-400">ID oficial</dt>
+                <dd className="mt-1 font-bold text-white">{selectedCard.id}</dd>
+              </div>
+            </dl>
+          </div>
         </section>
       ) : null}
 
