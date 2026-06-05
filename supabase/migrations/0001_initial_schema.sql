@@ -297,6 +297,10 @@ security definer
 set search_path = public
 as $$
 begin
+  if current_user in ('postgres', 'service_role', 'supabase_admin') then
+    return new;
+  end if;
+
   if not public.is_admin() and (
     new.is_admin is distinct from old.is_admin
     or new.is_verified is distinct from old.is_verified
