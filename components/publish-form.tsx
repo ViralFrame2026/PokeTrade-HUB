@@ -19,12 +19,29 @@ type CardsSearchResponse = {
   error: string | null;
 };
 
+type CreateListingResponse = {
+  data: {
+    id: string;
+    moderation_status: string;
+  } | null;
+  error: string | null;
+};
+
 export function PublishForm() {
   const [query, setQuery] = useState("");
   const [cards, setCards] = useState<PokemonTcgCard[]>([]);
   const [selectedCard, setSelectedCard] = useState<PokemonTcgCard | null>(null);
+  const [listingType, setListingType] = useState<"sale" | "trade" | "free">("sale");
+  const [condition, setCondition] = useState("Near Mint");
+  const [price, setPrice] = useState("");
+  const [tradeWants, setTradeWants] = useState("");
+  const [description, setDescription] = useState("");
+  const [locationCity, setLocationCity] = useState("");
+  const [locationCountry, setLocationCountry] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSearch() {
     const trimmedQuery = query.trim();
@@ -37,6 +54,7 @@ export function PublishForm() {
 
     setIsSearching(true);
     setError(null);
+    setSuccess(null);
 
     try {
       const response = await fetch(`/api/cards/search?q=${encodeURIComponent(trimmedQuery)}`);
@@ -63,8 +81,67 @@ export function PublishForm() {
     }
   }
 
+  async function handleSubmit() {
+    if (!selectedCard) {
+      setError("Selecciona una carta oficial antes de publicar.");
+      return;
+    }
+
+    setError(null);
+    setSuccess(null);
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/listings", {
+        body: JSON.stringify({
+          cardId: selectedCard.id,
+          condition,
+          description,
+          locationCity,
+          locationCountry,
+          price: listingType === "sale" && price ? Number(price) : null,
+          tradeWants: listingType === "trade" ? tradeWants : null,
+          type: listingType
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        },
+        method: "POST"
+      });
+      const payload = (await response.json()) as CreateListingResponse;
+
+      if (!response.ok || payload.error) {
+        throw new Error(payload.error ?? "No pudimos crear la publicacion.");
+      }
+
+      setSuccess(
+        `Publicacion ${payload.data?.id ?? ""} enviada. Quedo pendiente de moderacion.`
+      );
+      setCards([]);
+      setSelectedCard(null);
+      setQuery("");
+      setDescription("");
+      setPrice("");
+      setTradeWants("");
+    } catch (submitError) {
+      setError(
+        submitError instanceof Error
+          ? submitError.message
+          : "No pudimos crear la publicacion."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
-    <form className="glass rounded-lg p-5 sm:p-6" onSubmit={(event) => event.preventDefault()}>
+    <form
+      className="glass rounded-lg p-5 sm:p-6"
+      onSubmit={(event) => {
+        event.preventDefault();
+        handleSubmit();
+      }}
+    >
       <label className="text-sm font-bold text-slate-200" htmlFor="card-search">
         Carta oficial
       </label>
@@ -77,6 +154,7 @@ export function PublishForm() {
             onChange={(event) => setQuery(event.target.value)}
             onKeyDown={(event) => {
               if (event.key === "Enter") {
+                event.preventDefault();
                 handleSearch();
               }
             }}
@@ -127,7 +205,10 @@ export function PublishForm() {
                   : "border-white/10 bg-white/[0.04] hover:border-pokemonYellow/50"
               )}
               key={card.id}
-              onClick={() => setSelectedCard(card)}
+              onClick={() => {
+                setSelectedCard(card);
+                setError(null);
+              }}
               type="button"
             >
               <div className="relative aspect-[0.72] overflow-hidden rounded-md bg-slate-950">
@@ -145,7 +226,7 @@ export function PublishForm() {
                   {card.set.name}
                 </span>
                 <span className="mt-2 block text-xs leading-5 text-slate-400">
-                  ID oficial: {card.id} · Numero: {card.number ?? "N/D"} · Rareza:{" "}
+                  ID oficial: {card.id} | Numero: {card.number ?? "N/D"} | Rareza:{" "}
                   {card.rarity ?? "N/D"}
                 </span>
               </span>
@@ -181,48 +262,129 @@ export function PublishForm() {
       ) : null}
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        {[
-          ["Tipo", "Venta, Intercambio, Sorteo o Gratis"],
-          ["Estado", "Near Mint, Light Played, etc."],
-          ["Precio", "Solo para ventas"],
-          ["Busca a cambio", "Solo para intercambios"]
-        ].map(([label, placeholder]) => (
-          <label className="text-sm font-bold text-slate-200" key={label}>
-            {label}
+        <label className="text-sm font-bold text-slate-200">
+          Tipo
+          <select
+            className="mt-2 w-full rounded-lg border border-white/10 bg-slate-950 px-3 py-3 text-white outline-none focus:border-pokemonYellow/60"
+            onChange={(event) =>
+              setListingType(event.target.value as "sale" | "trade" | "free")
+            }
+            value={listingType}
+          >
+            <option value="sale">Venta</option>
+            <option value="trade">Intercambio</option>
+            <option value="free">Gratis</option>
+          </select>
+        </label>
+        <label className="text-sm font-bold text-slate-200">
+          Estado
+          <select
+            className="mt-2 w-full rounded-lg border border-white/10 bg-slate-950 px-3 py-3 text-white outline-none focus:border-pokemonYellow/60"
+            onChange={(event) => setCondition(event.target.value)}
+            value={condition}
+          >
+            {[
+              "Mint",
+              "Near Mint",
+              "Lightly Played",
+              "Moderately Played",
+              "Heavily Played",
+              "Damaged"
+            ].map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+        </label>
+        {listingType === "sale" ? (
+          <label className="text-sm font-bold text-slate-200">
+            Precio
             <input
               className="mt-2 w-full rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3 text-white outline-none focus:border-pokemonYellow/60"
-              placeholder={placeholder}
+              min="0.01"
+              onChange={(event) => setPrice(event.target.value)}
+              placeholder="Ej: 58000"
+              required
+              step="0.01"
+              type="number"
+              value={price}
             />
           </label>
-        ))}
+        ) : null}
+        {listingType === "trade" ? (
+          <label className="text-sm font-bold text-slate-200">
+            Busca a cambio
+            <input
+              className="mt-2 w-full rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3 text-white outline-none focus:border-pokemonYellow/60"
+              onChange={(event) => setTradeWants(event.target.value)}
+              placeholder="Ej: cartas de Gengar o Mew"
+              required
+              value={tradeWants}
+            />
+          </label>
+        ) : null}
+        <label className="text-sm font-bold text-slate-200">
+          Ciudad
+          <input
+            className="mt-2 w-full rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3 text-white outline-none focus:border-pokemonYellow/60"
+            onChange={(event) => setLocationCity(event.target.value)}
+            placeholder="Ej: Buenos Aires"
+            required
+            value={locationCity}
+          />
+        </label>
+        <label className="text-sm font-bold text-slate-200">
+          Pais
+          <input
+            className="mt-2 w-full rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3 text-white outline-none focus:border-pokemonYellow/60"
+            onChange={(event) => setLocationCountry(event.target.value)}
+            placeholder="Ej: Argentina"
+            required
+            value={locationCountry}
+          />
+        </label>
       </div>
       <label className="mt-4 block text-sm font-bold text-slate-200">
         Descripcion
         <textarea
           className="mt-2 min-h-32 w-full rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3 text-white outline-none focus:border-pokemonYellow/60"
+          minLength={10}
+          onChange={(event) => setDescription(event.target.value)}
           placeholder="Describe condicion, detalles y forma de entrega"
+          required
+          value={description}
         />
       </label>
       <div className="mt-5 grid gap-3 sm:grid-cols-3">
         <div className="rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
           <Camera className="mb-3 h-5 w-5 text-pokemonYellow" />
-          Fotos reales
+          Fotos reales (proximo paso)
         </div>
         <div className="rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
           <MapPin className="mb-3 h-5 w-5 text-pokemonYellow" />
-          Ubicacion
+          Ubicacion requerida
         </div>
         <div className="rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
           <ShieldCheck className="mb-3 h-5 w-5 text-pokemonYellow" />
-          Moderacion
+          Queda pendiente
         </div>
       </div>
+      {success ? (
+        <div className="mt-5 rounded-lg border border-emerald-400/30 bg-emerald-500/10 p-4 text-sm font-semibold text-emerald-100">
+          {success}
+        </div>
+      ) : null}
       <button
         className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-pokemonYellow px-5 py-3 font-black text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
-        disabled={!selectedCard}
-        type="button"
+        disabled={!selectedCard || isSubmitting}
+        type="submit"
       >
-        <Store className="h-5 w-5" />
+        {isSubmitting ? (
+          <Loader2 className="h-5 w-5 animate-spin" />
+        ) : (
+          <Store className="h-5 w-5" />
+        )}
         Enviar a revision
       </button>
     </form>
