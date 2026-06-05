@@ -281,12 +281,116 @@ create or replace function public.is_admin()
 returns boolean
 language sql
 stable
+security definer
+set search_path = public
 as $$
   select exists (
     select 1 from public.profiles
     where id = auth.uid() and is_admin = true
   );
 $$;
+
+create or replace function public.protect_profile_system_fields()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not public.is_admin() and (
+    new.is_admin is distinct from old.is_admin
+    or new.is_verified is distinct from old.is_verified
+    or new.reputation_average is distinct from old.reputation_average
+    or new.reputation_count is distinct from old.reputation_count
+    or new.joined_at is distinct from old.joined_at
+  ) then
+    raise exception 'Only administrators can update protected profile fields';
+  end if;
+
+  return new;
+end;
+$$;
+
+create trigger profiles_protect_system_fields
+before update on public.profiles
+for each row execute function public.protect_profile_system_fields();
+
+create or replace function public.protect_listing_moderation_fields()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if public.is_admin() then
+    return new;
+  end if;
+
+  if tg_op = 'INSERT' then
+    if new.moderation_status <> 'pending'
+      or new.rejection_reason is not null
+      or new.approved_at is not null then
+      raise exception 'New listings must start pending moderation';
+    end if;
+    return new;
+  end if;
+
+  if new.rejection_reason is distinct from old.rejection_reason
+    or new.approved_at is distinct from old.approved_at
+    or (
+      new.moderation_status is distinct from old.moderation_status
+      and not (
+        old.moderation_status = 'changes_requested'
+        and new.moderation_status = 'pending'
+      )
+    ) then
+    raise exception 'Only administrators can update listing moderation fields';
+  end if;
+
+  return new;
+end;
+$$;
+
+create trigger listings_protect_moderation_fields
+before insert or update on public.listings
+for each row execute function public.protect_listing_moderation_fields();
+
+create or replace function public.protect_raffle_moderation_fields()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if public.is_admin() then
+    return new;
+  end if;
+
+  if tg_op = 'INSERT' then
+    if new.moderation_status <> 'pending' or new.rejection_reason is not null then
+      raise exception 'New raffles must start pending moderation';
+    end if;
+    return new;
+  end if;
+
+  if new.rejection_reason is distinct from old.rejection_reason
+    or (
+      new.moderation_status is distinct from old.moderation_status
+      and not (
+        old.moderation_status = 'changes_requested'
+        and new.moderation_status = 'pending'
+      )
+    ) then
+    raise exception 'Only administrators can update raffle moderation fields';
+  end if;
+
+  return new;
+end;
+$$;
+
+create trigger raffles_protect_moderation_fields
+before insert or update on public.raffles
+for each row execute function public.protect_raffle_moderation_fields();
 
 create or replace function public.refresh_reputation()
 returns trigger
