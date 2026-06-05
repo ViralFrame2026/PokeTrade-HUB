@@ -5,6 +5,7 @@ import { useState } from "react";
 import {
   Camera,
   CheckCircle2,
+  ImageOff,
   Loader2,
   MapPin,
   Search,
@@ -42,6 +43,7 @@ export function PublishForm() {
   const [success, setSuccess] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
   async function handleSearch() {
     const trimmedQuery = query.trim();
@@ -212,13 +214,22 @@ export function PublishForm() {
               type="button"
             >
               <div className="relative aspect-[0.72] overflow-hidden rounded-md bg-slate-950">
-                <Image
-                  alt={card.name}
-                  className="object-cover"
-                  fill
-                  sizes="72px"
-                  src={card.images.small}
-                />
+                {failedImages[card.id] ? (
+                  <div className="grid h-full place-items-center text-slate-500">
+                    <ImageOff className="h-6 w-6" />
+                  </div>
+                ) : (
+                  <Image
+                    alt={card.name}
+                    className="object-cover"
+                    fill
+                    onError={() =>
+                      setFailedImages((current) => ({ ...current, [card.id]: true }))
+                    }
+                    sizes="72px"
+                    src={card.images.small}
+                  />
+                )}
               </div>
               <span className="min-w-0">
                 <span className="block font-black text-white">{card.name}</span>
