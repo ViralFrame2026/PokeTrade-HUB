@@ -1,18 +1,85 @@
 import { AlertTriangle, CheckCircle2, FileWarning, ShieldCheck, Users } from "lucide-react";
+import { AdminListings, type AdminListing } from "@/components/admin-listings";
 import { ButtonLink } from "@/components/ui/button-link";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const metadata = {
   title: "Panel Administrador"
 };
 
-const queues = [
-  { icon: FileWarning, label: "Publicaciones pendientes", value: "42" },
-  { icon: AlertTriangle, label: "Reportes abiertos", value: "13" },
-  { icon: Users, label: "Solicitudes de verificacion", value: "8" },
-  { icon: CheckCircle2, label: "Aprobadas hoy", value: "27" }
-];
+export const dynamic = "force-dynamic";
 
-export default function AdminPage() {
+type ListingRow = {
+  created_at: string;
+  id: string;
+  moderation_status: string;
+  profiles: { display_name: string } | { display_name: string }[] | null;
+  title: string;
+  type: string;
+};
+
+function sellerName(profile: ListingRow["profiles"]) {
+  if (Array.isArray(profile)) {
+    return profile[0]?.display_name ?? "Usuario";
+  }
+
+  return profile?.display_name ?? "Usuario";
+}
+
+export default async function AdminPage() {
+  const supabase = await createSupabaseServerClient();
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+
+  const [pendingResult, reportsResult, usersResult, approvedResult] = await Promise.all([
+    supabase
+      .from("listings")
+      .select("id, title, type, moderation_status, created_at, profiles!listings_seller_id_fkey(display_name)")
+      .eq("moderation_status", "pending")
+      .order("created_at", { ascending: true }),
+    supabase.from("reports").select("id", { count: "exact", head: true }).is("resolved_at", null),
+    supabase.from("profiles").select("id", { count: "exact", head: true }),
+    supabase
+      .from("listings")
+      .select("id", { count: "exact", head: true })
+      .eq("moderation_status", "approved")
+      .gte("approved_at", startOfToday.toISOString())
+  ]);
+
+  const listings: AdminListing[] = ((pendingResult.data ?? []) as ListingRow[]).map(
+    (listing) => ({
+      created_at: listing.created_at,
+      id: listing.id,
+      moderation_status: listing.moderation_status,
+      seller: sellerName(listing.profiles),
+      title: listing.title,
+      type: listing.type
+    })
+  );
+
+  const queues = [
+    {
+      icon: FileWarning,
+      label: "Publicaciones pendientes",
+      value: String(listings.length)
+    },
+    {
+      icon: AlertTriangle,
+      label: "Reportes abiertos",
+      value: String(reportsResult.count ?? 0)
+    },
+    {
+      icon: Users,
+      label: "Usuarios registrados",
+      value: String(usersResult.count ?? 0)
+    },
+    {
+      icon: CheckCircle2,
+      label: "Aprobadas hoy",
+      value: String(approvedResult.count ?? 0)
+    }
+  ];
+
   return (
     <main className="mx-auto min-h-screen max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <ButtonLink href="/" variant="ghost">
@@ -40,42 +107,7 @@ export default function AdminPage() {
         <div className="border-b border-white/10 p-5">
           <h2 className="text-xl font-black text-white">Cola de publicaciones</h2>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[720px] text-left text-sm">
-            <thead className="bg-white/[0.04] text-slate-400">
-              <tr>
-                <th className="px-5 py-4">Titulo</th>
-                <th className="px-5 py-4">Tipo</th>
-                <th className="px-5 py-4">Usuario</th>
-                <th className="px-5 py-4">Estado</th>
-                <th className="px-5 py-4">Accion</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/10">
-              {[
-                ["Charizard holo", "Intercambio", "Jota Rarezas", "Pendiente"],
-                ["ETB sellada", "Venta", "Andes TCG", "Pendiente"],
-                ["Sorteo pack 151", "Sorteo", "Mica Poke", "Cambios solicitados"]
-              ].map(([title, type, user, status]) => (
-                <tr key={title}>
-                  <td className="px-5 py-4 font-bold text-white">{title}</td>
-                  <td className="px-5 py-4 text-slate-300">{type}</td>
-                  <td className="px-5 py-4 text-slate-300">{user}</td>
-                  <td className="px-5 py-4">
-                    <span className="rounded-full bg-pokemonYellow/10 px-3 py-1 font-bold text-pokemonYellow">
-                      {status}
-                    </span>
-                  </td>
-                  <td className="px-5 py-4">
-                    <button className="rounded-lg border border-white/10 px-3 py-2 font-bold text-white">
-                      Revisar
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <AdminListings listings={listings} />
       </section>
     </main>
   );
