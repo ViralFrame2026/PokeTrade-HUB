@@ -17,4 +17,5 @@ export type Listing = {
   status: string;
   title: string;
   type: string;
+  verified?: boolean;
 };

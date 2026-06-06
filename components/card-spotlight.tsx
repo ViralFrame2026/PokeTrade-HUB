@@ -10,7 +10,7 @@ export function CardSpotlight({ cards }: CardSpotlightProps) {
     <div className="absolute inset-0">
       {cards.map((card, index) => (
         <article
-          className="foil glass absolute w-[220px] rounded-lg p-3 shadow-foil transition hover:-translate-y-2 sm:w-[260px]"
+          className="foil absolute w-[220px] rounded-lg border border-blue-100 bg-white p-3 shadow-[0_22px_65px_rgba(37,99,235,0.20)] transition hover:-translate-y-2 sm:w-[260px]"
           key={card.id}
           style={{
             left: `${index * 22}%`,
@@ -18,7 +18,7 @@ export function CardSpotlight({ cards }: CardSpotlightProps) {
             rotate: `${index === 0 ? "-7deg" : index === 1 ? "8deg" : "-2deg"}`
           }}
         >
-          <div className="relative aspect-[0.72] overflow-hidden rounded-md bg-slate-900">
+          <div className="relative aspect-[0.72] overflow-hidden rounded-md bg-blue-50">
             <Image
               alt={card.name}
               className="object-cover"
@@ -29,16 +29,16 @@ export function CardSpotlight({ cards }: CardSpotlightProps) {
             />
           </div>
           <div className="relative mt-3">
-            <h3 className="font-black text-white">{card.name}</h3>
-            <p className="text-sm font-semibold text-pokemonYellow">{card.set}</p>
+            <h3 className="font-black text-blue-950">{card.name}</h3>
+            <p className="text-sm font-semibold text-blue-600">{card.set}</p>
           </div>
         </article>
       ))}
-      <div className="absolute bottom-2 right-2 max-w-xs rounded-lg border border-white/10 bg-slate-950/80 p-5 backdrop-blur">
-        <p className="text-sm font-bold uppercase tracking-[0.18em] text-pokemonYellow">
+      <div className="absolute bottom-2 right-2 max-w-xs rounded-lg border border-yellow-300 bg-white/95 p-5 shadow-lg backdrop-blur">
+        <p className="text-sm font-bold uppercase tracking-[0.18em] text-red-500">
           Sin cartas inventadas
         </p>
-        <p className="mt-2 text-sm leading-6 text-slate-300">
+        <p className="mt-2 text-sm leading-6 text-slate-600">
           Las publicaciones de cartas se enlazan con IDs oficiales de la API
           Pokemon TCG.
         </p>

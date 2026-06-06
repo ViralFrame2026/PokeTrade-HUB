@@ -8,7 +8,7 @@ type ButtonLinkProps = {
   href: string;
   icon?: LucideIcon;
   size?: "sm" | "md";
-  variant?: "primary" | "secondary" | "ghost";
+  variant?: "primary" | "secondary" | "ghost" | "light" | "blue";
 };
 
 export function ButtonLink({
@@ -28,7 +28,11 @@ export function ButtonLink({
         variant === "secondary" &&
           "border-white/12 bg-white/10 text-white hover:border-pokemonYellow/50",
         variant === "ghost" &&
-          "border-transparent bg-transparent text-slate-200 hover:bg-white/10"
+          "border-transparent bg-transparent text-slate-200 hover:bg-white/10",
+        variant === "light" &&
+          "border-blue-200 bg-white text-blue-800 shadow-sm hover:border-blue-400 hover:bg-blue-50",
+        variant === "blue" &&
+          "border-blue-600 bg-blue-600 text-white hover:border-blue-700 hover:bg-blue-700"
       )}
       href={href}
     >

@@ -8,10 +8,10 @@ type StatCardProps = {
 
 export function StatCard({ icon: Icon, label, value }: StatCardProps) {
   return (
-    <article className="glass rounded-lg p-5">
-      <Icon className="h-6 w-6 text-pokemonYellow" />
+    <article className="rounded-lg border border-white/20 bg-white/10 p-5 backdrop-blur-sm">
+      <Icon className="h-6 w-6 text-yellow-300" />
       <p className="mt-4 text-3xl font-black text-white">{value}</p>
-      <p className="mt-1 text-sm font-semibold text-slate-400">{label}</p>
+      <p className="mt-1 text-sm font-semibold text-blue-100">{label}</p>
     </article>
   );
 }
