@@ -1,7 +1,10 @@
 import {
   BadgeCheck,
   Bell,
+  Droplets,
+  Flame,
   Gift,
+  Leaf,
   MessageCircle,
   Search,
   ShieldCheck,
@@ -9,7 +12,8 @@ import {
   Star,
   Store,
   Trophy,
-  Users
+  Users,
+  Zap
 } from "lucide-react";
 import Link from "next/link";
 import { CardSpotlight } from "@/components/card-spotlight";
@@ -180,26 +184,24 @@ export default async function HomePage() {
   }));
 
   return (
-    <main className="home-page min-h-screen bg-[#f7fbff] text-slate-900">
-      <header className="sticky top-0 z-20 border-b border-blue-100 bg-white/90 backdrop-blur-xl">
+    <main className="home-page min-h-screen bg-[#eaf2ff] text-slate-900">
+      <header className="sticky top-0 z-20 border-b-4 border-yellow-400 bg-blue-800/95 text-white backdrop-blur-xl">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <Link className="flex items-center gap-3" href="/">
-            <span className="grid h-11 w-11 place-items-center rounded-full border-[6px] border-white bg-pokemonYellow text-sm font-black text-blue-950 shadow-[0_0_0_3px_#2563eb]">
-              PH
-            </span>
+            <span className="pokeball h-11 w-11 shrink-0" aria-hidden="true" />
             <div>
-              <p className="text-sm font-black tracking-[0.24em] text-blue-700">POKETRADE</p>
-              <p className="text-xs font-bold text-slate-500">HUB TCG</p>
+              <p className="text-sm font-black tracking-[0.24em] text-yellow-300">POKETRADE</p>
+              <p className="text-xs font-bold text-blue-100">HUB TCG</p>
             </div>
           </Link>
-          <div className="hidden items-center gap-6 text-sm font-bold text-slate-600 md:flex">
-            <a className="hover:text-blue-700" href="#marketplace">
+          <div className="hidden items-center gap-6 text-sm font-bold text-blue-100 md:flex">
+            <a className="hover:text-yellow-300" href="#marketplace">
               Marketplace
             </a>
-            <a className="hover:text-blue-700" href="#comunidad">
+            <a className="hover:text-yellow-300" href="#comunidad">
               Comunidad
             </a>
-            <a className="hover:text-blue-700" href="#seguridad">
+            <a className="hover:text-yellow-300" href="#seguridad">
               Seguridad
             </a>
           </div>
@@ -209,19 +211,22 @@ export default async function HomePage() {
         </nav>
       </header>
 
-      <section className="relative overflow-hidden border-b border-blue-100 bg-[linear-gradient(135deg,#fff7c2_0%,#ffffff_42%,#dbeafe_100%)]">
-        <div className="absolute left-0 top-0 h-2 w-full bg-[linear-gradient(90deg,#ef4444_0_33%,#facc15_33%_66%,#2563eb_66%)]" />
+      <section className="relative overflow-hidden border-b-8 border-yellow-400 bg-blue-700">
+        <div className="pokeball-pattern absolute inset-0 opacity-[0.13]" aria-hidden="true" />
+        <div className="pokeball absolute -left-16 top-24 h-44 w-44 rotate-12 opacity-20" aria-hidden="true" />
+        <div className="pokeball absolute -right-20 bottom-12 h-56 w-56 -rotate-12 opacity-20" aria-hidden="true" />
+        <div className="absolute left-0 top-0 h-3 w-full bg-[linear-gradient(90deg,#ef4444_0_33%,#facc15_33%_66%,#60a5fa_66%)]" />
         <div className="mx-auto grid max-w-7xl gap-10 px-4 pb-16 pt-16 sm:px-6 lg:grid-cols-[1.02fr_0.98fr] lg:px-8 lg:pb-20 lg:pt-20">
-          <div className="flex flex-col justify-center">
-            <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-yellow-300 bg-white px-4 py-2 text-sm font-bold text-blue-800 shadow-sm">
-              <Sparkles className="h-4 w-4 text-yellow-500" />
+          <div className="relative z-10 flex flex-col justify-center">
+            <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border-2 border-yellow-300 bg-blue-950/45 px-4 py-2 text-sm font-bold text-yellow-200 shadow-sm backdrop-blur">
+              <Sparkles className="h-4 w-4 text-yellow-300" />
               Cartas oficiales, comunidad real
             </div>
-            <h1 className="max-w-4xl text-5xl font-black leading-[0.98] tracking-normal text-blue-950 sm:text-6xl lg:text-7xl">
+            <h1 className="max-w-4xl text-5xl font-black leading-[0.98] tracking-normal text-white sm:text-6xl lg:text-7xl">
               Tu comunidad para
-              <span className="block text-blue-600">coleccionar y conectar</span>
+              <span className="block text-yellow-300">coleccionar y conectar</span>
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-blue-100">
               Compra, vende e intercambia cartas oficiales de Pokemon TCG con
               publicaciones moderadas y reputacion visible.
             </p>
@@ -237,13 +242,13 @@ export default async function HomePage() {
               </ButtonLink>
             </div>
           </div>
-          <div className="relative min-h-[530px]">
+          <div className="relative z-10 min-h-[530px]">
             <CardSpotlight cards={featuredCards} />
           </div>
         </div>
       </section>
 
-      <section className="bg-blue-700 py-8 text-white">
+      <section className="bg-red-500 py-8 text-white">
         <div className="mx-auto grid max-w-7xl gap-4 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
           <StatCard icon={Users} label="Usuarios registrados" value={String(usersTotal)} />
           <StatCard
@@ -256,7 +261,9 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section id="marketplace" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <section id="marketplace" className="relative overflow-hidden bg-[#eaf2ff]">
+        <div className="pokeball absolute -right-20 top-10 h-48 w-48 opacity-[0.08]" aria-hidden="true" />
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <p className="text-sm font-black uppercase tracking-[0.22em] text-red-500">
@@ -287,24 +294,40 @@ export default async function HomePage() {
             </p>
           </div>
         )}
+        </div>
       </section>
 
-      <section id="comunidad" className="border-y border-blue-100 bg-[#fffbea] py-16">
+      <section id="comunidad" className="relative overflow-hidden border-y-8 border-yellow-400 bg-blue-800 py-16 text-white">
+        <div className="pokeball-pattern absolute inset-0 opacity-[0.08]" aria-hidden="true" />
         <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
-          <div>
-            <p className="text-sm font-black uppercase tracking-[0.22em] text-red-500">
+          <div className="relative z-10">
+            <p className="text-sm font-black uppercase tracking-[0.22em] text-yellow-300">
               Comunidad
             </p>
-            <h2 className="mt-2 text-3xl font-black text-blue-950">
+            <h2 className="mt-2 text-3xl font-black text-white">
               La confianza también se colecciona
             </h2>
-            <p className="mt-4 max-w-xl leading-7 text-slate-600">
+            <p className="mt-4 max-w-xl leading-7 text-blue-100">
               Cada operación ayuda a construir reputación. Los perfiles muestran
               valoraciones, actividad y verificación.
             </p>
+            <div className="mt-8 flex gap-3" aria-hidden="true">
+              <span className="energy-dot bg-yellow-400 text-blue-950">
+                <Zap className="h-5 w-5 fill-current" />
+              </span>
+              <span className="energy-dot bg-red-500 text-white">
+                <Flame className="h-5 w-5 fill-current" />
+              </span>
+              <span className="energy-dot bg-sky-400 text-white">
+                <Droplets className="h-5 w-5" />
+              </span>
+              <span className="energy-dot bg-emerald-500 text-white">
+                <Leaf className="h-5 w-5 fill-current" />
+              </span>
+            </div>
           </div>
           {topUsers.length > 0 ? (
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="relative z-10 grid gap-4 sm:grid-cols-2">
               {topUsers.map((user) => (
                 <article className="rounded-lg border border-yellow-200 bg-white p-5 shadow-sm" key={user.name}>
                   <div className="flex items-center gap-4">
@@ -324,14 +347,15 @@ export default async function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="rounded-lg border border-yellow-200 bg-white p-8 text-slate-600 shadow-sm">
+            <div className="relative z-10 rounded-lg border border-yellow-300 bg-white p-8 text-slate-600 shadow-sm">
               Los coleccionistas destacados aparecerán cuando reciban sus primeras valoraciones.
             </div>
           )}
         </div>
       </section>
 
-      <section id="seguridad" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <section id="seguridad" className="bg-[#fff8cf]">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mb-8 max-w-2xl">
           <p className="text-sm font-black uppercase tracking-[0.22em] text-red-500">Seguridad</p>
           <h2 className="mt-2 text-3xl font-black text-blue-950">Un intercambio más tranquilo</h2>
@@ -374,6 +398,7 @@ export default async function HomePage() {
           <ButtonLink href="/admin" icon={ShieldCheck} variant="light">
             Panel administrador
           </ButtonLink>
+        </div>
         </div>
       </section>
     </main>

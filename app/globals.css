@@ -56,3 +56,55 @@ a {
   border: 1px solid rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(18px);
 }
+
+.pokeball-pattern {
+  background-color: #1d4ed8;
+  background-image:
+    radial-gradient(circle at center, #ffffff 0 5px, #172554 6px 9px, transparent 10px),
+    linear-gradient(
+      to bottom,
+      rgba(239, 68, 68, 0.22) 0 44%,
+      rgba(15, 23, 42, 0.24) 45% 55%,
+      rgba(255, 255, 255, 0.13) 56% 100%
+    );
+  background-position: 0 0, 0 0;
+  background-size: 72px 72px;
+}
+
+.pokeball {
+  background:
+    linear-gradient(
+      to bottom,
+      #ef4444 0 43%,
+      #172554 44% 56%,
+      #ffffff 57% 100%
+    );
+  border: 5px solid #172554;
+  border-radius: 999px;
+  box-shadow: 0 12px 35px rgba(30, 64, 175, 0.2);
+  position: relative;
+}
+
+.pokeball::after {
+  background: #ffffff;
+  border: 5px solid #172554;
+  border-radius: 999px;
+  content: "";
+  height: 28%;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 28%;
+}
+
+.energy-dot {
+  align-items: center;
+  border: 3px solid rgba(255, 255, 255, 0.72);
+  border-radius: 999px;
+  box-shadow: 0 8px 20px rgba(30, 64, 175, 0.18);
+  display: inline-flex;
+  height: 42px;
+  justify-content: center;
+  width: 42px;
+}
