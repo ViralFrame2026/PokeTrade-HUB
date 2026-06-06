@@ -211,18 +211,16 @@ export default async function HomePage() {
         </nav>
       </header>
 
-      <section className="relative overflow-hidden border-b-8 border-yellow-400 bg-blue-700">
-        <div className="pokeball-pattern absolute inset-0 opacity-[0.13]" aria-hidden="true" />
-        <div className="pokeball absolute -left-16 top-24 h-44 w-44 rotate-12 opacity-20" aria-hidden="true" />
-        <div className="pokeball absolute -right-20 bottom-12 h-56 w-56 -rotate-12 opacity-20" aria-hidden="true" />
+      <section className="pokemon-hero-surface relative overflow-hidden border-b-8 border-yellow-400">
+        <div className="pokemon-speed-lines absolute inset-0" aria-hidden="true" />
         <div className="absolute left-0 top-0 h-3 w-full bg-[linear-gradient(90deg,#ef4444_0_33%,#facc15_33%_66%,#60a5fa_66%)]" />
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 pb-16 pt-16 sm:px-6 lg:grid-cols-[1.02fr_0.98fr] lg:px-8 lg:pb-20 lg:pt-20">
-          <div className="relative z-10 flex flex-col justify-center">
+        <div className="relative z-10 mx-auto grid max-w-7xl gap-6 px-4 pb-24 pt-12 sm:px-6 lg:min-h-[610px] lg:grid-cols-[1.02fr_0.98fr] lg:items-center lg:px-8 lg:pb-24 lg:pt-14">
+          <div className="flex flex-col justify-center">
             <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border-2 border-yellow-300 bg-blue-950/45 px-4 py-2 text-sm font-bold text-yellow-200 shadow-sm backdrop-blur">
               <Sparkles className="h-4 w-4 text-yellow-300" />
               Cartas oficiales, comunidad real
             </div>
-            <h1 className="max-w-4xl text-5xl font-black leading-[0.98] tracking-normal text-white sm:text-6xl lg:text-7xl">
+            <h1 className="max-w-4xl text-5xl font-black leading-[0.98] tracking-normal text-white sm:text-6xl lg:text-[68px]">
               Tu comunidad para
               <span className="block text-yellow-300">coleccionar y conectar</span>
             </h1>
@@ -242,7 +240,7 @@ export default async function HomePage() {
               </ButtonLink>
             </div>
           </div>
-          <div className="relative z-10 min-h-[530px]">
+          <div className="relative min-h-[470px] lg:min-h-[520px]">
             <CardSpotlight cards={featuredCards} />
           </div>
         </div>
@@ -262,7 +260,8 @@ export default async function HomePage() {
       </section>
 
       <section id="marketplace" className="relative overflow-hidden bg-[#eaf2ff]">
-        <div className="pokeball absolute -right-20 top-10 h-48 w-48 opacity-[0.08]" aria-hidden="true" />
+        <div className="absolute right-0 top-0 h-2 w-1/3 bg-red-500" aria-hidden="true" />
+        <div className="absolute left-0 top-0 h-2 w-2/3 bg-blue-600" aria-hidden="true" />
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
@@ -298,7 +297,7 @@ export default async function HomePage() {
       </section>
 
       <section id="comunidad" className="relative overflow-hidden border-y-8 border-yellow-400 bg-blue-800 py-16 text-white">
-        <div className="pokeball-pattern absolute inset-0 opacity-[0.08]" aria-hidden="true" />
+        <div className="pokemon-speed-lines absolute inset-0 opacity-50" aria-hidden="true" />
         <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
           <div className="relative z-10">
             <p className="text-sm font-black uppercase tracking-[0.22em] text-yellow-300">

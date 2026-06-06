@@ -57,20 +57,6 @@ a {
   backdrop-filter: blur(18px);
 }
 
-.pokeball-pattern {
-  background-color: #1d4ed8;
-  background-image:
-    radial-gradient(circle at center, #ffffff 0 5px, #172554 6px 9px, transparent 10px),
-    linear-gradient(
-      to bottom,
-      rgba(239, 68, 68, 0.22) 0 44%,
-      rgba(15, 23, 42, 0.24) 45% 55%,
-      rgba(255, 255, 255, 0.13) 56% 100%
-    );
-  background-position: 0 0, 0 0;
-  background-size: 72px 72px;
-}
-
 .pokeball {
   background:
     linear-gradient(
@@ -96,6 +82,45 @@ a {
   top: 50%;
   transform: translate(-50%, -50%);
   width: 28%;
+}
+
+.pokemon-hero-surface {
+  background:
+    linear-gradient(112deg, #173db8 0 58%, #2455dc 58% 100%);
+  isolation: isolate;
+}
+
+.pokemon-hero-surface::before {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
+  content: "";
+  height: 520px;
+  position: absolute;
+  right: -130px;
+  top: -210px;
+  width: 760px;
+  z-index: -1;
+}
+
+.pokemon-hero-surface::after {
+  background: #facc15;
+  bottom: -78px;
+  clip-path: ellipse(72% 45% at 50% 100%);
+  content: "";
+  height: 130px;
+  left: -5%;
+  opacity: 0.98;
+  position: absolute;
+  width: 110%;
+  z-index: 0;
+}
+
+.pokemon-speed-lines {
+  background-image: repeating-linear-gradient(
+    112deg,
+    transparent 0 72px,
+    rgba(255, 255, 255, 0.045) 72px 75px
+  );
 }
 
 .energy-dot {
