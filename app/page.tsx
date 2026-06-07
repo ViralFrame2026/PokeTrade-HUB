@@ -20,7 +20,6 @@ import { CardSpotlight } from "@/components/card-spotlight";
 import { ListingCard } from "@/components/listing-card";
 import { StatCard } from "@/components/stat-card";
 import { ButtonLink } from "@/components/ui/button-link";
-import { featuredCards } from "@/lib/demo-data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { Listing } from "@/lib/types";
 
@@ -205,17 +204,22 @@ export default async function HomePage() {
               Seguridad
             </a>
           </div>
-          <ButtonLink href="/publish" icon={Store} size="sm">
-            Publicar
-          </ButtonLink>
+          <Link
+            aria-label="Publicar producto"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-yellow-400 bg-yellow-400 text-slate-950 transition hover:bg-yellow-300 sm:h-auto sm:w-auto sm:gap-2 sm:px-4 sm:py-2 sm:text-sm sm:font-bold"
+            href="/publish"
+          >
+            <Store className="h-4 w-4" />
+            <span className="hidden sm:inline">Publicar</span>
+          </Link>
         </nav>
       </header>
 
       <section className="pokemon-hero-surface relative overflow-hidden border-b-8 border-yellow-400">
-        <div className="pokemon-speed-lines absolute inset-0" aria-hidden="true" />
+        <div className="pokemon-hero-overlay absolute inset-0" aria-hidden="true" />
         <div className="absolute left-0 top-0 h-3 w-full bg-[linear-gradient(90deg,#ef4444_0_33%,#facc15_33%_66%,#60a5fa_66%)]" />
-        <div className="relative z-10 mx-auto grid max-w-7xl gap-6 px-4 pb-24 pt-12 sm:px-6 lg:min-h-[610px] lg:grid-cols-[1.02fr_0.98fr] lg:items-center lg:px-8 lg:pb-24 lg:pt-14">
-          <div className="flex flex-col justify-center">
+        <div className="relative z-10 mx-auto grid w-full min-w-0 max-w-7xl grid-cols-1 gap-4 overflow-hidden px-4 pb-12 pt-12 sm:px-6 lg:min-h-[610px] lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:px-8 lg:pb-14 lg:pt-14">
+          <div className="flex w-[calc(100vw-2rem)] min-w-0 max-w-full flex-col justify-center lg:w-auto">
             <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border-2 border-yellow-300 bg-blue-950/45 px-4 py-2 text-sm font-bold text-yellow-200 shadow-sm backdrop-blur">
               <Sparkles className="h-4 w-4 text-yellow-300" />
               Cartas oficiales, comunidad real
@@ -240,8 +244,8 @@ export default async function HomePage() {
               </ButtonLink>
             </div>
           </div>
-          <div className="relative min-h-[470px] lg:min-h-[520px]">
-            <CardSpotlight cards={featuredCards} />
+          <div className="relative w-[calc(100vw-2rem)] min-w-0 max-w-full lg:w-auto">
+            <CardSpotlight />
           </div>
         </div>
       </section>

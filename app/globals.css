@@ -85,21 +85,11 @@ a {
 }
 
 .pokemon-hero-surface {
-  background:
-    linear-gradient(112deg, #173db8 0 58%, #2455dc 58% 100%);
+  background-color: #102d82;
+  background-image: url("/assets/pokemon-card-banner.webp");
+  background-position: center;
+  background-size: cover;
   isolation: isolate;
-}
-
-.pokemon-hero-surface::before {
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 50%;
-  content: "";
-  height: 520px;
-  position: absolute;
-  right: -130px;
-  top: -210px;
-  width: 760px;
-  z-index: -1;
 }
 
 .pokemon-hero-surface::after {
@@ -115,12 +105,31 @@ a {
   z-index: 0;
 }
 
-.pokemon-speed-lines {
-  background-image: repeating-linear-gradient(
-    112deg,
-    transparent 0 72px,
-    rgba(255, 255, 255, 0.045) 72px 75px
-  );
+.pokemon-hero-overlay {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(8, 28, 82, 0.96) 0%,
+      rgba(14, 48, 132, 0.9) 40%,
+      rgba(18, 55, 151, 0.62) 67%,
+      rgba(8, 24, 72, 0.42) 100%
+    ),
+    linear-gradient(180deg, rgba(4, 13, 42, 0.1), rgba(4, 13, 42, 0.56));
+}
+
+@media (max-width: 1023px) {
+  .pokemon-hero-surface {
+    background-position: 56% center;
+  }
+
+  .pokemon-hero-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(8, 29, 88, 0.94) 0%,
+      rgba(14, 50, 139, 0.88) 58%,
+      rgba(7, 24, 73, 0.68) 100%
+    );
+  }
 }
 
 .energy-dot {

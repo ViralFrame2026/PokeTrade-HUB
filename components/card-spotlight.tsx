@@ -1,78 +1,61 @@
 import Image from "next/image";
-import type { FeaturedCard } from "@/lib/types";
 
-type CardSpotlightProps = {
-  cards: FeaturedCard[];
-};
-
-export function CardSpotlight({ cards }: CardSpotlightProps) {
-  const primaryCard = cards[0];
-  const sealedProducts = [
-    {
-      image: "/assets/official-etb.png",
-      label: "Elite Trainer Box",
-      position:
-        "right-[1%] top-[4%] w-[44%] max-w-[255px] rotate-[2deg] sm:right-[2%]"
-    },
-    {
-      image: "/assets/official-booster-display.png",
-      label: "Booster Display",
-      position:
-        "bottom-[3%] right-[2%] w-[37%] max-w-[215px] rotate-[2deg] sm:right-[3%]"
-    },
-    {
-      image: "/assets/official-booster-bundle.png",
-      label: "Booster Bundle",
-      position:
-        "bottom-[4%] left-[43%] w-[29%] max-w-[165px] rotate-[-3deg] sm:left-[45%]"
-    }
-  ];
-
-  if (!primaryCard) {
-    return null;
+const heroProducts = [
+  {
+    alt: "Caja de entrenador elite Llamaradas Fantasmales",
+    imageClassName:
+      "col-span-1 max-h-[190px] justify-self-end sm:max-h-[235px] lg:max-h-[270px]",
+    height: 477,
+    src: "/assets/phantasmal-etb-transparent.png",
+    width: 500
+  },
+  {
+    alt: "Caja de entrenador elite Caos Creciente",
+    imageClassName:
+      "col-span-1 max-h-[190px] justify-self-start sm:max-h-[235px] lg:max-h-[270px]",
+    height: 3840,
+    src: "/assets/chaos-rising-etb.webp",
+    width: 3840
+  },
+  {
+    alt: "Latas oficiales Mega Charizard X y Mega Charizard Y",
+    imageClassName:
+      "col-span-2 max-h-[175px] justify-self-center sm:max-h-[210px] lg:max-h-[235px]",
+    height: 533,
+    src: "/assets/mega-charizard-tins.webp",
+    width: 533
   }
+];
 
+export function CardSpotlight() {
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div className="relative flex h-full min-h-[350px] min-w-0 items-center justify-center overflow-hidden sm:min-h-[440px] lg:min-h-[520px]">
       <div
-        className="absolute left-[2%] top-[10%] h-72 w-72 rounded-full border border-white/15 bg-white/10 blur-[1px] sm:h-80 sm:w-80"
+        className="absolute inset-x-[8%] bottom-[9%] h-[24%] rounded-[50%] bg-blue-950/45 blur-2xl"
         aria-hidden="true"
       />
 
-      <article className="foil absolute left-[2%] top-[14%] z-20 w-[42%] max-w-[235px] rotate-[-5deg] rounded-lg border border-blue-100 bg-white p-2.5 shadow-[0_28px_70px_rgba(15,23,42,0.38)] transition hover:-translate-y-2 hover:rotate-[-2deg] sm:left-[5%] sm:p-3">
-        <div className="relative aspect-[0.72] overflow-hidden rounded-md bg-blue-50">
-          <Image
-            alt={primaryCard.name}
-            className="object-contain"
-            fill
-            priority
-            sizes="(max-width: 640px) 42vw, 235px"
-            src={primaryCard.image}
-          />
-        </div>
-        <div className="relative mt-3">
-          <h3 className="font-black text-blue-950">{primaryCard.name}</h3>
-          <p className="text-sm font-semibold text-blue-600">{primaryCard.set}</p>
-        </div>
-      </article>
-
-      {sealedProducts.map((product) => (
-        <figure
-          className={`absolute z-10 transition hover:z-30 hover:-translate-y-1 ${product.position}`}
-          key={product.label}
-        >
-          <Image
-            alt={`Producto oficial Pokemon TCG: ${product.label}`}
-            className="h-auto w-full object-contain drop-shadow-[0_18px_18px_rgba(15,23,42,0.36)]"
-            height={325}
-            priority
-            sizes="(max-width: 640px) 52vw, 305px"
-            src={product.image}
-            unoptimized
-            width={578}
-          />
-        </figure>
-      ))}
+      <div className="relative grid min-w-0 w-full max-w-[610px] grid-cols-2 items-end gap-x-2 gap-y-1 px-1 sm:gap-x-4 lg:px-0">
+        {heroProducts.map((product) => (
+          <figure
+            className={`flex min-w-0 items-end justify-center ${
+              product.imageClassName.includes("col-span-2") ? "col-span-2" : ""
+            }`}
+            key={product.src}
+          >
+            <Image
+              alt={product.alt}
+              className={`h-auto min-w-0 w-auto max-w-full object-contain drop-shadow-[0_24px_20px_rgba(3,7,18,0.55)] transition duration-300 hover:-translate-y-2 ${product.imageClassName.replace("col-span-2 ", "")}`}
+              height={product.height}
+              priority
+              sizes="(max-width: 640px) 48vw, (max-width: 1024px) 32vw, 280px"
+              src={product.src}
+              unoptimized
+              width={product.width}
+            />
+          </figure>
+        ))}
+      </div>
     </div>
   );
 }
