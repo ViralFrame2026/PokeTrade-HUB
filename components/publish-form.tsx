@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Camera,
   CheckCircle2,
@@ -10,9 +10,12 @@ import {
   MapPin,
   Search,
   ShieldCheck,
-  Store
+  Store,
+  Trash2,
+  Upload
 } from "lucide-react";
 import type { PokemonTcgCard } from "@/lib/pokemon-tcg-api";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
 type CardsSearchResponse = {
@@ -44,6 +47,41 @@ export function PublishForm() {
   const [isSearching, setIsSearching] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
+  const [photos, setPhotos] = useState<File[]>([]);
+  const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
+
+  useEffect(() => {
+    const previews = photos.map((photo) => URL.createObjectURL(photo));
+    setPhotoPreviews(previews);
+
+    return () => {
+      previews.forEach((preview) => URL.revokeObjectURL(preview));
+    };
+  }, [photos]);
+
+  function handlePhotos(files: FileList | null) {
+    if (!files) return;
+
+    const nextPhotos = Array.from(files);
+    const allowedTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
+
+    if (nextPhotos.length > 5) {
+      setError("Puedes subir un máximo de 5 fotos reales.");
+      return;
+    }
+
+    const invalidPhoto = nextPhotos.find(
+      (photo) => !allowedTypes.has(photo.type) || photo.size > 8 * 1024 * 1024
+    );
+
+    if (invalidPhoto) {
+      setError("Las fotos deben ser JPG, PNG o WEBP y pesar menos de 8 MB.");
+      return;
+    }
+
+    setPhotos(nextPhotos);
+    setError(null);
+  }
 
   async function handleSearch() {
     const trimmedQuery = query.trim();
@@ -89,6 +127,11 @@ export function PublishForm() {
       return;
     }
 
+    if (photos.length === 0) {
+      setError("Sube al menos una foto real del producto.");
+      return;
+    }
+
     setError(null);
     setSuccess(null);
     setIsSubmitting(true);
@@ -116,8 +159,62 @@ export function PublishForm() {
         throw new Error(payload.error ?? "No pudimos crear la publicacion.");
       }
 
+      const listingId = payload.data?.id;
+
+      if (!listingId) {
+        throw new Error("No recibimos el identificador de la publicación.");
+      }
+
+      const uploadedPaths: string[] = [];
+
+      try {
+        const supabase = createSupabaseBrowserClient();
+        const {
+          data: { user }
+        } = await supabase.auth.getUser();
+
+        if (!user) {
+          throw new Error("Tu sesión venció. Inicia sesión nuevamente.");
+        }
+
+        for (const [index, photo] of photos.entries()) {
+          const extension = photo.name.split(".").pop()?.toLowerCase() || "jpg";
+          const storagePath = `${user.id}/${listingId}/${crypto.randomUUID()}.${extension}`;
+          const { error: uploadError } = await supabase.storage
+            .from("listing-images")
+            .upload(storagePath, photo, {
+              cacheControl: "3600",
+              contentType: photo.type,
+              upsert: false
+            });
+
+          if (uploadError) throw uploadError;
+          uploadedPaths.push(storagePath);
+
+          const { error: imageError } = await supabase.from("listing_images").insert({
+            alt_text: `Foto real ${index + 1} de ${selectedCard.name}`,
+            listing_id: listingId,
+            sort_order: index,
+            storage_path: storagePath
+          });
+
+          if (imageError) throw imageError;
+        }
+      } catch (uploadError) {
+        const supabase = createSupabaseBrowserClient();
+        if (uploadedPaths.length > 0) {
+          await supabase.storage.from("listing-images").remove(uploadedPaths);
+        }
+        await fetch(`/api/listings/${listingId}`, { method: "DELETE" });
+        throw new Error(
+          uploadError instanceof Error
+            ? `No pudimos subir las fotos: ${uploadError.message}`
+            : "No pudimos subir las fotos reales."
+        );
+      }
+
       setSuccess(
-        `Publicacion ${payload.data?.id ?? ""} enviada. Quedo pendiente de moderacion.`
+        `Publicacion ${listingId} enviada con ${photos.length} foto(s). Quedo pendiente de moderacion.`
       );
       setCards([]);
       setSelectedCard(null);
@@ -125,6 +222,7 @@ export function PublishForm() {
       setDescription("");
       setPrice("");
       setTradeWants("");
+      setPhotos([]);
     } catch (submitError) {
       setError(
         submitError instanceof Error
@@ -392,10 +490,73 @@ export function PublishForm() {
           value={description}
         />
       </label>
+      <section className="mt-5 rounded-lg border border-white/10 bg-slate-950/45 p-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-sm font-black text-white">Fotos reales del producto</p>
+            <p className="mt-1 text-xs leading-5 text-slate-400">
+              Sube entre 1 y 5 fotos. La primera será la imagen principal.
+            </p>
+          </div>
+          <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-pokemonYellow/50 bg-pokemonYellow/10 px-4 py-2 text-sm font-black text-pokemonYellow transition hover:bg-pokemonYellow/20">
+            <Upload className="h-4 w-4" />
+            Seleccionar fotos
+            <input
+              accept="image/jpeg,image/png,image/webp"
+              className="sr-only"
+              multiple
+              onChange={(event) => handlePhotos(event.target.files)}
+              type="file"
+            />
+          </label>
+        </div>
+
+        {photoPreviews.length > 0 ? (
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {photoPreviews.map((preview, index) => (
+              <figure
+                className="relative aspect-square overflow-hidden rounded-lg border border-white/10 bg-slate-950"
+                key={preview}
+              >
+                <Image
+                  alt={`Vista previa de foto real ${index + 1}`}
+                  className="object-cover"
+                  fill
+                  sizes="(max-width: 640px) 45vw, 180px"
+                  src={preview}
+                  unoptimized
+                />
+                <span className="absolute left-2 top-2 rounded bg-blue-950/85 px-2 py-1 text-[10px] font-black uppercase text-white">
+                  {index === 0 ? "Principal" : `Foto ${index + 1}`}
+                </span>
+                <button
+                  aria-label={`Eliminar foto ${index + 1}`}
+                  className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-md bg-red-500 text-white shadow transition hover:bg-red-600"
+                  onClick={() =>
+                    setPhotos((current) =>
+                      current.filter((_, photoIndex) => photoIndex !== index)
+                    )
+                  }
+                  type="button"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </figure>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-4 grid min-h-36 place-items-center rounded-lg border-2 border-dashed border-white/10 text-center text-sm text-slate-500">
+            <div>
+              <Camera className="mx-auto mb-2 h-7 w-7 text-pokemonYellow" />
+              Aún no seleccionaste fotos reales.
+            </div>
+          </div>
+        )}
+      </section>
       <div className="mt-5 grid gap-3 sm:grid-cols-3">
         <div className="rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
           <Camera className="mb-3 h-5 w-5 text-pokemonYellow" />
-          Fotos reales (proximo paso)
+          {photos.length > 0 ? `${photos.length} foto(s) lista(s)` : "Fotos reales requeridas"}
         </div>
         <div className="rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
           <MapPin className="mb-3 h-5 w-5 text-pokemonYellow" />
@@ -413,7 +574,7 @@ export function PublishForm() {
       ) : null}
       <button
         className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-pokemonYellow px-5 py-3 font-black text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
-        disabled={!selectedCard || isSubmitting}
+        disabled={!selectedCard || photos.length === 0 || isSubmitting}
         type="submit"
       >
         {isSubmitting ? (

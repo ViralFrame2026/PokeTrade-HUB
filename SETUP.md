@@ -23,6 +23,8 @@ Si usas el SQL editor, pega el contenido de:
 
 ```text
 supabase/migrations/0001_initial_schema.sql
+supabase/migrations/0002_allow_privileged_profile_updates.sql
+supabase/migrations/0003_listing_images_storage.sql
 ```
 
 ## 3. Configuracion Pokemon TCG API

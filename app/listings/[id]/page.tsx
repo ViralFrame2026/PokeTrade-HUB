@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -14,6 +13,7 @@ import {
   Store,
   Tag
 } from "lucide-react";
+import { ListingGallery } from "@/components/listing-gallery";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -25,6 +25,11 @@ type ListingDetailRow = {
   created_at: string;
   description: string | null;
   id: string;
+  listing_images: Array<{
+    alt_text: string | null;
+    sort_order: number;
+    storage_path: string;
+  }>;
   location_city: string | null;
   location_country: string | null;
   price: number | null;
@@ -98,7 +103,7 @@ async function getListing(id: string) {
   const { data } = await supabase
     .from("listings")
     .select(
-      "id, title, description, type, status, price, trade_wants, location_city, location_country, approved_at, created_at, profiles!listings_seller_id_fkey(display_name, is_verified, reputation_average, reputation_count, whatsapp, instagram), products!listings_product_id_fkey(condition, cards!products_card_id_fkey(pokemon_tcg_id, official_name, image_large, set_name, rarity, number))"
+      "id, title, description, type, status, price, trade_wants, location_city, location_country, approved_at, created_at, listing_images(storage_path, alt_text, sort_order), profiles!listings_seller_id_fkey(display_name, is_verified, reputation_average, reputation_count, whatsapp, instagram), products!listings_product_id_fkey(condition, cards!products_card_id_fkey(pokemon_tcg_id, official_name, image_large, set_name, rarity, number))"
     )
     .eq("id", id)
     .eq("moderation_status", "approved")
@@ -162,6 +167,23 @@ export default async function ListingDetailPage({
       ? "Contactar por Instagram"
       : "Iniciar sesión para contactar";
   const ContactIcon = whatsapp ? MessageCircle : instagram ? Instagram : MessageCircle;
+  const supabase = await createSupabaseServerClient();
+  const realPhotos = [...(listing.listing_images ?? [])]
+    .sort((a, b) => a.sort_order - b.sort_order)
+    .map((image, index) => ({
+      alt: image.alt_text ?? `Foto real ${index + 1} de ${card.official_name}`,
+      src: supabase.storage.from("listing-images").getPublicUrl(image.storage_path).data
+        .publicUrl,
+      type: "real" as const
+    }));
+  const galleryImages = [
+    ...realPhotos,
+    {
+      alt: `Imagen oficial de ${card.official_name}`,
+      src: card.image_large,
+      type: "official" as const
+    }
+  ];
 
   return (
     <main className="min-h-screen bg-[#eaf2ff] text-slate-900">
@@ -195,18 +217,7 @@ export default async function ListingDetailPage({
 
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(340px,0.92fr)] lg:px-8">
         <section>
-          <div className="relative grid min-h-[520px] place-items-center overflow-hidden rounded-lg border border-blue-100 bg-[linear-gradient(145deg,#dbeafe,#fff7cc)] p-8 sm:p-12">
-            <div className="absolute left-0 top-0 h-2 w-full bg-[linear-gradient(90deg,#ef4444_0_33%,#facc15_33%_66%,#2563eb_66%)]" />
-            <Image
-              alt={card.official_name}
-              className="h-auto max-h-[610px] w-auto max-w-full object-contain drop-shadow-[0_28px_28px_rgba(30,64,175,0.25)]"
-              height={733}
-              priority
-              sizes="(max-width: 1024px) 80vw, 520px"
-              src={card.image_large}
-              width={527}
-            />
-          </div>
+          <ListingGallery images={galleryImages} />
 
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             <InfoItem label="Set" value={card.set_name} />
