@@ -194,9 +194,9 @@ export default async function HomePage() {
             </div>
           </Link>
           <div className="hidden items-center gap-6 text-sm font-bold text-blue-100 md:flex">
-            <a className="hover:text-yellow-300" href="#marketplace">
+            <Link className="hover:text-yellow-300" href="/marketplace">
               Marketplace
-            </a>
+            </Link>
             <a className="hover:text-yellow-300" href="#comunidad">
               Comunidad
             </a>
@@ -233,7 +233,7 @@ export default async function HomePage() {
               publicaciones moderadas y reputacion visible.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href="#marketplace" icon={Search}>
+              <ButtonLink href="/marketplace" icon={Search}>
                 Explorar cartas
               </ButtonLink>
               <ButtonLink href="/publish" icon={Store} variant="light">
