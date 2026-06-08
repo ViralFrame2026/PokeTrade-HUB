@@ -127,11 +127,6 @@ export function PublishForm() {
       return;
     }
 
-    if (photos.length === 0) {
-      setError("Sube al menos una foto real del producto.");
-      return;
-    }
-
     setError(null);
     setSuccess(null);
     setIsSubmitting(true);
@@ -168,6 +163,20 @@ export function PublishForm() {
       const uploadedPaths: string[] = [];
 
       try {
+        if (photos.length === 0) {
+          setSuccess(
+            `Publicacion ${listingId} enviada. Quedo pendiente de moderacion.`
+          );
+          setCards([]);
+          setSelectedCard(null);
+          setQuery("");
+          setDescription("");
+          setPrice("");
+          setTradeWants("");
+          setPhotos([]);
+          return;
+        }
+
         const supabase = createSupabaseBrowserClient();
         const {
           data: { user }
@@ -493,9 +502,11 @@ export function PublishForm() {
       <section className="mt-5 rounded-lg border border-white/10 bg-slate-950/45 p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-sm font-black text-white">Fotos reales del producto</p>
+            <p className="text-sm font-black text-white">
+              Fotos reales del producto <span className="text-slate-400">(opcional)</span>
+            </p>
             <p className="mt-1 text-xs leading-5 text-slate-400">
-              Sube entre 1 y 5 fotos. La primera será la imagen principal.
+              Puedes subir hasta 5 fotos. Si no agregas ninguna, se usara la imagen oficial.
             </p>
           </div>
           <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-pokemonYellow/50 bg-pokemonYellow/10 px-4 py-2 text-sm font-black text-pokemonYellow transition hover:bg-pokemonYellow/20">
@@ -548,7 +559,7 @@ export function PublishForm() {
           <div className="mt-4 grid min-h-36 place-items-center rounded-lg border-2 border-dashed border-white/10 text-center text-sm text-slate-500">
             <div>
               <Camera className="mx-auto mb-2 h-7 w-7 text-pokemonYellow" />
-              Aún no seleccionaste fotos reales.
+              Puedes continuar sin fotos reales.
             </div>
           </div>
         )}
@@ -556,7 +567,7 @@ export function PublishForm() {
       <div className="mt-5 grid gap-3 sm:grid-cols-3">
         <div className="rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
           <Camera className="mb-3 h-5 w-5 text-pokemonYellow" />
-          {photos.length > 0 ? `${photos.length} foto(s) lista(s)` : "Fotos reales requeridas"}
+          {photos.length > 0 ? `${photos.length} foto(s) lista(s)` : "Fotos reales opcionales"}
         </div>
         <div className="rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
           <MapPin className="mb-3 h-5 w-5 text-pokemonYellow" />
@@ -574,7 +585,7 @@ export function PublishForm() {
       ) : null}
       <button
         className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-pokemonYellow px-5 py-3 font-black text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
-        disabled={!selectedCard || photos.length === 0 || isSubmitting}
+        disabled={!selectedCard || isSubmitting}
         type="submit"
       >
         {isSubmitting ? (
