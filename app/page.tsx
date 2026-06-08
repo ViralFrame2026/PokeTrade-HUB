@@ -12,6 +12,7 @@ import {
   Star,
   Store,
   Trophy,
+  UserRound,
   Users,
   Zap
 } from "lucide-react";
@@ -197,6 +198,9 @@ export default async function HomePage() {
             <Link className="hover:text-yellow-300" href="/marketplace">
               Marketplace
             </Link>
+            <Link className="hover:text-yellow-300" href="/account/listings">
+              Mis publicaciones
+            </Link>
             <a className="hover:text-yellow-300" href="#comunidad">
               Comunidad
             </a>
@@ -204,14 +208,24 @@ export default async function HomePage() {
               Seguridad
             </a>
           </div>
-          <Link
-            aria-label="Publicar producto"
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-yellow-400 bg-yellow-400 text-slate-950 transition hover:bg-yellow-300 sm:h-auto sm:w-auto sm:gap-2 sm:px-4 sm:py-2 sm:text-sm sm:font-bold"
-            href="/publish"
-          >
-            <Store className="h-4 w-4" />
-            <span className="hidden sm:inline">Publicar</span>
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              aria-label="Mis publicaciones"
+              className="grid h-10 w-10 place-items-center rounded-lg border border-blue-300 text-blue-100 transition hover:border-yellow-300 hover:text-yellow-300 md:hidden"
+              href="/account/listings"
+              title="Mis publicaciones"
+            >
+              <UserRound className="h-4 w-4" />
+            </Link>
+            <Link
+              aria-label="Publicar producto"
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-yellow-400 bg-yellow-400 text-slate-950 transition hover:bg-yellow-300 sm:h-auto sm:w-auto sm:gap-2 sm:px-4 sm:py-2 sm:text-sm sm:font-bold"
+              href="/publish"
+            >
+              <Store className="h-4 w-4" />
+              <span className="hidden sm:inline">Publicar</span>
+            </Link>
+          </div>
         </nav>
       </header>
 

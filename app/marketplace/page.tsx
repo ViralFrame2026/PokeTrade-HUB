@@ -1,4 +1,4 @@
-import { ArrowLeft, Search, Store } from "lucide-react";
+import { ArrowLeft, Search, Store, UserRound } from "lucide-react";
 import Link from "next/link";
 import { ListingCard } from "@/components/listing-card";
 import { MarketplaceFilters } from "@/components/marketplace-filters";
@@ -144,9 +144,19 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
               <p className="text-xs font-bold text-blue-100">MARKETPLACE</p>
             </div>
           </Link>
-          <ButtonLink href="/publish" icon={Store}>
-            Publicar
-          </ButtonLink>
+          <div className="flex items-center gap-2">
+            <Link
+              aria-label="Mis publicaciones"
+              className="grid h-11 w-11 place-items-center rounded-lg border border-blue-300 text-blue-100 transition hover:border-yellow-300 hover:text-yellow-300"
+              href="/account/listings"
+              title="Mis publicaciones"
+            >
+              <UserRound className="h-4 w-4" />
+            </Link>
+            <ButtonLink href="/publish" icon={Store}>
+              Publicar
+            </ButtonLink>
+          </div>
         </nav>
       </header>
 
