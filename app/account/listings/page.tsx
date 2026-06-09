@@ -1,6 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-import { AlertCircle, ArrowLeft, CheckCircle2, Clock3, Eye, Plus, Store } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowLeft,
+  CheckCircle2,
+  Clock3,
+  Eye,
+  Pencil,
+  Plus,
+  Store
+} from "lucide-react";
 import { redirect } from "next/navigation";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -83,7 +92,12 @@ function priceLabel(listing: ListingRow) {
   }).format(listing.price ?? 0);
 }
 
-export default async function MyListingsPage() {
+export default async function MyListingsPage({
+  searchParams
+}: {
+  searchParams: Promise<{ resubmitted?: string }>;
+}) {
+  const params = await searchParams;
   const supabase = await createSupabaseServerClient();
   const {
     data: { user }
@@ -152,6 +166,11 @@ export default async function MyListingsPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        {params.resubmitted === "1" ? (
+          <div className="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4 font-bold text-emerald-800">
+            Los cambios se guardaron y la publicacion volvio a moderacion.
+          </div>
+        ) : null}
         {listings.length > 0 ? (
           <div className="space-y-4">
             {listings.map((listing) => {
@@ -216,11 +235,13 @@ export default async function MyListingsPage() {
                         Ver publicada
                       </Link>
                     ) : (
-                      <span className="text-sm font-semibold text-slate-500">
-                        {new Intl.DateTimeFormat("es-AR", {
-                          dateStyle: "medium"
-                        }).format(new Date(listing.created_at))}
-                      </span>
+                      <Link
+                        className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-black text-blue-800 transition hover:border-blue-400"
+                        href={`/account/listings/${listing.id}/edit`}
+                      >
+                        <Pencil className="h-4 w-4" />
+                        Editar
+                      </Link>
                     )}
                   </div>
                 </article>
