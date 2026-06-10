@@ -11,6 +11,7 @@ import {
   Store
 } from "lucide-react";
 import { redirect } from "next/navigation";
+import { DeleteListingButton } from "@/components/delete-listing-button";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -225,7 +226,7 @@ export default async function MyListingsPage({
                     ) : null}
                   </div>
 
-                  <div className="flex sm:justify-end">
+                  <div className="flex flex-wrap gap-2 sm:max-w-52 sm:justify-end">
                     {listing.moderation_status === "approved" ? (
                       <Link
                         className="inline-flex items-center gap-2 rounded-lg bg-blue-700 px-4 py-2 text-sm font-black text-white transition hover:bg-blue-800"
@@ -243,6 +244,10 @@ export default async function MyListingsPage({
                         Editar
                       </Link>
                     )}
+                    <DeleteListingButton
+                      listingId={listing.id}
+                      title={card?.official_name ?? listing.title}
+                    />
                   </div>
                 </article>
               );

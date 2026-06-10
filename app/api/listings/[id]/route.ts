@@ -135,11 +135,7 @@ export async function DELETE(
     .eq("id", id)
     .maybeSingle();
 
-  if (
-    !listing ||
-    listing.seller_id !== user.id ||
-    listing.moderation_status !== "pending"
-  ) {
+  if (!listing || listing.seller_id !== user.id) {
     return NextResponse.json(
       { error: "La publicación no puede eliminarse." },
       { status: 403 }
