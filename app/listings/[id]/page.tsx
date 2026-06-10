@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { ListingGallery } from "@/components/listing-gallery";
 import { FavoriteButton } from "@/components/favorite-button";
+import { ReportListingForm } from "@/components/report-listing-form";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -293,6 +294,10 @@ export default async function ListingDetailPage({
             </a>
             <FavoriteButton
               initialFavorite={Boolean(favorite)}
+              isAuthenticated={Boolean(user)}
+              listingId={listing.id}
+            />
+            <ReportListingForm
               isAuthenticated={Boolean(user)}
               listingId={listing.id}
             />

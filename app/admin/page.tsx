@@ -1,5 +1,6 @@
 import { AlertTriangle, CheckCircle2, FileWarning, ShieldCheck, Users } from "lucide-react";
 import { AdminListings, type AdminListing } from "@/components/admin-listings";
+import { AdminReports, type AdminReport } from "@/components/admin-reports";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -17,6 +18,23 @@ type ListingRow = {
   title: string;
   type: string;
 };
+
+type ReportRow = {
+  created_at: string;
+  details: string | null;
+  id: string;
+  listing_id: string | null;
+  listings: { title: string } | { title: string }[] | null;
+  reason: string;
+};
+
+function listingTitle(listing: ReportRow["listings"]) {
+  if (Array.isArray(listing)) {
+    return listing[0]?.title ?? "Publicacion no disponible";
+  }
+
+  return listing?.title ?? "Publicacion no disponible";
+}
 
 function sellerName(profile: ListingRow["profiles"]) {
   if (Array.isArray(profile)) {
@@ -37,7 +55,11 @@ export default async function AdminPage() {
       .select("id, title, type, moderation_status, created_at, profiles!listings_seller_id_fkey(display_name)")
       .eq("moderation_status", "pending")
       .order("created_at", { ascending: true }),
-    supabase.from("reports").select("id", { count: "exact", head: true }).is("resolved_at", null),
+    supabase
+      .from("reports")
+      .select("id, listing_id, reason, details, created_at, listings!reports_listing_id_fkey(title)")
+      .is("resolved_at", null)
+      .order("created_at", { ascending: true }),
     supabase.from("profiles").select("id", { count: "exact", head: true }),
     supabase
       .from("listings")
@@ -56,6 +78,16 @@ export default async function AdminPage() {
       type: listing.type
     })
   );
+  const reports: AdminReport[] = ((reportsResult.data ?? []) as ReportRow[]).flatMap(
+    (report) => report.listing_id ? [{
+      createdAt: report.created_at,
+      details: report.details ?? "Sin detalles adicionales.",
+      id: report.id,
+      listingId: report.listing_id,
+      listingTitle: listingTitle(report.listings),
+      reason: report.reason
+    }] : []
+  );
 
   const queues = [
     {
@@ -66,7 +98,7 @@ export default async function AdminPage() {
     {
       icon: AlertTriangle,
       label: "Reportes abiertos",
-      value: String(reportsResult.count ?? 0)
+      value: String(reports.length)
     },
     {
       icon: Users,
@@ -108,6 +140,12 @@ export default async function AdminPage() {
           <h2 className="text-xl font-black text-white">Cola de publicaciones</h2>
         </div>
         <AdminListings listings={listings} />
+      </section>
+      <section className="glass mt-8 overflow-hidden rounded-lg">
+        <div className="border-b border-white/10 p-5">
+          <h2 className="text-xl font-black text-white">Reportes abiertos</h2>
+        </div>
+        <AdminReports reports={reports} />
       </section>
     </main>
   );
