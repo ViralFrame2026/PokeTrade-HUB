@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { redirect } from "next/navigation";
 import { DeleteListingButton } from "@/components/delete-listing-button";
+import { ListingStatusControl } from "@/components/listing-status-control";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -92,6 +93,16 @@ function priceLabel(listing: ListingRow) {
     maximumFractionDigits: 0,
     style: "currency"
   }).format(listing.price ?? 0);
+}
+
+function availabilityLabel(status: string) {
+  return {
+    active: "Disponible",
+    finished: "Finalizada",
+    reserved: "Reservada",
+    sold: "Vendida",
+    traded: "Intercambiada"
+  }[status] ?? status;
 }
 
 export default async function MyListingsPage({
@@ -221,6 +232,11 @@ export default async function MyListingsPage({
                       <span className="text-xs font-bold uppercase text-slate-500">
                         {typeLabel(listing.type)}
                       </span>
+                      {listing.moderation_status === "approved" ? (
+                        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
+                          {availabilityLabel(listing.status)}
+                        </span>
+                      ) : null}
                     </div>
                     <h2 className="mt-3 truncate text-xl font-black text-blue-950">
                       {card?.official_name ?? listing.title}
@@ -238,7 +254,8 @@ export default async function MyListingsPage({
                   </div>
 
                   <div className="flex flex-wrap gap-2 sm:max-w-52 sm:justify-end">
-                    {listing.moderation_status === "approved" ? (
+                    {listing.moderation_status === "approved" &&
+                    listing.status === "active" ? (
                       <Link
                         className="inline-flex items-center gap-2 rounded-lg bg-blue-700 px-4 py-2 text-sm font-black text-white transition hover:bg-blue-800"
                         href={`/listings/${listing.id}`}
@@ -246,7 +263,7 @@ export default async function MyListingsPage({
                         <Eye className="h-4 w-4" />
                         Ver publicada
                       </Link>
-                    ) : (
+                    ) : listing.moderation_status !== "approved" ? (
                       <Link
                         className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-black text-blue-800 transition hover:border-blue-400"
                         href={`/account/listings/${listing.id}/edit`}
@@ -254,7 +271,14 @@ export default async function MyListingsPage({
                         <Pencil className="h-4 w-4" />
                         Editar
                       </Link>
-                    )}
+                    ) : null}
+                    {listing.moderation_status === "approved" ? (
+                      <ListingStatusControl
+                        currentStatus={listing.status}
+                        listingId={listing.id}
+                        listingType={listing.type}
+                      />
+                    ) : null}
                     <DeleteListingButton
                       listingId={listing.id}
                       title={card?.official_name ?? listing.title}
