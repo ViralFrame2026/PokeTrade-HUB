@@ -201,6 +201,9 @@ export default async function HomePage() {
             <Link className="hover:text-yellow-300" href="/account/listings">
               Mis publicaciones
             </Link>
+            <Link className="hover:text-yellow-300" href="/account/profile">
+              Mi perfil
+            </Link>
             <a className="hover:text-yellow-300" href="#comunidad">
               Comunidad
             </a>
@@ -210,10 +213,10 @@ export default async function HomePage() {
           </div>
           <div className="flex items-center gap-2">
             <Link
-              aria-label="Mis publicaciones"
+              aria-label="Mi perfil"
               className="grid h-10 w-10 place-items-center rounded-lg border border-blue-300 text-blue-100 transition hover:border-yellow-300 hover:text-yellow-300 md:hidden"
-              href="/account/listings"
-              title="Mis publicaciones"
+              href="/account/profile"
+              title="Mi perfil"
             >
               <UserRound className="h-4 w-4" />
             </Link>

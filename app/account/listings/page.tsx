@@ -8,7 +8,8 @@ import {
   Eye,
   Pencil,
   Plus,
-  Store
+  Store,
+  UserRound
 } from "lucide-react";
 import { redirect } from "next/navigation";
 import { DeleteListingButton } from "@/components/delete-listing-button";
@@ -134,9 +135,19 @@ export default async function MyListingsPage({
               <p className="text-xs font-bold text-blue-100">MI CUENTA</p>
             </div>
           </Link>
-          <ButtonLink href="/publish" icon={Plus}>
-            Publicar
-          </ButtonLink>
+          <div className="flex items-center gap-2">
+            <Link
+              aria-label="Mi perfil"
+              className="grid h-11 w-11 place-items-center rounded-lg border border-blue-300 text-blue-100 transition hover:border-yellow-300 hover:text-yellow-300"
+              href="/account/profile"
+              title="Mi perfil"
+            >
+              <UserRound className="h-4 w-4" />
+            </Link>
+            <ButtonLink href="/publish" icon={Plus}>
+              Publicar
+            </ButtonLink>
+          </div>
         </nav>
       </header>
 
