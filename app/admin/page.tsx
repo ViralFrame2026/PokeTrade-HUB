@@ -1,6 +1,7 @@
 import { AlertTriangle, CheckCircle2, FileWarning, ShieldCheck, Users } from "lucide-react";
 import { AdminListings, type AdminListing } from "@/components/admin-listings";
 import { AdminReports, type AdminReport } from "@/components/admin-reports";
+import { AdminUsers, type AdminUser } from "@/components/admin-users";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -46,10 +47,20 @@ function sellerName(profile: ListingRow["profiles"]) {
 
 export default async function AdminPage() {
   const supabase = await createSupabaseServerClient();
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
+  const { data: currentProfile } = user
+    ? await supabase
+        .from("profiles")
+        .select("is_super_admin")
+        .eq("id", user.id)
+        .single()
+    : { data: null };
   const startOfToday = new Date();
   startOfToday.setHours(0, 0, 0, 0);
 
-  const [pendingResult, reportsResult, usersResult, approvedResult] = await Promise.all([
+  const [pendingResult, reportsResult, usersResult, approvedResult, userRolesResult] = await Promise.all([
     supabase
       .from("listings")
       .select("id, title, type, moderation_status, created_at, profiles!listings_seller_id_fkey(display_name)")
@@ -65,7 +76,15 @@ export default async function AdminPage() {
       .from("listings")
       .select("id", { count: "exact", head: true })
       .eq("moderation_status", "approved")
-      .gte("approved_at", startOfToday.toISOString())
+      .gte("approved_at", startOfToday.toISOString()),
+    currentProfile?.is_super_admin
+      ? supabase
+          .from("profiles")
+          .select("id, display_name, is_admin, is_super_admin, joined_at")
+          .order("is_super_admin", { ascending: false })
+          .order("is_admin", { ascending: false })
+          .order("joined_at", { ascending: true })
+      : Promise.resolve({ data: [] })
   ]);
 
   const listings: AdminListing[] = ((pendingResult.data ?? []) as ListingRow[]).map(
@@ -88,6 +107,13 @@ export default async function AdminPage() {
       reason: report.reason
     }] : []
   );
+  const adminUsers: AdminUser[] = (userRolesResult.data ?? []).map((profile) => ({
+    displayName: profile.display_name,
+    id: profile.id,
+    isAdmin: profile.is_admin,
+    isSuperAdmin: profile.is_super_admin,
+    joinedAt: profile.joined_at
+  }));
 
   const queues = [
     {
@@ -147,6 +173,20 @@ export default async function AdminPage() {
         </div>
         <AdminReports reports={reports} />
       </section>
+      {currentProfile?.is_super_admin && user ? (
+        <section className="glass mt-8 overflow-hidden rounded-lg">
+          <div className="border-b border-white/10 p-5">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-yellow-300">
+              Solo administrador principal
+            </p>
+            <h2 className="mt-2 text-xl font-black text-white">Permisos de administradores</h2>
+            <p className="mt-2 text-sm text-slate-400">
+              Concede acceso al centro de moderacion únicamente a personas de confianza.
+            </p>
+          </div>
+          <AdminUsers currentUserId={user.id} users={adminUsers} />
+        </section>
+      ) : null}
     </main>
   );
 }
