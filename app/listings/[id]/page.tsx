@@ -14,6 +14,7 @@ import {
   Tag
 } from "lucide-react";
 import { ListingGallery } from "@/components/listing-gallery";
+import { FavoriteButton } from "@/components/favorite-button";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -168,6 +169,17 @@ export default async function ListingDetailPage({
       : "Iniciar sesión para contactar";
   const ContactIcon = whatsapp ? MessageCircle : instagram ? Instagram : MessageCircle;
   const supabase = await createSupabaseServerClient();
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
+  const { data: favorite } = user
+    ? await supabase
+        .from("favorites")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("listing_id", listing.id)
+        .maybeSingle()
+    : { data: null };
   const realPhotos = [...(listing.listing_images ?? [])]
     .sort((a, b) => a.sort_order - b.sort_order)
     .map((image, index) => ({
@@ -279,6 +291,11 @@ export default async function ListingDetailPage({
               <ContactIcon className="h-5 w-5" />
               {contactLabel}
             </a>
+            <FavoriteButton
+              initialFavorite={Boolean(favorite)}
+              isAuthenticated={Boolean(user)}
+              listingId={listing.id}
+            />
             <p className="mt-3 text-center text-xs leading-5 text-slate-500">
               Confirma identidad, estado y condiciones antes de realizar cualquier operación.
             </p>

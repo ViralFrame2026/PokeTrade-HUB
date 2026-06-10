@@ -204,6 +204,9 @@ export default async function HomePage() {
             <Link className="hover:text-yellow-300" href="/account/profile">
               Mi perfil
             </Link>
+            <Link className="hover:text-yellow-300" href="/account/favorites">
+              Favoritos
+            </Link>
             <a className="hover:text-yellow-300" href="#comunidad">
               Comunidad
             </a>
