@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
   AlertCircle,
   ArrowLeft,
+  Bell,
   CheckCircle2,
   Clock3,
   Eye,
@@ -147,6 +148,14 @@ export default async function MyListingsPage({
             </div>
           </Link>
           <div className="flex items-center gap-2">
+            <Link
+              aria-label="Notificaciones"
+              className="grid h-11 w-11 place-items-center rounded-lg border border-blue-300 text-blue-100 transition hover:border-yellow-300 hover:text-yellow-300"
+              href="/account/notifications"
+              title="Notificaciones"
+            >
+              <Bell className="h-4 w-4" />
+            </Link>
             <Link
               aria-label="Mi perfil"
               className="grid h-11 w-11 place-items-center rounded-lg border border-blue-300 text-blue-100 transition hover:border-yellow-300 hover:text-yellow-300"

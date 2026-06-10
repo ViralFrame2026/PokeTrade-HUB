@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, Heart, IdCard, ListChecks } from "lucide-react";
+import { ArrowLeft, Bell, Heart, IdCard, ListChecks } from "lucide-react";
 import { redirect } from "next/navigation";
 import { ProfileForm } from "@/components/profile-form";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -34,6 +34,14 @@ export default async function ProfilePage() {
             </div>
           </Link>
           <div className="flex gap-2">
+            <Link
+              aria-label="Notificaciones"
+              className="grid h-10 w-10 place-items-center rounded-lg border border-blue-300 text-blue-100 transition hover:border-yellow-300 hover:text-yellow-300"
+              href="/account/notifications"
+              title="Notificaciones"
+            >
+              <Bell className="h-4 w-4" />
+            </Link>
             <Link
               aria-label="Mis favoritos"
               className="grid h-10 w-10 place-items-center rounded-lg border border-blue-300 text-blue-100 transition hover:border-yellow-300 hover:text-yellow-300"
