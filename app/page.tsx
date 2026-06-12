@@ -12,7 +12,6 @@ import {
   Star,
   Store,
   Trophy,
-  UserRound,
   Users,
   Zap
 } from "lucide-react";
@@ -20,6 +19,7 @@ import Link from "next/link";
 import { CardSpotlight } from "@/components/card-spotlight";
 import { ListingCard } from "@/components/listing-card";
 import { StatCard } from "@/components/stat-card";
+import { SiteMenu } from "@/components/site-menu";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { Listing } from "@/lib/types";
@@ -194,38 +194,7 @@ export default async function HomePage() {
               <p className="text-xs font-bold text-blue-100">HUB TCG</p>
             </div>
           </Link>
-          <div className="hidden items-center gap-6 text-sm font-bold text-blue-100 md:flex">
-            <Link className="hover:text-yellow-300" href="/marketplace">
-              Marketplace
-            </Link>
-            <Link className="hover:text-yellow-300" href="/account/listings">
-              Mis publicaciones
-            </Link>
-            <Link className="hover:text-yellow-300" href="/account/profile">
-              Mi perfil
-            </Link>
-            <Link className="hover:text-yellow-300" href="/account/favorites">
-              Favoritos
-            </Link>
-            <Link className="hover:text-yellow-300" href="/account/notifications">
-              Notificaciones
-            </Link>
-            <a className="hover:text-yellow-300" href="#comunidad">
-              Comunidad
-            </a>
-            <a className="hover:text-yellow-300" href="#seguridad">
-              Seguridad
-            </a>
-          </div>
           <div className="flex items-center gap-2">
-            <Link
-              aria-label="Mi perfil"
-              className="grid h-10 w-10 place-items-center rounded-lg border border-blue-300 text-blue-100 transition hover:border-yellow-300 hover:text-yellow-300 md:hidden"
-              href="/account/profile"
-              title="Mi perfil"
-            >
-              <UserRound className="h-4 w-4" />
-            </Link>
             <Link
               aria-label="Publicar producto"
               className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-yellow-400 bg-yellow-400 text-slate-950 transition hover:bg-yellow-300 sm:h-auto sm:w-auto sm:gap-2 sm:px-4 sm:py-2 sm:text-sm sm:font-bold"
@@ -234,6 +203,7 @@ export default async function HomePage() {
               <Store className="h-4 w-4" />
               <span className="hidden sm:inline">Publicar</span>
             </Link>
+            <SiteMenu />
           </div>
         </nav>
       </header>
