@@ -67,7 +67,7 @@ export function SiteMenu() {
       >
         <button
           aria-label="Cerrar menu"
-          className={`absolute inset-0 bg-blue-950/65 backdrop-blur-sm transition-opacity duration-300 ${
+          className={`absolute inset-0 bg-slate-950/55 backdrop-blur-[2px] transition-opacity duration-300 ${
             isOpen ? "opacity-100" : "opacity-0"
           }`}
           onClick={() => setIsOpen(false)}
@@ -76,23 +76,23 @@ export function SiteMenu() {
 
         <aside
           aria-label="Navegacion principal"
-          className={`absolute right-0 top-0 flex h-full w-[min(88vw,360px)] flex-col border-l-4 border-yellow-400 bg-blue-950 text-white shadow-2xl transition-transform duration-300 ease-out ${
-            isOpen ? "translate-x-0" : "translate-x-full"
+          className={`absolute left-0 top-0 flex h-full w-[min(84vw,320px)] flex-col border-r border-yellow-300/70 bg-[#10245e] text-white shadow-[16px_0_40px_rgba(15,23,42,0.35)] transition-transform duration-300 ease-out ${
+            isOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          <div className="flex items-center justify-between border-b border-white/10 px-5 py-5">
+          <div className="flex items-center justify-between border-b border-white/10 px-4 py-4">
             <div className="flex items-center gap-3">
-              <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
+              <span className="pokeball h-9 w-9 shrink-0" aria-hidden="true" />
               <div>
-                <p className="text-sm font-black tracking-[0.2em] text-yellow-300">
+                <p className="text-xs font-black tracking-[0.2em] text-yellow-300">
                   POKETRADE
                 </p>
-                <p className="text-xs font-bold text-blue-200">MENU PRINCIPAL</p>
+                <p className="text-[11px] font-bold text-blue-200">Menu principal</p>
               </div>
             </div>
             <button
               aria-label="Cerrar menu"
-              className="grid h-10 w-10 place-items-center rounded-lg border border-white/15 text-blue-100 transition hover:border-yellow-300 hover:text-yellow-300"
+              className="grid h-9 w-9 place-items-center rounded-lg text-blue-100 transition hover:bg-white/10 hover:text-yellow-300"
               onClick={() => setIsOpen(false)}
               type="button"
             >
@@ -100,16 +100,21 @@ export function SiteMenu() {
             </button>
           </div>
 
-          <nav className="flex-1 overflow-y-auto p-4">
+          <nav className="flex-1 overflow-y-auto px-3 py-5">
+            <p className="mb-2 px-3 text-[10px] font-black uppercase tracking-[0.18em] text-blue-300">
+              Navegacion
+            </p>
             <div className="space-y-1">
               {links.map((item) => (
                 <Link
-                  className="flex min-h-12 items-center gap-3 rounded-lg px-4 py-3 font-bold text-blue-100 transition hover:bg-blue-800 hover:text-yellow-300"
+                  className="group flex min-h-11 items-center gap-3 rounded-md px-3 py-2.5 text-sm font-bold text-blue-50 transition hover:bg-white/10 hover:text-yellow-300"
                   href={item.href}
                   key={item.href}
                   onClick={() => setIsOpen(false)}
                 >
-                  <item.icon className="h-5 w-5 shrink-0" />
+                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-blue-800/80 text-blue-200 transition group-hover:bg-yellow-400 group-hover:text-blue-950">
+                    <item.icon className="h-4 w-4" />
+                  </span>
                   {item.label}
                 </Link>
               ))}
@@ -118,11 +123,11 @@ export function SiteMenu() {
 
           <div className="border-t border-white/10 p-4">
             <Link
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-yellow-400 px-5 py-3 font-black text-blue-950 transition hover:bg-yellow-300"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-yellow-400 px-4 py-2.5 text-sm font-black text-blue-950 transition hover:bg-yellow-300"
               href="/publish"
               onClick={() => setIsOpen(false)}
             >
-              <Store className="h-5 w-5" />
+              <Store className="h-4 w-4" />
               Publicar producto
             </Link>
           </div>
