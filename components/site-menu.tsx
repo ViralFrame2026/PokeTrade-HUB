@@ -2,6 +2,7 @@
 
 import {
   Bell,
+  ChevronDown,
   Heart,
   ListChecks,
   Menu,
@@ -9,13 +10,13 @@ import {
   ShoppingBag,
   Store,
   UserRound,
-  Users,
-  X
+  Users
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const links = [
+  { href: "/publish", icon: Store, label: "Publicar producto", primary: true },
   { href: "/marketplace", icon: ShoppingBag, label: "Marketplace" },
   { href: "/account/listings", icon: ListChecks, label: "Mis publicaciones" },
   { href: "/account/profile", icon: UserRound, label: "Mi perfil" },
@@ -27,112 +28,92 @@ const links = [
 
 export function SiteMenu() {
   const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!isOpen) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
 
     function closeOnEscape(event: KeyboardEvent) {
       if (event.key === "Escape") setIsOpen(false);
     }
 
+    function closeOnOutsideClick(event: PointerEvent) {
+      if (!menuRef.current?.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+
     window.addEventListener("keydown", closeOnEscape);
+    window.addEventListener("pointerdown", closeOnOutsideClick);
 
     return () => {
-      document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", closeOnEscape);
+      window.removeEventListener("pointerdown", closeOnOutsideClick);
     };
   }, [isOpen]);
 
   return (
-    <>
+    <div className="relative" ref={menuRef}>
       <button
         aria-expanded={isOpen}
-        aria-label="Abrir menu"
-        className="grid h-10 w-10 place-items-center rounded-lg border border-blue-300 text-blue-100 transition hover:border-yellow-300 hover:bg-blue-700 hover:text-yellow-300"
-        onClick={() => setIsOpen(true)}
+        aria-label={isOpen ? "Cerrar menu" : "Abrir menu"}
+        className="inline-flex h-10 items-center gap-2 rounded-lg border border-blue-300 px-3 text-sm font-bold text-blue-100 transition hover:border-yellow-300 hover:bg-blue-700 hover:text-yellow-300"
+        onClick={() => setIsOpen((current) => !current)}
         title="Menu"
         type="button"
       >
         <Menu className="h-5 w-5" />
+        <span className="hidden sm:inline">Menu</span>
+        <ChevronDown
+          className={`hidden h-4 w-4 transition-transform sm:block ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        />
       </button>
 
       <div
         aria-hidden={!isOpen}
-        className={`fixed inset-0 z-50 transition ${
-          isOpen ? "pointer-events-auto visible" : "pointer-events-none invisible"
+        className={`absolute left-0 top-[calc(100%+18px)] z-50 w-[min(86vw,310px)] origin-top-left overflow-hidden rounded-b-lg border border-t-4 border-blue-200 border-t-yellow-400 bg-[#10245e] text-white shadow-[0_18px_45px_rgba(15,23,42,0.35)] transition duration-200 ${
+          isOpen
+            ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
+            : "pointer-events-none -translate-y-2 scale-[0.98] opacity-0"
         }`}
       >
-        <button
-          aria-label="Cerrar menu"
-          className={`absolute inset-0 bg-slate-950/55 backdrop-blur-[2px] transition-opacity duration-300 ${
-            isOpen ? "opacity-100" : "opacity-0"
-          }`}
-          onClick={() => setIsOpen(false)}
-          type="button"
-        />
+        <div className="border-b border-white/10 px-4 py-3">
+          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-yellow-300">
+            Menu principal
+          </p>
+          <p className="mt-1 text-xs text-blue-200">Accesos de tu cuenta y comunidad</p>
+        </div>
 
-        <aside
-          aria-label="Navegacion principal"
-          className={`absolute left-0 top-0 flex h-full w-[min(84vw,320px)] flex-col border-r border-yellow-300/70 bg-[#10245e] text-white shadow-[16px_0_40px_rgba(15,23,42,0.35)] transition-transform duration-300 ease-out ${
-            isOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
-        >
-          <div className="flex items-center justify-between border-b border-white/10 px-4 py-4">
-            <div className="flex items-center gap-3">
-              <span className="pokeball h-9 w-9 shrink-0" aria-hidden="true" />
-              <div>
-                <p className="text-xs font-black tracking-[0.2em] text-yellow-300">
-                  POKETRADE
-                </p>
-                <p className="text-[11px] font-bold text-blue-200">Menu principal</p>
-              </div>
-            </div>
-            <button
-              aria-label="Cerrar menu"
-              className="grid h-9 w-9 place-items-center rounded-lg text-blue-100 transition hover:bg-white/10 hover:text-yellow-300"
-              onClick={() => setIsOpen(false)}
-              type="button"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-
-          <nav className="flex-1 overflow-y-auto px-3 py-5">
-            <p className="mb-2 px-3 text-[10px] font-black uppercase tracking-[0.18em] text-blue-300">
-              Navegacion
-            </p>
-            <div className="space-y-1">
-              {links.map((item) => (
-                <Link
-                  className="group flex min-h-11 items-center gap-3 rounded-md px-3 py-2.5 text-sm font-bold text-blue-50 transition hover:bg-white/10 hover:text-yellow-300"
-                  href={item.href}
-                  key={item.href}
-                  onClick={() => setIsOpen(false)}
+        <nav aria-label="Navegacion principal" className="max-h-[min(68vh,470px)] overflow-y-auto p-2">
+          <div className="space-y-1">
+            {links.map((item) => (
+              <Link
+                className={`group flex min-h-11 items-center gap-3 rounded-md px-3 py-2.5 text-sm font-bold transition ${
+                  item.primary
+                    ? "bg-yellow-400 text-blue-950 hover:bg-yellow-300"
+                    : "text-blue-50 hover:bg-white/10 hover:text-yellow-300"
+                }`}
+                href={item.href}
+                key={item.href}
+                onClick={() => setIsOpen(false)}
+              >
+                <span
+                  className={`grid h-8 w-8 shrink-0 place-items-center rounded-md transition ${
+                    item.primary
+                      ? "bg-blue-950/10 text-blue-950"
+                      : "bg-blue-800/80 text-blue-200 group-hover:bg-yellow-400 group-hover:text-blue-950"
+                  }`}
                 >
-                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-blue-800/80 text-blue-200 transition group-hover:bg-yellow-400 group-hover:text-blue-950">
-                    <item.icon className="h-4 w-4" />
-                  </span>
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </nav>
-
-          <div className="border-t border-white/10 p-4">
-            <Link
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-yellow-400 px-4 py-2.5 text-sm font-black text-blue-950 transition hover:bg-yellow-300"
-              href="/publish"
-              onClick={() => setIsOpen(false)}
-            >
-              <Store className="h-4 w-4" />
-              Publicar producto
-            </Link>
+                  <item.icon className="h-4 w-4" />
+                </span>
+                {item.label}
+              </Link>
+            ))}
           </div>
-        </aside>
+        </nav>
       </div>
-    </>
+    </div>
   );
 }

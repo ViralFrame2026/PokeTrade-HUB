@@ -186,24 +186,16 @@ export default async function HomePage() {
   return (
     <main className="home-page min-h-screen bg-[#eaf2ff] text-slate-900">
       <header className="sticky top-0 z-20 border-b-4 border-yellow-400 bg-blue-800/95 text-white backdrop-blur-xl">
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <Link className="flex items-center gap-3" href="/">
-            <span className="pokeball h-11 w-11 shrink-0" aria-hidden="true" />
-            <div>
-              <p className="text-sm font-black tracking-[0.24em] text-yellow-300">POKETRADE</p>
-              <p className="text-xs font-bold text-blue-100">HUB TCG</p>
-            </div>
-          </Link>
-          <div className="flex items-center gap-2">
-            <Link
-              aria-label="Publicar producto"
-              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-yellow-400 bg-yellow-400 text-slate-950 transition hover:bg-yellow-300 sm:h-auto sm:w-auto sm:gap-2 sm:px-4 sm:py-2 sm:text-sm sm:font-bold"
-              href="/publish"
-            >
-              <Store className="h-4 w-4" />
-              <span className="hidden sm:inline">Publicar</span>
-            </Link>
+        <nav className="mx-auto flex max-w-7xl items-center px-4 py-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3">
             <SiteMenu />
+            <Link className="flex items-center gap-3" href="/">
+              <span className="pokeball h-11 w-11 shrink-0" aria-hidden="true" />
+              <div>
+                <p className="text-sm font-black tracking-[0.24em] text-yellow-300">POKETRADE</p>
+                <p className="text-xs font-bold text-blue-100">HUB TCG</p>
+              </div>
+            </Link>
           </div>
         </nav>
       </header>
