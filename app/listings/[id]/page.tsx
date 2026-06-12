@@ -16,6 +16,7 @@ import {
 import { ListingGallery } from "@/components/listing-gallery";
 import { FavoriteButton } from "@/components/favorite-button";
 import { ReportListingForm } from "@/components/report-listing-form";
+import { StartConversationButton } from "@/components/start-conversation-button";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -27,6 +28,7 @@ type ListingDetailRow = {
   created_at: string;
   description: string | null;
   id: string;
+  seller_id: string;
   listing_images: Array<{
     alt_text: string | null;
     sort_order: number;
@@ -105,7 +107,7 @@ async function getListing(id: string) {
   const { data } = await supabase
     .from("listings")
     .select(
-      "id, title, description, type, status, price, trade_wants, location_city, location_country, approved_at, created_at, listing_images(storage_path, alt_text, sort_order), profiles!listings_seller_id_fkey(display_name, is_verified, reputation_average, reputation_count, whatsapp, instagram), products!listings_product_id_fkey(condition, cards!products_card_id_fkey(pokemon_tcg_id, official_name, image_large, set_name, rarity, number))"
+      "id, seller_id, title, description, type, status, price, trade_wants, location_city, location_country, approved_at, created_at, listing_images(storage_path, alt_text, sort_order), profiles!listings_seller_id_fkey(display_name, is_verified, reputation_average, reputation_count, whatsapp, instagram), products!listings_product_id_fkey(condition, cards!products_card_id_fkey(pokemon_tcg_id, official_name, image_large, set_name, rarity, number))"
     )
     .eq("id", id)
     .eq("moderation_status", "approved")
@@ -283,15 +285,24 @@ export default async function ListingDetailPage({
               </div>
             ) : null}
 
-            <a
-              className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-yellow-400 bg-yellow-400 px-5 py-4 font-black text-slate-950 transition hover:bg-yellow-300"
-              href={contactUrl}
-              rel={whatsapp || instagram ? "noreferrer" : undefined}
-              target={whatsapp || instagram ? "_blank" : undefined}
-            >
-              <ContactIcon className="h-5 w-5" />
-              {contactLabel}
-            </a>
+            {user?.id !== listing.seller_id ? (
+              <>
+                <StartConversationButton
+                  isAuthenticated={Boolean(user)}
+                  listingId={listing.id}
+                  sellerId={listing.seller_id}
+                />
+                <a
+                  className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-blue-200 bg-white px-5 py-3 font-bold text-blue-800 transition hover:bg-blue-50"
+                  href={contactUrl}
+                  rel={whatsapp || instagram ? "noreferrer" : undefined}
+                  target={whatsapp || instagram ? "_blank" : undefined}
+                >
+                  <ContactIcon className="h-5 w-5" />
+                  {contactLabel}
+                </a>
+              </>
+            ) : null}
             <FavoriteButton
               initialFavorite={Boolean(favorite)}
               isAuthenticated={Boolean(user)}
