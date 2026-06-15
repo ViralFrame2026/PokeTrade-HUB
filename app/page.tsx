@@ -104,9 +104,24 @@ export default async function HomePage() {
   let usersTotal = 0;
   let listingsTotal = 0;
   let rafflesTotal = 0;
+  let isAdmin = false;
 
   if (hasSupabaseConfig) {
     const supabase = await createSupabaseServerClient();
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("is_admin")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      isAdmin = profile?.is_admin ?? false;
+    }
+
     const [listingsResult, usersCount, listingsCount, rafflesCount, profilesResult] =
       await Promise.all([
         supabase
@@ -192,7 +207,7 @@ export default async function HomePage() {
       <header className="sticky top-0 z-20 border-b-4 border-yellow-400 bg-blue-800/95 text-white backdrop-blur-xl">
         <nav className="mx-auto flex max-w-7xl items-center px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
-            <SiteMenu />
+            <SiteMenu showAdmin={isAdmin} />
             <Link className="flex items-center gap-3" href="/">
               <span className="pokeball h-11 w-11 shrink-0" aria-hidden="true" />
               <div>
@@ -391,9 +406,11 @@ export default async function HomePage() {
             <MessageCircle className="h-5 w-5 text-yellow-300" />
             Contacto directo hoy, chat interno preparado para la siguiente etapa.
           </div>
-          <ButtonLink href="/admin" icon={ShieldCheck} variant="light">
-            Panel administrador
-          </ButtonLink>
+          {isAdmin ? (
+            <ButtonLink href="/admin" icon={ShieldCheck} variant="light">
+              Panel administrador
+            </ButtonLink>
+          ) : null}
         </div>
         </div>
       </section>

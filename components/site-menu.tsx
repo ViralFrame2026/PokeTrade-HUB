@@ -34,9 +34,15 @@ const links = [
   { href: "/#seguridad", icon: ShieldCheck, label: "Seguridad" }
 ];
 
-export function SiteMenu() {
+export function SiteMenu({ showAdmin = false }: { showAdmin?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const visibleLinks = showAdmin
+    ? [
+        { href: "/admin", icon: ShieldCheck, label: "Panel administrador", primary: true },
+        ...links
+      ]
+    : links;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -96,7 +102,7 @@ export function SiteMenu() {
 
         <nav aria-label="Navegacion principal" className="max-h-[min(68vh,470px)] overflow-y-auto p-2">
           <div className="space-y-1">
-            {links.map((item) => (
+            {visibleLinks.map((item) => (
               <Link
                 className={`group flex min-h-11 items-center gap-3 rounded-md px-3 py-2.5 text-sm font-bold transition ${
                   item.primary
