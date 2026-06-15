@@ -1,4 +1,11 @@
-import { ArrowLeft, CalendarClock, Gift, ShieldCheck, Users } from "lucide-react";
+import {
+  ArrowLeft,
+  CalendarClock,
+  Gift,
+  ShieldCheck,
+  Trophy,
+  Users
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -20,7 +27,7 @@ export default async function RaffleDetailPage({
   const { data: raffle } = await supabase
     .from("raffles")
     .select(
-      "id, creator_id, title, prize, image_path, requirements, closes_at, entry_limit, moderation_status, profiles!raffles_creator_id_fkey(display_name)"
+      "id, creator_id, title, prize, image_path, requirements, closes_at, entry_limit, moderation_status, winner_id, drawn_at, profiles!raffles_creator_id_fkey(display_name), winner:profiles!raffles_winner_id_fkey(display_name)"
     )
     .eq("id", id)
     .eq("moderation_status", "approved")
@@ -29,6 +36,7 @@ export default async function RaffleDetailPage({
   if (!raffle) notFound();
 
   const creator = Array.isArray(raffle.profiles) ? raffle.profiles[0] : raffle.profiles;
+  const winner = Array.isArray(raffle.winner) ? raffle.winner[0] : raffle.winner;
   const { data: entry } = user
     ? await supabase
         .from("raffle_entries")
@@ -110,9 +118,17 @@ export default async function RaffleDetailPage({
             Organiza {creator?.display_name ?? "Entrenador TCG"}
           </p>
           <div className="mt-6">
-            {isClosed ? (
+            {raffle.winner_id && winner ? (
+              <div className="rounded-lg border border-yellow-300 bg-yellow-50 p-5 text-center text-amber-900">
+                <Trophy className="mx-auto h-8 w-8 text-yellow-500" />
+                <p className="mt-2 text-xs font-black uppercase tracking-[0.14em]">
+                  Ganador
+                </p>
+                <p className="mt-1 text-xl font-black">{winner.display_name}</p>
+              </div>
+            ) : isClosed ? (
               <div className="rounded-lg bg-slate-100 p-4 text-center font-black text-slate-600">
-                El sorteo ya finalizo
+                El sorteo finalizo. El resultado está pendiente.
               </div>
             ) : isCreator ? (
               <div className="rounded-lg bg-blue-50 p-4 text-center font-black text-blue-800">

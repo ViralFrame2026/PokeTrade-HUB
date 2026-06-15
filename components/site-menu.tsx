@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   ShoppingBag,
   Store,
+  Trophy,
   UserRound,
   Users
 } from "lucide-react";
@@ -21,6 +22,7 @@ const links = [
   { href: "/publish", icon: Store, label: "Publicar producto", primary: true },
   { href: "/marketplace", icon: ShoppingBag, label: "Marketplace" },
   { href: "/raffles", icon: Gift, label: "Sorteos" },
+  { href: "/account/raffles", icon: Trophy, label: "Mis sorteos" },
   { href: "/account/listings", icon: ListChecks, label: "Mis publicaciones" },
   { href: "/account/messages", icon: MessagesSquare, label: "Mensajes" },
   { href: "/account/profile", icon: UserRound, label: "Mi perfil" },

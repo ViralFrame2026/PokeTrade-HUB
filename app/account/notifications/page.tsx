@@ -37,6 +37,13 @@ function notificationMeta(type: string) {
     };
   }
 
+  if (type === "raffle_won" || type === "raffle_drawn") {
+    return {
+      className: "bg-yellow-100 text-amber-700",
+      icon: CheckCircle2
+    };
+  }
+
   return {
     className: "bg-blue-100 text-blue-700",
     icon: Info
@@ -105,7 +112,9 @@ export default async function NotificationsPage() {
               const listingId = notification.payload?.listing_id;
               const raffleId = notification.payload?.raffle_id;
               const href =
-                notification.type === "raffle_approved" && raffleId
+                ["raffle_approved", "raffle_won", "raffle_drawn"].includes(
+                  notification.type
+                ) && raffleId
                   ? `/raffles/${raffleId}`
                   : notification.type === "listing_approved" && listingId
                   ? `/listings/${listingId}`
@@ -145,7 +154,9 @@ export default async function NotificationsPage() {
                         }).format(new Date(notification.created_at))}
                       </p>
                       <NotificationLink href={href} notificationId={notification.id}>
-                        {notification.type === "raffle_approved"
+                        {["raffle_approved", "raffle_won", "raffle_drawn"].includes(
+                          notification.type
+                        )
                           ? "Ver sorteo"
                           : notification.type === "listing_approved"
                             ? "Ver publicacion"
