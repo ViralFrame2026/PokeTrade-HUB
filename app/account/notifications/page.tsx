@@ -15,6 +15,7 @@ type NotificationRow = {
   id: string;
   payload: {
     listing_id?: string;
+    raffle_id?: string;
   } | null;
   read_at: string | null;
   title: string;
@@ -102,10 +103,15 @@ export default async function NotificationsPage() {
               const meta = notificationMeta(notification.type);
               const Icon = meta.icon;
               const listingId = notification.payload?.listing_id;
+              const raffleId = notification.payload?.raffle_id;
               const href =
-                notification.type === "listing_approved" && listingId
+                notification.type === "raffle_approved" && raffleId
+                  ? `/raffles/${raffleId}`
+                  : notification.type === "listing_approved" && listingId
                   ? `/listings/${listingId}`
-                  : "/account/listings";
+                  : notification.type.startsWith("raffle_")
+                    ? "/raffles"
+                    : "/account/listings";
 
               return (
                 <article
@@ -139,9 +145,13 @@ export default async function NotificationsPage() {
                         }).format(new Date(notification.created_at))}
                       </p>
                       <NotificationLink href={href} notificationId={notification.id}>
-                        {notification.type === "listing_approved"
-                          ? "Ver publicacion"
-                          : "Ver mis publicaciones"}
+                        {notification.type === "raffle_approved"
+                          ? "Ver sorteo"
+                          : notification.type === "listing_approved"
+                            ? "Ver publicacion"
+                            : notification.type.startsWith("raffle_")
+                              ? "Ver sorteos"
+                              : "Ver mis publicaciones"}
                       </NotificationLink>
                     </div>
                   </div>

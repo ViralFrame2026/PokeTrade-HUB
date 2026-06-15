@@ -1,5 +1,6 @@
-import { AlertTriangle, CheckCircle2, FileWarning, ShieldCheck, Users } from "lucide-react";
+import { AlertTriangle, CheckCircle2, FileWarning, Gift, ShieldCheck, Users } from "lucide-react";
 import { AdminListings, type AdminListing } from "@/components/admin-listings";
+import { AdminRaffles, type AdminRaffle } from "@/components/admin-raffles";
 import { AdminReports, type AdminReport } from "@/components/admin-reports";
 import { AdminUsers, type AdminUser } from "@/components/admin-users";
 import { ButtonLink } from "@/components/ui/button-link";
@@ -60,10 +61,15 @@ export default async function AdminPage() {
   const startOfToday = new Date();
   startOfToday.setHours(0, 0, 0, 0);
 
-  const [pendingResult, reportsResult, usersResult, approvedResult, userRolesResult] = await Promise.all([
+  const [pendingResult, rafflesResult, reportsResult, usersResult, approvedResult, userRolesResult] = await Promise.all([
     supabase
       .from("listings")
       .select("id, title, type, moderation_status, created_at, profiles!listings_seller_id_fkey(display_name)")
+      .eq("moderation_status", "pending")
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("raffles")
+      .select("id, title, prize, closes_at, profiles!raffles_creator_id_fkey(display_name)")
       .eq("moderation_status", "pending")
       .order("created_at", { ascending: true }),
     supabase
@@ -107,6 +113,13 @@ export default async function AdminPage() {
       reason: report.reason
     }] : []
   );
+  const raffles: AdminRaffle[] = (rafflesResult.data ?? []).map((raffle) => ({
+    closesAt: raffle.closes_at,
+    creator: sellerName(raffle.profiles),
+    id: raffle.id,
+    prize: raffle.prize,
+    title: raffle.title
+  }));
   const adminUsers: AdminUser[] = (userRolesResult.data ?? []).map((profile) => ({
     displayName: profile.display_name,
     id: profile.id,
@@ -120,6 +133,11 @@ export default async function AdminPage() {
       icon: FileWarning,
       label: "Publicaciones pendientes",
       value: String(listings.length)
+    },
+    {
+      icon: Gift,
+      label: "Sorteos pendientes",
+      value: String(raffles.length)
     },
     {
       icon: AlertTriangle,
@@ -152,7 +170,7 @@ export default async function AdminPage() {
         </div>
         <ShieldCheck className="h-12 w-12 text-pokemonYellow" />
       </div>
-      <section className="mt-8 grid gap-4 md:grid-cols-4">
+      <section className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
         {queues.map((item) => (
           <article className="glass rounded-lg p-5" key={item.label}>
             <item.icon className="h-6 w-6 text-pokemonYellow" />
@@ -160,6 +178,12 @@ export default async function AdminPage() {
             <p className="mt-1 text-sm font-semibold text-slate-400">{item.label}</p>
           </article>
         ))}
+      </section>
+      <section className="glass mt-8 overflow-hidden rounded-lg">
+        <div className="border-b border-white/10 p-5">
+          <h2 className="text-xl font-black text-white">Cola de sorteos</h2>
+        </div>
+        <AdminRaffles raffles={raffles} />
       </section>
       <section className="glass mt-8 overflow-hidden rounded-lg">
         <div className="border-b border-white/10 p-5">

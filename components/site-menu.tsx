@@ -4,6 +4,7 @@ import {
   Bell,
   ChevronDown,
   Heart,
+  Gift,
   ListChecks,
   MessagesSquare,
   Menu,
@@ -19,6 +20,7 @@ import { useEffect, useRef, useState } from "react";
 const links = [
   { href: "/publish", icon: Store, label: "Publicar producto", primary: true },
   { href: "/marketplace", icon: ShoppingBag, label: "Marketplace" },
+  { href: "/raffles", icon: Gift, label: "Sorteos" },
   { href: "/account/listings", icon: ListChecks, label: "Mis publicaciones" },
   { href: "/account/messages", icon: MessagesSquare, label: "Mensajes" },
   { href: "/account/profile", icon: UserRound, label: "Mi perfil" },
