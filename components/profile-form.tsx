@@ -142,7 +142,7 @@ export function ProfileForm({ initial }: ProfileFormProps) {
 
       <p className="mt-4 text-sm leading-6 text-slate-500">
         WhatsApp e Instagram solo se muestran como opciones de contacto en tus
-        publicaciones. Debes completar al menos uno.
+        publicaciones. Son opcionales porque PokeTrade tambien tiene mensajes internos.
       </p>
 
       {error ? (

@@ -12,14 +12,6 @@ const profileSchema = z
     whatsapp: z.string().trim().max(30)
   })
   .superRefine((value, context) => {
-    if (!value.whatsapp && !value.instagram) {
-      context.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Agrega WhatsApp o Instagram para que puedan contactarte.",
-        path: ["whatsapp"]
-      });
-    }
-
     if (value.whatsapp && value.whatsapp.replace(/\D/g, "").length < 8) {
       context.addIssue({
         code: z.ZodIssueCode.custom,
