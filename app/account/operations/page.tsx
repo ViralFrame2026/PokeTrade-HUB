@@ -1,0 +1,318 @@
+import Image from "next/image";
+import Link from "next/link";
+import {
+  ArrowLeft,
+  CheckCircle2,
+  Eye,
+  Handshake,
+  MessageSquareText,
+  Star,
+  Store,
+  UserRound
+} from "lucide-react";
+import { redirect } from "next/navigation";
+import { ButtonLink } from "@/components/ui/button-link";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+
+export const dynamic = "force-dynamic";
+
+type Related<T> = T | T[] | null;
+
+type OperationRow = {
+  approved_at: string | null;
+  completed_with_id: string | null;
+  created_at: string;
+  id: string;
+  location_city: string | null;
+  location_country: string | null;
+  price: number | null;
+  status: string;
+  trade_wants: string | null;
+  type: string;
+  products: Related<{
+    condition: string;
+    cards: Related<{
+      image_large: string;
+      number: string | null;
+      official_name: string;
+      rarity: string | null;
+      set_name: string;
+    }>;
+  }>;
+  profiles: Related<{
+    display_name: string;
+    id: string;
+    is_verified: boolean;
+    reputation_average: number;
+  }>;
+};
+
+type RatingRow = {
+  listing_id: string | null;
+};
+
+function firstRelated<T>(value: Related<T>) {
+  return Array.isArray(value) ? value[0] ?? null : value;
+}
+
+function statusLabel(status: string) {
+  return {
+    finished: "Finalizada",
+    sold: "Comprada",
+    traded: "Intercambiada"
+  }[status] ?? status;
+}
+
+function typeLabel(type: string) {
+  return {
+    free: "Gratis",
+    sale: "Compra",
+    trade: "Intercambio"
+  }[type] ?? type;
+}
+
+function valueLabel(operation: OperationRow) {
+  if (operation.type === "trade") return operation.trade_wants || "Intercambio";
+  if (operation.type === "free") return "Gratis";
+
+  return new Intl.NumberFormat("es-AR", {
+    currency: "ARS",
+    maximumFractionDigits: 0,
+    style: "currency"
+  }).format(operation.price ?? 0);
+}
+
+function dateLabel(date: string | null) {
+  if (!date) return "Sin fecha";
+
+  return new Intl.DateTimeFormat("es-AR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  }).format(new Date(date));
+}
+
+export default async function OperationsPage() {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
+
+  if (!user) redirect("/login?next=/account/operations");
+
+  const { data } = await supabase
+    .from("listings")
+    .select(
+      "id, type, status, price, trade_wants, completed_with_id, approved_at, created_at, location_city, location_country, profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!listings_product_id_fkey(condition, cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number))"
+    )
+    .eq("completed_with_id", user.id)
+    .eq("moderation_status", "approved")
+    .in("status", ["sold", "traded", "finished"])
+    .order("updated_at", { ascending: false });
+
+  const operations = (data ?? []) as OperationRow[];
+  const operationIds = operations.map((operation) => operation.id);
+  const { data: ratingsData } = operationIds.length
+    ? await supabase
+        .from("ratings")
+        .select("listing_id")
+        .eq("reviewer_id", user.id)
+        .in("listing_id", operationIds)
+    : { data: [] };
+
+  const ratedIds = new Set(
+    ((ratingsData ?? []) as RatingRow[])
+      .map((rating) => rating.listing_id)
+      .filter(Boolean)
+  );
+  const pendingRatings = operations.filter((operation) => !ratedIds.has(operation.id)).length;
+
+  return (
+    <main className="min-h-screen bg-[#eaf2ff] text-slate-900">
+      <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
+        <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
+          <Link className="flex items-center gap-3" href="/">
+            <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
+            <div>
+              <p className="text-sm font-black tracking-[0.2em] text-yellow-300">POKETRADE</p>
+              <p className="text-xs font-bold text-blue-100">MIS OPERACIONES</p>
+            </div>
+          </Link>
+          <ButtonLink href="/account/messages" icon={MessageSquareText} size="sm">
+            Mensajes
+          </ButtonLink>
+        </nav>
+      </header>
+
+      <section className="border-b border-blue-100 bg-white">
+        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+          <Link
+            className="inline-flex items-center gap-2 text-sm font-bold text-blue-700 hover:text-blue-900"
+            href="/"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Volver al inicio
+          </Link>
+
+          <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
+            <div>
+              <p className="text-sm font-black uppercase tracking-[0.18em] text-red-500">
+                Historial comprador
+              </p>
+              <h1 className="mt-2 text-4xl font-black text-blue-950">Mis operaciones</h1>
+              <p className="mt-3 max-w-2xl leading-7 text-slate-600">
+                Revisa tus compras e intercambios cerrados. Desde aqui puedes volver a
+                la publicacion para valorar al vendedor.
+              </p>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              <SummaryCard label="Cerradas" value={operations.length} />
+              <SummaryCard label="Por valorar" value={pendingRatings} variant="yellow" />
+              <SummaryCard label="Valoradas" value={operations.length - pendingRatings} variant="green" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+        {operations.length > 0 ? (
+          <div className="space-y-4">
+            {operations.map((operation) => {
+              const product = firstRelated(operation.products);
+              const card = firstRelated(product?.cards ?? null);
+              const seller = firstRelated(operation.profiles);
+              const isRated = ratedIds.has(operation.id);
+              const title = card?.official_name ?? "Carta Pokemon TCG";
+
+              return (
+                <article
+                  className="grid gap-5 rounded-lg border border-blue-100 bg-white p-4 shadow-sm sm:grid-cols-[124px_minmax(0,1fr)_auto] sm:items-center"
+                  key={operation.id}
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-blue-50">
+                    {card?.image_large ? (
+                      <Image
+                        alt={title}
+                        className="object-contain p-2"
+                        fill
+                        sizes="124px"
+                        src={card.image_large}
+                      />
+                    ) : (
+                      <Store className="absolute inset-0 m-auto h-8 w-8 text-blue-300" />
+                    )}
+                  </div>
+
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-xs font-black text-blue-700">
+                        <Handshake className="h-3.5 w-3.5" />
+                        {statusLabel(operation.status)}
+                      </span>
+                      <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
+                        {typeLabel(operation.type)}
+                      </span>
+                      {isRated ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-700">
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          Valorada
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-yellow-100 px-3 py-1 text-xs font-black text-yellow-800">
+                          <Star className="h-3.5 w-3.5" />
+                          Pendiente de valorar
+                        </span>
+                      )}
+                    </div>
+
+                    <h2 className="mt-3 truncate text-xl font-black text-blue-950">{title}</h2>
+                    <p className="mt-1 text-sm text-slate-500">
+                      {[card?.set_name, card?.number ? `#${card.number}` : null, card?.rarity, product?.condition]
+                        .filter(Boolean)
+                        .join(" | ")}
+                    </p>
+
+                    <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-600">
+                      <span className="font-black text-red-500">{valueLabel(operation)}</span>
+                      <span>{dateLabel(operation.approved_at ?? operation.created_at)}</span>
+                      {seller ? (
+                        <Link
+                          className="inline-flex items-center gap-1 font-bold text-blue-700 hover:text-blue-900"
+                          href={`/users/${seller.id}`}
+                        >
+                          <UserRound className="h-4 w-4" />
+                          {seller.display_name}
+                        </Link>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2 sm:w-48 sm:justify-end">
+                    <Link
+                      className="inline-flex items-center justify-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-black text-blue-800 transition hover:border-blue-400"
+                      href={`/listings/${operation.id}`}
+                    >
+                      <Eye className="h-4 w-4" />
+                      Ver
+                    </Link>
+                    {!isRated ? (
+                      <Link
+                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-sm font-black text-blue-950 transition hover:bg-yellow-300"
+                        href={`/listings/${operation.id}`}
+                      >
+                        <Star className="h-4 w-4" />
+                        Valorar
+                      </Link>
+                    ) : null}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="grid min-h-80 place-items-center rounded-lg border-2 border-dashed border-blue-200 bg-white px-6 text-center">
+            <div>
+              <Handshake className="mx-auto h-12 w-12 text-blue-500" />
+              <h2 className="mt-4 text-2xl font-black text-blue-950">
+                Aun no tienes operaciones cerradas
+              </h2>
+              <p className="mt-2 max-w-md text-slate-600">
+                Cuando un vendedor marque una publicacion como vendida o intercambiada
+                contigo, aparecera aqui para que puedas valorar la experiencia.
+              </p>
+              <div className="mt-6">
+                <ButtonLink href="/marketplace" icon={Store}>
+                  Explorar marketplace
+                </ButtonLink>
+              </div>
+            </div>
+          </div>
+        )}
+      </section>
+    </main>
+  );
+}
+
+function SummaryCard({
+  label,
+  value,
+  variant = "blue"
+}: {
+  label: string;
+  value: number;
+  variant?: "blue" | "green" | "yellow";
+}) {
+  const colors = {
+    blue: "border-blue-200 bg-blue-50 text-blue-800",
+    green: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    yellow: "border-yellow-200 bg-yellow-50 text-yellow-800"
+  };
+
+  return (
+    <div className={`rounded-lg border p-4 ${colors[variant]}`}>
+      <p className="text-2xl font-black">{value}</p>
+      <p className="mt-1 text-xs font-black uppercase">{label}</p>
+    </div>
+  );
+}
