@@ -5,18 +5,24 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 type ListingStatusControlProps = {
+  counterparties: Array<{
+    id: string;
+    name: string;
+  }>;
   currentStatus: string;
   listingId: string;
   listingType: string;
 };
 
 export function ListingStatusControl({
+  counterparties,
   currentStatus,
   listingId,
   listingType
 }: ListingStatusControlProps) {
   const router = useRouter();
   const [status, setStatus] = useState(currentStatus);
+  const [counterpartyId, setCounterpartyId] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,6 +33,10 @@ export function ListingStatusControl({
     if (status === currentStatus) return;
 
     const closing = ["sold", "traded", "finished"].includes(status);
+    if (closing && !counterpartyId) {
+      setError("Selecciona con quien concretaste la operacion.");
+      return;
+    }
     if (
       closing &&
       !window.confirm("Esta publicacion dejara de aparecer en el marketplace. ¿Continuar?")
@@ -40,7 +50,10 @@ export function ListingStatusControl({
 
     try {
       const response = await fetch(`/api/listings/${listingId}/status`, {
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({
+          counterpartyId: closing ? counterpartyId : null,
+          status
+        }),
         headers: { "Content-Type": "application/json" },
         method: "PATCH"
       });
@@ -84,6 +97,31 @@ export function ListingStatusControl({
           </option>
         </select>
       </label>
+      {["sold", "traded", "finished"].includes(status) &&
+      status !== currentStatus ? (
+        <label className="mt-3 block text-xs font-black uppercase text-blue-800">
+          Operacion realizada con
+          <select
+            className="mt-2 h-10 w-full rounded-md border border-blue-200 bg-white px-3 text-sm font-bold normal-case text-blue-950 outline-none focus:border-blue-500"
+            disabled={isSaving}
+            onChange={(event) => setCounterpartyId(event.target.value)}
+            required
+            value={counterpartyId}
+          >
+            <option value="">Seleccionar usuario</option>
+            {counterparties.map((counterparty) => (
+              <option key={counterparty.id} value={counterparty.id}>
+                {counterparty.name}
+              </option>
+            ))}
+          </select>
+          {counterparties.length === 0 ? (
+            <span className="mt-2 block normal-case text-slate-500">
+              Primero debes recibir un mensaje de la persona interesada.
+            </span>
+          ) : null}
+        </label>
+      ) : null}
       <button
         className="mt-2 inline-flex h-9 w-full items-center justify-center gap-2 rounded-md bg-blue-700 px-3 text-xs font-black text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
         disabled={isSaving || status === currentStatus}

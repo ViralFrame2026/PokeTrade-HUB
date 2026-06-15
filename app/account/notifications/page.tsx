@@ -37,7 +37,11 @@ function notificationMeta(type: string) {
     };
   }
 
-  if (type === "raffle_won" || type === "raffle_drawn") {
+  if (
+    type === "raffle_won" ||
+    type === "raffle_drawn" ||
+    type === "rating_received"
+  ) {
     return {
       className: "bg-yellow-100 text-amber-700",
       icon: CheckCircle2
@@ -112,7 +116,9 @@ export default async function NotificationsPage() {
               const listingId = notification.payload?.listing_id;
               const raffleId = notification.payload?.raffle_id;
               const href =
-                ["raffle_approved", "raffle_won", "raffle_drawn"].includes(
+                notification.type === "rating_received" && listingId
+                  ? `/listings/${listingId}`
+                  : ["raffle_approved", "raffle_won", "raffle_drawn"].includes(
                   notification.type
                 ) && raffleId
                   ? `/raffles/${raffleId}`
@@ -154,7 +160,9 @@ export default async function NotificationsPage() {
                         }).format(new Date(notification.created_at))}
                       </p>
                       <NotificationLink href={href} notificationId={notification.id}>
-                        {["raffle_approved", "raffle_won", "raffle_drawn"].includes(
+                        {notification.type === "rating_received"
+                          ? "Ver valoracion"
+                          : ["raffle_approved", "raffle_won", "raffle_drawn"].includes(
                           notification.type
                         )
                           ? "Ver sorteo"

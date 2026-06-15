@@ -14,6 +14,7 @@ import {
   Tag
 } from "lucide-react";
 import { ListingGallery } from "@/components/listing-gallery";
+import { ListingRatingForm } from "@/components/listing-rating-form";
 import { FavoriteButton } from "@/components/favorite-button";
 import { ReportListingForm } from "@/components/report-listing-form";
 import { StartConversationButton } from "@/components/start-conversation-button";
@@ -26,6 +27,7 @@ type Related<T> = T | T[] | null;
 type ListingDetailRow = {
   approved_at: string | null;
   created_at: string;
+  completed_with_id: string | null;
   description: string | null;
   id: string;
   seller_id: string;
@@ -62,6 +64,16 @@ type ListingDetailRow = {
   type: string;
 };
 
+type RatingRow = {
+  comment: string | null;
+  created_at: string;
+  id: string;
+  profiles: Related<{
+    display_name: string;
+  }>;
+  stars: number;
+};
+
 function firstRelated<T>(value: Related<T>) {
   return Array.isArray(value) ? value[0] ?? null : value;
 }
@@ -83,6 +95,16 @@ function priceLabel(listing: ListingDetailRow) {
     maximumFractionDigits: 0,
     style: "currency"
   }).format(listing.price ?? 0);
+}
+
+function statusLabel(status: string) {
+  return {
+    active: "Disponible",
+    finished: "Finalizada",
+    reserved: "Reservada",
+    sold: "Vendida",
+    traded: "Intercambiada"
+  }[status] ?? status;
 }
 
 function whatsappUrl(value: string) {
@@ -107,7 +129,7 @@ async function getListing(id: string) {
   const { data } = await supabase
     .from("listings")
     .select(
-      "id, seller_id, title, description, type, status, price, trade_wants, location_city, location_country, approved_at, created_at, listing_images(storage_path, alt_text, sort_order), profiles!listings_seller_id_fkey(display_name, is_verified, reputation_average, reputation_count, whatsapp, instagram), products!listings_product_id_fkey(condition, cards!products_card_id_fkey(pokemon_tcg_id, official_name, image_large, set_name, rarity, number))"
+      "id, seller_id, completed_with_id, title, description, type, status, price, trade_wants, location_city, location_country, approved_at, created_at, listing_images(storage_path, alt_text, sort_order), profiles!listings_seller_id_fkey(display_name, is_verified, reputation_average, reputation_count, whatsapp, instagram), products!listings_product_id_fkey(condition, cards!products_card_id_fkey(pokemon_tcg_id, official_name, image_large, set_name, rarity, number))"
     )
     .eq("id", id)
     .eq("moderation_status", "approved")
@@ -175,14 +197,42 @@ export default async function ListingDetailPage({
   const {
     data: { user }
   } = await supabase.auth.getUser();
-  const { data: favorite } = user
-    ? await supabase
-        .from("favorites")
-        .select("id")
-        .eq("user_id", user.id)
-        .eq("listing_id", listing.id)
-        .maybeSingle()
-    : { data: null };
+  const isCompleted = ["sold", "traded", "finished"].includes(listing.status);
+  const [favoriteResult, ratingResult, reviewsResult] =
+    await Promise.all([
+      user
+        ? supabase
+            .from("favorites")
+            .select("id")
+            .eq("user_id", user.id)
+            .eq("listing_id", listing.id)
+            .maybeSingle()
+        : Promise.resolve({ data: null }),
+      user && user.id !== listing.seller_id
+        ? supabase
+            .from("ratings")
+            .select("id")
+            .eq("reviewer_id", user.id)
+            .eq("listing_id", listing.id)
+            .maybeSingle()
+        : Promise.resolve({ data: null }),
+      supabase
+        .from("ratings")
+        .select(
+          "id, stars, comment, created_at, profiles!ratings_reviewer_id_fkey(display_name)"
+        )
+        .eq("reviewed_id", listing.seller_id)
+        .order("created_at", { ascending: false })
+        .limit(5)
+    ]);
+  const favorite = favoriteResult.data;
+  const existingRating = ratingResult.data;
+  const reviews = (reviewsResult.data ?? []) as RatingRow[];
+  const canRate =
+    Boolean(user) &&
+    user?.id === listing.completed_with_id &&
+    isCompleted &&
+    !existingRating;
   const realPhotos = [...(listing.listing_images ?? [])]
     .sort((a, b) => a.sort_order - b.sort_order)
     .map((image, index) => ({
@@ -248,7 +298,7 @@ export default async function ListingDetailPage({
                 {typeLabel(listing.type)}
               </span>
               <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-black uppercase text-emerald-700">
-                Disponible
+                {statusLabel(listing.status)}
               </span>
             </div>
 
@@ -341,6 +391,51 @@ export default async function ListingDetailPage({
               </div>
             </div>
           </div>
+          {canRate ? <ListingRatingForm listingId={listing.id} /> : null}
+          {existingRating ? (
+            <div className="mt-5 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-center text-sm font-black text-emerald-700">
+              Ya valoraste esta operacion.
+            </div>
+          ) : null}
+          {reviews.length > 0 ? (
+            <section className="mt-5 rounded-lg border border-blue-100 bg-white p-6">
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-lg font-black text-blue-950">Valoraciones recientes</h2>
+                <span className="text-sm font-bold text-slate-400">
+                  {seller.reputation_count} total
+                </span>
+              </div>
+              <div className="mt-4 divide-y divide-blue-100">
+                {reviews.map((review) => {
+                  const reviewer = firstRelated(review.profiles);
+
+                  return (
+                    <article className="py-4 first:pt-0 last:pb-0" key={review.id}>
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="font-black text-blue-950">
+                          {reviewer?.display_name ?? "Entrenador TCG"}
+                        </p>
+                        <span className="flex items-center gap-1 text-sm font-black text-amber-600">
+                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                          {review.stars}
+                        </span>
+                      </div>
+                      {review.comment ? (
+                        <p className="mt-2 text-sm leading-6 text-slate-600">
+                          {review.comment}
+                        </p>
+                      ) : null}
+                      <p className="mt-2 text-xs font-semibold text-slate-400">
+                        {new Intl.DateTimeFormat("es-AR", {
+                          dateStyle: "medium"
+                        }).format(new Date(review.created_at))}
+                      </p>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+          ) : null}
         </aside>
       </div>
     </main>

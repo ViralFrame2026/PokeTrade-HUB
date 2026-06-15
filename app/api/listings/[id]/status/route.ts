@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const statusSchema = z.object({
+  counterpartyId: z.string().uuid().nullable(),
   status: z.enum(["active", "reserved", "sold", "traded", "finished"])
 });
 
@@ -27,6 +28,7 @@ export async function PATCH(
   }
 
   const { error } = await supabase.rpc("set_own_listing_status", {
+    counterparty_id: parsed.data.counterpartyId,
     next_status: parsed.data.status,
     target_listing_id: id
   });

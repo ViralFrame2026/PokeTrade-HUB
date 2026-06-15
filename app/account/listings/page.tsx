@@ -41,6 +41,12 @@ type ListingRow = {
   }>;
 };
 
+type MessageRow = {
+  listing_id: string | null;
+  recipient_id: string;
+  sender_id: string;
+};
+
 function firstRelated<T>(value: Related<T>) {
   return Array.isArray(value) ? value[0] ?? null : value;
 }
@@ -130,6 +136,49 @@ export default async function MyListingsPage({
     .order("created_at", { ascending: false });
 
   const listings = (data ?? []) as ListingRow[];
+  const listingIds = listings.map((listing) => listing.id);
+  const { data: messagesData } = listingIds.length
+    ? await supabase
+        .from("messages")
+        .select("listing_id, sender_id, recipient_id")
+        .in("listing_id", listingIds)
+        .or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`)
+    : { data: [] };
+  const messages = (messagesData ?? []) as MessageRow[];
+  const counterpartIds = [
+    ...new Set(
+      messages.map((message) =>
+        message.sender_id === user.id ? message.recipient_id : message.sender_id
+      )
+    )
+  ];
+  const { data: counterpartProfiles } = counterpartIds.length
+    ? await supabase
+        .from("profiles")
+        .select("id, display_name")
+        .in("id", counterpartIds)
+    : { data: [] };
+  const counterpartNames = new Map(
+    (counterpartProfiles ?? []).map((profile) => [profile.id, profile.display_name])
+  );
+  const counterpartiesByListing = new Map<
+    string,
+    Array<{ id: string; name: string }>
+  >();
+
+  for (const message of messages) {
+    if (!message.listing_id) continue;
+    const otherId =
+      message.sender_id === user.id ? message.recipient_id : message.sender_id;
+    const current = counterpartiesByListing.get(message.listing_id) ?? [];
+    if (!current.some((counterparty) => counterparty.id === otherId)) {
+      current.push({
+        id: otherId,
+        name: counterpartNames.get(otherId) ?? "Entrenador TCG"
+      });
+      counterpartiesByListing.set(message.listing_id, current);
+    }
+  }
   const approved = listings.filter((listing) => listing.moderation_status === "approved").length;
   const pending = listings.filter((listing) => listing.moderation_status === "pending").length;
   const needsAttention = listings.filter((listing) =>
@@ -283,6 +332,7 @@ export default async function MyListingsPage({
                     ) : null}
                     {listing.moderation_status === "approved" ? (
                       <ListingStatusControl
+                        counterparties={counterpartiesByListing.get(listing.id) ?? []}
                         currentStatus={listing.status}
                         listingId={listing.id}
                         listingType={listing.type}
