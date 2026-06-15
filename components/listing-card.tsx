@@ -8,15 +8,33 @@ type ListingCardProps = {
 };
 
 export function ListingCard({ listing }: ListingCardProps) {
+  const sellerContent = (
+    <>
+      <ShieldCheck className="h-4 w-4 text-blue-600" />
+      {listing.seller}
+      {listing.verified ? (
+        <span className="rounded-full bg-blue-50 px-2 py-1 text-[10px] font-black uppercase text-blue-700">
+          Verificado
+        </span>
+      ) : null}
+    </>
+  );
+
   return (
-    <Link
-      aria-label={`Ver publicación de ${listing.title}`}
-      className="block"
-      href={`/listings/${listing.id}`}
-    >
-      <article className="overflow-hidden rounded-lg border border-blue-100 bg-white shadow-[0_12px_35px_rgba(30,64,175,0.10)] transition hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(30,64,175,0.16)]">
+    <article className="overflow-hidden rounded-lg border border-blue-100 bg-white shadow-[0_12px_35px_rgba(30,64,175,0.10)] transition hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(30,64,175,0.16)]">
+      <Link
+        aria-label={`Ver publicacion de ${listing.title}`}
+        className="block"
+        href={`/listings/${listing.id}`}
+      >
         <div className="relative aspect-[4/3] bg-[linear-gradient(145deg,#eff6ff,#fffbea)]">
-          <Image alt={listing.title} className="object-contain p-5" fill sizes="420px" src={listing.image} />
+          <Image
+            alt={listing.title}
+            className="object-contain p-5"
+            fill
+            sizes="420px"
+            src={listing.image}
+          />
           <div className="absolute left-3 top-3 rounded-full bg-blue-700 px-3 py-1 text-xs font-black text-white shadow-sm">
             {listing.type}
           </div>
@@ -32,7 +50,9 @@ export function ListingCard({ listing }: ListingCardProps) {
             </div>
             <p className="whitespace-nowrap text-lg font-black text-red-500">{listing.price}</p>
           </div>
-          <p className="line-clamp-2 text-sm leading-6 text-slate-600">{listing.description}</p>
+          <p className="line-clamp-2 text-sm leading-6 text-slate-600">
+            {listing.description}
+          </p>
           <div className="mt-5 flex items-center justify-between gap-3 text-sm text-slate-500">
             <span className="flex items-center gap-1">
               <MapPin className="h-4 w-4" />
@@ -43,17 +63,23 @@ export function ListingCard({ listing }: ListingCardProps) {
               {listing.sellerRating}
             </span>
           </div>
-          <div className="mt-4 flex items-center gap-2 border-t border-blue-100 pt-4 text-sm font-semibold text-blue-700">
-            <ShieldCheck className="h-4 w-4 text-blue-600" />
-            {listing.seller}
-            {listing.verified ? (
-              <span className="rounded-full bg-blue-50 px-2 py-1 text-[10px] font-black uppercase text-blue-700">
-                Verificado
-              </span>
-            ) : null}
-          </div>
         </div>
-      </article>
-    </Link>
+      </Link>
+
+      <div className="border-t border-blue-100 px-5 py-4">
+        {listing.sellerId ? (
+          <Link
+            className="flex items-center gap-2 text-sm font-semibold text-blue-700 transition hover:text-blue-950"
+            href={`/users/${listing.sellerId}`}
+          >
+            {sellerContent}
+          </Link>
+        ) : (
+          <div className="flex items-center gap-2 text-sm font-semibold text-blue-700">
+            {sellerContent}
+          </div>
+        )}
+      </div>
+    </article>
   );
 }

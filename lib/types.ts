@@ -13,6 +13,7 @@ export type Listing = {
   location: string;
   price: string;
   seller: string;
+  sellerId?: string;
   sellerRating: string;
   status: string;
   title: string;

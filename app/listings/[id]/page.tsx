@@ -41,6 +41,7 @@ type ListingDetailRow = {
   price: number | null;
   profiles: Related<{
     display_name: string;
+    id: string;
     instagram: string | null;
     is_verified: boolean;
     reputation_average: number;
@@ -129,7 +130,7 @@ async function getListing(id: string) {
   const { data } = await supabase
     .from("listings")
     .select(
-      "id, seller_id, completed_with_id, title, description, type, status, price, trade_wants, location_city, location_country, approved_at, created_at, listing_images(storage_path, alt_text, sort_order), profiles!listings_seller_id_fkey(display_name, is_verified, reputation_average, reputation_count, whatsapp, instagram), products!listings_product_id_fkey(condition, cards!products_card_id_fkey(pokemon_tcg_id, official_name, image_large, set_name, rarity, number))"
+      "id, seller_id, completed_with_id, title, description, type, status, price, trade_wants, location_city, location_country, approved_at, created_at, listing_images(storage_path, alt_text, sort_order), profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average, reputation_count, whatsapp, instagram), products!listings_product_id_fkey(condition, cards!products_card_id_fkey(pokemon_tcg_id, official_name, image_large, set_name, rarity, number))"
     )
     .eq("id", id)
     .eq("moderation_status", "approved")
@@ -374,7 +375,12 @@ export default async function ListingDetailPage({
               </div>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="font-black">{seller.display_name}</h2>
+                  <Link
+                    className="font-black transition hover:text-yellow-300"
+                    href={`/users/${seller.id}`}
+                  >
+                    {seller.display_name}
+                  </Link>
                   {seller.is_verified ? (
                     <BadgeCheck className="h-5 w-5 text-sky-300" aria-label="Vendedor verificado" />
                   ) : null}

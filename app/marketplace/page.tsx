@@ -27,6 +27,7 @@ type ListingRow = {
   price: number | null;
   profiles: Related<{
     display_name: string;
+    id: string;
     is_verified: boolean;
     reputation_average: number;
   }>;
@@ -84,7 +85,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
     let request = supabase
       .from("listings")
       .select(
-        "id, description, type, status, price, trade_wants, location_city, location_country, profiles!listings_seller_id_fkey(display_name, is_verified, reputation_average), products!inner(condition, cards!inner(official_name, image_large, set_name, rarity, number))"
+        "id, description, type, status, price, trade_wants, location_city, location_country, profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!inner(condition, cards!inner(official_name, image_large, set_name, rarity, number))"
       )
       .eq("moderation_status", "approved")
       .eq("status", "active")
@@ -123,6 +124,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
         "Ubicacion no informada",
       price: priceLabel(row),
       seller: profile?.display_name ?? "Entrenador TCG",
+      sellerId: profile?.id,
       sellerRating: Number(profile?.reputation_average ?? 0).toFixed(1),
       status: "Activa",
       title: card.official_name,

@@ -36,6 +36,7 @@ type ListingRow = {
   price: number | null;
   profiles: Related<{
     display_name: string;
+    id: string;
     is_verified: boolean;
     reputation_average: number;
   }>;
@@ -59,6 +60,7 @@ type ProfileRow = {
   city: string | null;
   country: string | null;
   display_name: string;
+  id: string;
   is_verified: boolean;
   reputation_average: number;
   reputation_count: number;
@@ -110,7 +112,7 @@ export default async function HomePage() {
         supabase
           .from("listings")
           .select(
-            "id, title, description, type, status, price, trade_wants, location_city, location_country, profiles!listings_seller_id_fkey(display_name, is_verified, reputation_average), products!listings_product_id_fkey(cards!products_card_id_fkey(pokemon_tcg_id, official_name, image_large, set_name, rarity, number))"
+            "id, title, description, type, status, price, trade_wants, location_city, location_country, profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!listings_product_id_fkey(cards!products_card_id_fkey(pokemon_tcg_id, official_name, image_large, set_name, rarity, number))"
           )
           .eq("moderation_status", "approved")
           .eq("status", "active")
@@ -128,7 +130,7 @@ export default async function HomePage() {
         supabase
           .from("profiles")
           .select(
-            "display_name, city, country, is_verified, reputation_average, reputation_count"
+            "id, display_name, city, country, is_verified, reputation_average, reputation_count"
           )
           .gt("reputation_count", 0)
           .order("reputation_average", { ascending: false })
@@ -161,6 +163,7 @@ export default async function HomePage() {
         location: [row.location_city, row.location_country].filter(Boolean).join(", "),
         price: listingPrice(row),
         seller: profile?.display_name ?? "Entrenador TCG",
+        sellerId: profile?.id,
         sellerRating: Number(profile?.reputation_average ?? 0).toFixed(1),
         status: "Activa",
         title: card.official_name,
@@ -179,6 +182,7 @@ export default async function HomePage() {
       .map((part) => part[0])
       .join("")
       .toUpperCase(),
+    id: profile.id,
     name: profile.display_name,
     rating: Number(profile.reputation_average).toFixed(2)
   }));
@@ -317,7 +321,11 @@ export default async function HomePage() {
           {topUsers.length > 0 ? (
             <div className="relative z-10 grid gap-4 sm:grid-cols-2">
               {topUsers.map((user) => (
-                <article className="rounded-lg border border-yellow-200 bg-white p-5 shadow-sm" key={user.name}>
+                <Link
+                  className="rounded-lg border border-yellow-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                  href={`/users/${user.id}`}
+                  key={user.id}
+                >
                   <div className="flex items-center gap-4">
                     <div className="grid h-12 w-12 place-items-center rounded-full bg-blue-600 font-black text-white">
                       {user.initials}
@@ -331,7 +339,7 @@ export default async function HomePage() {
                     <Star className="h-4 w-4 fill-current" />
                     {user.rating} | {user.badge}
                   </div>
-                </article>
+                </Link>
               ))}
             </div>
           ) : (
