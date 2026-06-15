@@ -5,9 +5,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export function ReportListingForm({
+  initialReported = false,
   isAuthenticated,
   listingId
 }: {
+  initialReported?: boolean;
   isAuthenticated: boolean;
   listingId: string;
 }) {
@@ -17,7 +19,7 @@ export function ReportListingForm({
   const [details, setDetails] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [success, setSuccess] = useState(initialReported);
 
   async function submitReport(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -59,7 +61,7 @@ export function ReportListingForm({
     return (
       <div className="mt-5 flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm font-bold text-emerald-700">
         <CheckCircle2 className="h-5 w-5" />
-        Reporte enviado a moderacion.
+        {initialReported ? "Ya reportaste esta publicacion." : "Reporte enviado a moderacion."}
       </div>
     );
   }

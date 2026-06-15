@@ -199,7 +199,7 @@ export default async function ListingDetailPage({
     data: { user }
   } = await supabase.auth.getUser();
   const isCompleted = ["sold", "traded", "finished"].includes(listing.status);
-  const [favoriteResult, ratingResult, reviewsResult] =
+  const [favoriteResult, ratingResult, existingReportResult, reviewsResult] =
     await Promise.all([
       user
         ? supabase
@@ -217,6 +217,15 @@ export default async function ListingDetailPage({
             .eq("listing_id", listing.id)
             .maybeSingle()
         : Promise.resolve({ data: null }),
+      user && user.id !== listing.seller_id
+        ? supabase
+            .from("reports")
+            .select("id")
+            .eq("reporter_id", user.id)
+            .eq("listing_id", listing.id)
+            .is("resolved_at", null)
+            .maybeSingle()
+        : Promise.resolve({ data: null }),
       supabase
         .from("ratings")
         .select(
@@ -228,6 +237,7 @@ export default async function ListingDetailPage({
     ]);
   const favorite = favoriteResult.data;
   const existingRating = ratingResult.data;
+  const existingReport = existingReportResult.data;
   const reviews = (reviewsResult.data ?? []) as RatingRow[];
   const canRate =
     Boolean(user) &&
@@ -360,6 +370,7 @@ export default async function ListingDetailPage({
               listingId={listing.id}
             />
             <ReportListingForm
+              initialReported={Boolean(existingReport)}
               isAuthenticated={Boolean(user)}
               listingId={listing.id}
             />

@@ -51,6 +51,21 @@ export async function POST(request: Request) {
     );
   }
 
+  const { data: existingReport } = await supabase
+    .from("reports")
+    .select("id")
+    .eq("reporter_id", user.id)
+    .eq("listing_id", listing.id)
+    .is("resolved_at", null)
+    .maybeSingle();
+
+  if (existingReport) {
+    return NextResponse.json(
+      { error: "Ya enviaste un reporte abierto para esta publicacion." },
+      { status: 409 }
+    );
+  }
+
   const { error } = await supabase.from("reports").insert({
     details: parsed.data.details,
     listing_id: listing.id,
