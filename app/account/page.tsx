@@ -13,6 +13,7 @@ import {
   UserRound
 } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button-link";
+import { SignOutButton } from "@/components/sign-out-button";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -158,9 +159,12 @@ export default async function AccountPage() {
               <p className="text-xs font-bold text-blue-100">MI CUENTA</p>
             </div>
           </Link>
-          <ButtonLink href="/publish" icon={Store} size="sm">
-            Publicar
-          </ButtonLink>
+          <div className="flex items-center gap-2">
+            <ButtonLink href="/publish" icon={Store} size="sm">
+              Publicar
+            </ButtonLink>
+            <SignOutButton />
+          </div>
         </nav>
       </header>
 
