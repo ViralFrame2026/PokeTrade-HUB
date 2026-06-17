@@ -21,6 +21,7 @@ import { useEffect, useRef, useState } from "react";
 
 const links = [
   { href: "/publish", icon: Store, label: "Publicar producto", primary: true },
+  { href: "/account", icon: UserRound, label: "Mi cuenta" },
   { href: "/marketplace", icon: ShoppingBag, label: "Marketplace" },
   { href: "/raffles", icon: Gift, label: "Sorteos" },
   { href: "/account/raffles", icon: Trophy, label: "Mis sorteos" },
