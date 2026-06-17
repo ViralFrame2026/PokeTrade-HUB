@@ -105,22 +105,15 @@ export default async function HomePage() {
   let listingsTotal = 0;
   let rafflesTotal = 0;
   let isAdmin = false;
+  let pendingListingsCount = 0;
+  let unreadMessagesCount = 0;
+  let unreadNotificationsCount = 0;
 
   if (hasSupabaseConfig) {
     const supabase = await createSupabaseServerClient();
     const {
       data: { user }
     } = await supabase.auth.getUser();
-
-    if (user) {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("is_admin")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      isAdmin = profile?.is_admin ?? false;
-    }
 
     const [listingsResult, usersCount, listingsCount, rafflesCount, profilesResult] =
       await Promise.all([
@@ -151,6 +144,41 @@ export default async function HomePage() {
           .order("reputation_average", { ascending: false })
           .limit(4)
       ]);
+
+    if (user) {
+      const [
+        profileResult,
+        pendingListingsResult,
+        unreadMessagesResult,
+        unreadNotificationsResult
+      ] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("is_admin")
+          .eq("id", user.id)
+          .maybeSingle(),
+        supabase
+          .from("listings")
+          .select("id", { count: "exact", head: true })
+          .eq("seller_id", user.id)
+          .in("moderation_status", ["pending", "changes_requested", "rejected"]),
+        supabase
+          .from("messages")
+          .select("id", { count: "exact", head: true })
+          .eq("recipient_id", user.id)
+          .is("read_at", null),
+        supabase
+          .from("notifications")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id)
+          .is("read_at", null)
+      ]);
+
+      isAdmin = profileResult.data?.is_admin ?? false;
+      pendingListingsCount = pendingListingsResult.count ?? 0;
+      unreadMessagesCount = unreadMessagesResult.count ?? 0;
+      unreadNotificationsCount = unreadNotificationsResult.count ?? 0;
+    }
 
     listingsData = (listingsResult.data ?? []) as ListingRow[];
     profilesData = (profilesResult.data ?? []) as ProfileRow[];
@@ -207,7 +235,14 @@ export default async function HomePage() {
       <header className="sticky top-0 z-20 border-b-4 border-yellow-400 bg-blue-800/95 text-white backdrop-blur-xl">
         <nav className="mx-auto flex max-w-7xl items-center px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
-            <SiteMenu showAdmin={isAdmin} />
+            <SiteMenu
+              badges={{
+                listings: pendingListingsCount,
+                messages: unreadMessagesCount,
+                notifications: unreadNotificationsCount
+              }}
+              showAdmin={isAdmin}
+            />
             <Link className="flex items-center gap-3" href="/">
               <span className="pokeball h-11 w-11 shrink-0" aria-hidden="true" />
               <div>

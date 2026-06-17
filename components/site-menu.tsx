@@ -24,17 +24,34 @@ const links = [
   { href: "/marketplace", icon: ShoppingBag, label: "Marketplace" },
   { href: "/raffles", icon: Gift, label: "Sorteos" },
   { href: "/account/raffles", icon: Trophy, label: "Mis sorteos" },
-  { href: "/account/listings", icon: ListChecks, label: "Mis publicaciones" },
+  {
+    href: "/account/listings",
+    icon: ListChecks,
+    label: "Mis publicaciones",
+    badge: "listings"
+  },
   { href: "/account/operations", icon: Handshake, label: "Mis operaciones" },
-  { href: "/account/messages", icon: MessagesSquare, label: "Mensajes" },
+  { href: "/account/messages", icon: MessagesSquare, label: "Mensajes", badge: "messages" },
   { href: "/account/profile", icon: UserRound, label: "Mi perfil" },
   { href: "/account/favorites", icon: Heart, label: "Favoritos" },
-  { href: "/account/notifications", icon: Bell, label: "Notificaciones" },
+  {
+    href: "/account/notifications",
+    icon: Bell,
+    label: "Notificaciones",
+    badge: "notifications"
+  },
   { href: "/#comunidad", icon: Users, label: "Comunidad" },
   { href: "/#seguridad", icon: ShieldCheck, label: "Seguridad" }
 ];
 
-export function SiteMenu({ showAdmin = false }: { showAdmin?: boolean }) {
+type MenuBadgeKey = "listings" | "messages" | "notifications";
+
+type SiteMenuProps = {
+  badges?: Partial<Record<MenuBadgeKey, number>>;
+  showAdmin?: boolean;
+};
+
+export function SiteMenu({ badges = {}, showAdmin = false }: SiteMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const visibleLinks = showAdmin
@@ -102,29 +119,41 @@ export function SiteMenu({ showAdmin = false }: { showAdmin?: boolean }) {
 
         <nav aria-label="Navegacion principal" className="max-h-[min(68vh,470px)] overflow-y-auto p-2">
           <div className="space-y-1">
-            {visibleLinks.map((item) => (
-              <Link
-                className={`group flex min-h-11 items-center gap-3 rounded-md px-3 py-2.5 text-sm font-bold transition ${
-                  item.primary
-                    ? "bg-yellow-400 text-blue-950 hover:bg-yellow-300"
-                    : "text-blue-50 hover:bg-white/10 hover:text-yellow-300"
-                }`}
-                href={item.href}
-                key={item.href}
-                onClick={() => setIsOpen(false)}
-              >
-                <span
-                  className={`grid h-8 w-8 shrink-0 place-items-center rounded-md transition ${
+            {visibleLinks.map((item) => {
+              const badge =
+                "badge" in item && item.badge
+                  ? Math.min(badges[item.badge as MenuBadgeKey] ?? 0, 99)
+                  : 0;
+
+              return (
+                <Link
+                  className={`group flex min-h-11 items-center gap-3 rounded-md px-3 py-2.5 text-sm font-bold transition ${
                     item.primary
-                      ? "bg-blue-950/10 text-blue-950"
-                      : "bg-blue-800/80 text-blue-200 group-hover:bg-yellow-400 group-hover:text-blue-950"
+                      ? "bg-yellow-400 text-blue-950 hover:bg-yellow-300"
+                      : "text-blue-50 hover:bg-white/10 hover:text-yellow-300"
                   }`}
+                  href={item.href}
+                  key={item.href}
+                  onClick={() => setIsOpen(false)}
                 >
-                  <item.icon className="h-4 w-4" />
-                </span>
-                {item.label}
-              </Link>
-            ))}
+                  <span
+                    className={`grid h-8 w-8 shrink-0 place-items-center rounded-md transition ${
+                      item.primary
+                        ? "bg-blue-950/10 text-blue-950"
+                        : "bg-blue-800/80 text-blue-200 group-hover:bg-yellow-400 group-hover:text-blue-950"
+                    }`}
+                  >
+                    <item.icon className="h-4 w-4" />
+                  </span>
+                  <span className="min-w-0 flex-1">{item.label}</span>
+                  {badge > 0 ? (
+                    <span className="grid min-w-6 place-items-center rounded-full bg-red-500 px-2 py-1 text-[11px] font-black leading-none text-white">
+                      {badge}
+                    </span>
+                  ) : null}
+                </Link>
+              );
+            })}
           </div>
         </nav>
       </div>
