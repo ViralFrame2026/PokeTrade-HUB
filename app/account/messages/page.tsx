@@ -14,6 +14,30 @@ type MessageRow = {
   sender_id: string;
 };
 
+type ConversationPreview = {
+  key: string;
+  lastMessage: MessageRow;
+  unreadCount: number;
+};
+
+function messageDateLabel(date: string) {
+  const value = new Date(date);
+  const today = new Date();
+  const isToday = value.toDateString() === today.toDateString();
+
+  if (isToday) {
+    return new Intl.DateTimeFormat("es-AR", {
+      hour: "2-digit",
+      minute: "2-digit"
+    }).format(value);
+  }
+
+  return new Intl.DateTimeFormat("es-AR", {
+    day: "2-digit",
+    month: "short"
+  }).format(value);
+}
+
 export default async function MessagesPage() {
   const supabase = await createSupabaseServerClient();
   const {
@@ -29,20 +53,37 @@ export default async function MessagesPage() {
     .order("created_at", { ascending: false });
 
   const messages = (data ?? []) as MessageRow[];
-  const conversationMap = new Map<string, MessageRow>();
+  const conversationMap = new Map<string, ConversationPreview>();
 
   for (const message of messages) {
     if (!message.listing_id) continue;
     const otherId =
       message.sender_id === user.id ? message.recipient_id : message.sender_id;
     const key = `${message.listing_id}:${otherId}`;
-    if (!conversationMap.has(key)) conversationMap.set(key, message);
+    const current = conversationMap.get(key);
+    const isUnread = message.recipient_id === user.id && message.read_at === null;
+
+    if (!current) {
+      conversationMap.set(key, {
+        key,
+        lastMessage: message,
+        unreadCount: isUnread ? 1 : 0
+      });
+    } else if (isUnread) {
+      current.unreadCount += 1;
+    }
   }
 
-  const conversations = [...conversationMap.entries()];
-  const otherIds = [...new Set(conversations.map(([key]) => key.split(":")[1]))];
+  const conversations = [...conversationMap.values()];
+  const otherIds = [
+    ...new Set(conversations.map((conversation) => conversation.key.split(":")[1]))
+  ];
   const listingIds = [
-    ...new Set(conversations.map(([, message]) => message.listing_id).filter(Boolean))
+    ...new Set(
+      conversations
+        .map((conversation) => conversation.lastMessage.listing_id)
+        .filter(Boolean)
+    )
   ] as string[];
   const [{ data: profiles }, { data: listings }] = await Promise.all([
     otherIds.length
@@ -89,14 +130,16 @@ export default async function MessagesPage() {
 
         {conversations.length ? (
           <div className="mt-8 overflow-hidden rounded-lg border border-blue-100 bg-white shadow-sm">
-            {conversations.map(([key, message]) => {
+            {conversations.map((conversation) => {
+              const { key, lastMessage, unreadCount } = conversation;
               const [listingId, otherId] = key.split(":");
-              const isUnread =
-                message.recipient_id === user.id && message.read_at === null;
+              const isOwnLastMessage = lastMessage.sender_id === user.id;
 
               return (
                 <Link
-                  className="flex items-center gap-4 border-b border-blue-100 p-4 transition last:border-b-0 hover:bg-blue-50 sm:p-5"
+                  className={`flex items-center gap-4 border-b border-blue-100 p-4 transition last:border-b-0 hover:bg-blue-50 sm:p-5 ${
+                    unreadCount > 0 ? "bg-yellow-50/60" : ""
+                  }`}
                   href={`/account/messages/${listingId}/${otherId}`}
                   key={key}
                 >
@@ -108,14 +151,28 @@ export default async function MessagesPage() {
                       <h2 className="truncate font-black text-blue-950">
                         {profileNames.get(otherId) ?? "Entrenador TCG"}
                       </h2>
-                      {isUnread ? (
-                        <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-red-500" />
-                      ) : null}
+                      <span className="shrink-0 text-xs font-bold text-slate-400">
+                        {messageDateLabel(lastMessage.created_at)}
+                      </span>
                     </div>
                     <p className="truncate text-xs font-bold text-blue-600">
                       {listingTitles.get(listingId) ?? "Publicacion"}
                     </p>
-                    <p className="mt-1 truncate text-sm text-slate-500">{message.body}</p>
+                    <div className="mt-1 flex items-center gap-3">
+                      <p
+                        className={`min-w-0 flex-1 truncate text-sm ${
+                          unreadCount > 0 ? "font-bold text-slate-700" : "text-slate-500"
+                        }`}
+                      >
+                        {isOwnLastMessage ? "Tu: " : ""}
+                        {lastMessage.body}
+                      </p>
+                      {unreadCount > 0 ? (
+                        <span className="grid min-w-6 shrink-0 place-items-center rounded-full bg-red-500 px-2 py-1 text-[11px] font-black leading-none text-white">
+                          {Math.min(unreadCount, 99)}
+                        </span>
+                      ) : null}
+                    </div>
                   </div>
                 </Link>
               );
