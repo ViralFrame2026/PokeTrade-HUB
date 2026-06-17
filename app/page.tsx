@@ -5,6 +5,7 @@ import {
   Flame,
   Gift,
   Leaf,
+  LogIn,
   MessageCircle,
   Search,
   ShieldCheck,
@@ -12,6 +13,7 @@ import {
   Star,
   Store,
   Trophy,
+  UserRound,
   Users,
   Zap
 } from "lucide-react";
@@ -105,6 +107,7 @@ export default async function HomePage() {
   let listingsTotal = 0;
   let rafflesTotal = 0;
   let isAdmin = false;
+  let isAuthenticated = false;
   let pendingListingsCount = 0;
   let unreadMessagesCount = 0;
   let unreadNotificationsCount = 0;
@@ -114,6 +117,7 @@ export default async function HomePage() {
     const {
       data: { user }
     } = await supabase.auth.getUser();
+    isAuthenticated = Boolean(user);
 
     const [listingsResult, usersCount, listingsCount, rafflesCount, profilesResult] =
       await Promise.all([
@@ -233,7 +237,7 @@ export default async function HomePage() {
   return (
     <main className="home-page min-h-screen bg-[#eaf2ff] text-slate-900">
       <header className="sticky top-0 z-20 border-b-4 border-yellow-400 bg-blue-800/95 text-white backdrop-blur-xl">
-        <nav className="mx-auto flex max-w-7xl items-center px-4 py-4 sm:px-6 lg:px-8">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
             <SiteMenu
               badges={{
@@ -251,6 +255,14 @@ export default async function HomePage() {
               </div>
             </Link>
           </div>
+          <ButtonLink
+            href={isAuthenticated ? "/account" : "/login"}
+            icon={isAuthenticated ? UserRound : LogIn}
+            size="sm"
+            variant="light"
+          >
+            {isAuthenticated ? "Mi cuenta" : "Ingresar"}
+          </ButtonLink>
         </nav>
       </header>
 
