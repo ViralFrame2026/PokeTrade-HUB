@@ -102,7 +102,7 @@ export default async function NotificationsPage() {
           <div>
             <h1 className="text-4xl font-black text-blue-950">Notificaciones</h1>
             <p className="mt-2 text-slate-600">
-              Avisos sobre moderacion y actividad de tu cuenta.
+              Avisos sobre moderación y actividad de tu cuenta.
             </p>
           </div>
           <MarkAllNotificationsReadButton disabled={unreadCount === 0} />
@@ -161,13 +161,13 @@ export default async function NotificationsPage() {
                       </p>
                       <NotificationLink href={href} notificationId={notification.id}>
                         {notification.type === "rating_received"
-                          ? "Ver valoracion"
+                          ? "Ver valoración"
                           : ["raffle_approved", "raffle_won", "raffle_drawn"].includes(
                           notification.type
                         )
                           ? "Ver sorteo"
                           : notification.type === "listing_approved"
-                            ? "Ver publicacion"
+                            ? "Ver publicación"
                             : notification.type.startsWith("raffle_")
                               ? "Ver sorteos"
                               : "Ver mis publicaciones"}
@@ -184,7 +184,7 @@ export default async function NotificationsPage() {
               <Bell className="mx-auto h-10 w-10 text-blue-400" />
               <h2 className="mt-4 text-xl font-black text-blue-950">No tienes notificaciones</h2>
               <p className="mt-2 text-slate-600">
-                Los avisos de moderacion apareceran aqui.
+                Los avisos de moderación aparecerán aquí.
               </p>
             </div>
           </div>

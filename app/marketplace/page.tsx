@@ -154,7 +154,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
       image: card.image_large,
       location:
         [row.location_city, row.location_country].filter(Boolean).join(", ") ||
-        "Ubicacion no informada",
+        "Ubicación no informada",
       price: priceLabel(row),
       seller: profile?.display_name ?? "Entrenador TCG",
       sellerId: profile?.id,
@@ -206,7 +206,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
           </Link>
           <div className="mt-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
-              <p className="text-sm font-black uppercase text-red-500">Catalogo de la comunidad</p>
+              <p className="text-sm font-black uppercase text-red-500">Catálogo de la comunidad</p>
               <h1 className="mt-2 text-4xl font-black text-blue-950">Explorar cartas</h1>
               <p className="mt-2 text-slate-600">
                 Publicaciones aprobadas de venta, intercambio y regalo.
@@ -238,12 +238,12 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
             <div>
               <Search className="mx-auto h-10 w-10 text-blue-500" />
               <h2 className="mt-4 text-xl font-black text-blue-950">
-                {hasFilters ? "No encontramos coincidencias" : "Todavia no hay publicaciones"}
+                {hasFilters ? "No encontramos coincidencias" : "Todavía no hay publicaciones"}
               </h2>
               <p className="mx-auto mt-2 max-w-md text-slate-600">
                 {hasFilters
                   ? "Prueba con menos filtros o busca otra carta."
-                  : "Las cartas aprobadas apareceran aqui."}
+                  : "Las cartas aprobadas aparecerán aquí."}
               </p>
               {hasFilters ? (
                 <Link

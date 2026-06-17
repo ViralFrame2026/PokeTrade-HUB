@@ -91,7 +91,7 @@ export default async function FavoritesPage() {
       image: card.image_large,
       location:
         [listing.location_city, listing.location_country].filter(Boolean).join(", ") ||
-        "Ubicacion no informada",
+        "Ubicación no informada",
       price: priceLabel(listing.type, listing.price),
       seller: seller?.display_name ?? "Entrenador TCG",
       sellerId: seller?.id,
@@ -129,7 +129,7 @@ export default async function FavoritesPage() {
           Volver al inicio
         </Link>
         <h1 className="mt-5 text-4xl font-black text-blue-950">Mis favoritos</h1>
-        <p className="mt-2 text-slate-600">Cartas guardadas para revisar mas tarde.</p>
+        <p className="mt-2 text-slate-600">Cartas guardadas para revisar más tarde.</p>
 
         {listings.length > 0 ? (
           <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -142,10 +142,10 @@ export default async function FavoritesPage() {
             <div>
               <Heart className="mx-auto h-10 w-10 text-red-400" />
               <h2 className="mt-4 text-xl font-black text-blue-950">
-                Todavia no guardaste publicaciones
+                Todavía no guardaste publicaciones
               </h2>
               <p className="mt-2 text-slate-600">
-                Usa el boton de favoritos en una carta que te interese.
+                Usa el botón de favoritos en una carta que te interese.
               </p>
               <div className="mt-5">
                 <ButtonLink href="/marketplace" icon={Store}>

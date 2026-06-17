@@ -161,8 +161,8 @@ export default async function OperationsPage() {
               </p>
               <h1 className="mt-2 text-4xl font-black text-blue-950">Mis operaciones</h1>
               <p className="mt-3 max-w-2xl leading-7 text-slate-600">
-                Revisa tus compras e intercambios cerrados. Desde aqui puedes volver a
-                la publicacion para valorar al vendedor.
+                Revisa tus compras e intercambios cerrados. Desde aquí puedes volver a
+                la publicación para valorar al vendedor.
               </p>
             </div>
 
@@ -275,11 +275,11 @@ export default async function OperationsPage() {
             <div>
               <Handshake className="mx-auto h-12 w-12 text-blue-500" />
               <h2 className="mt-4 text-2xl font-black text-blue-950">
-                Aun no tienes operaciones cerradas
+                Aún no tienes operaciones cerradas
               </h2>
               <p className="mt-2 max-w-md text-slate-600">
-                Cuando un vendedor marque una publicacion como vendida o intercambiada
-                contigo, aparecera aqui para que puedas valorar la experiencia.
+                Cuando un vendedor marque una publicación como vendida o intercambiada
+                contigo, aparecerá aquí para que puedas valorar la experiencia.
               </p>
               <div className="mt-6">
                 <ButtonLink href="/marketplace" icon={Store}>
