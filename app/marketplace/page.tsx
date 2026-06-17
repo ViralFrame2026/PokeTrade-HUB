@@ -15,6 +15,7 @@ type MarketplacePageProps = {
     condition?: string;
     location?: string;
     q?: string;
+    sort?: string;
     type?: string;
   }>;
 };
@@ -75,6 +76,11 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
   const type = ["sale", "trade", "free"].includes(params.type ?? "") ? params.type! : "";
   const condition = params.condition?.trim() ?? "";
   const location = params.location?.trim() ?? "";
+  const sort = ["recent", "price_asc", "price_desc", "seller_rating"].includes(
+    params.sort ?? ""
+  )
+    ? params.sort!
+    : "recent";
   const hasSupabaseConfig = Boolean(
     process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   );
@@ -104,6 +110,33 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
     const result = await request;
     rows = (result.data ?? []) as ListingRow[];
   }
+
+  rows = rows.sort((left, right) => {
+    if (sort === "price_asc") {
+      const leftPrice =
+        left.type === "sale" ? left.price ?? Number.MAX_SAFE_INTEGER : Number.MAX_SAFE_INTEGER;
+      const rightPrice =
+        right.type === "sale" ? right.price ?? Number.MAX_SAFE_INTEGER : Number.MAX_SAFE_INTEGER;
+      return leftPrice - rightPrice;
+    }
+
+    if (sort === "price_desc") {
+      const leftPrice = left.type === "sale" ? left.price ?? 0 : 0;
+      const rightPrice = right.type === "sale" ? right.price ?? 0 : 0;
+      return rightPrice - leftPrice;
+    }
+
+    if (sort === "seller_rating") {
+      const leftProfile = firstRelated(left.profiles);
+      const rightProfile = firstRelated(right.profiles);
+      return (
+        Number(rightProfile?.reputation_average ?? 0) -
+        Number(leftProfile?.reputation_average ?? 0)
+      );
+    }
+
+    return 0;
+  });
 
   const listings: Listing[] = rows.flatMap((row) => {
     const product = firstRelated(row.products);
@@ -187,6 +220,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
             condition={condition}
             location={location}
             query={query}
+            sort={sort}
             type={type}
           />
         </div>

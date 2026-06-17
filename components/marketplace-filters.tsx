@@ -5,6 +5,7 @@ type MarketplaceFiltersProps = {
   condition: string;
   location: string;
   query: string;
+  sort: string;
   type: string;
 };
 
@@ -15,12 +16,13 @@ export function MarketplaceFilters({
   condition,
   location,
   query,
+  sort,
   type
 }: MarketplaceFiltersProps) {
   return (
     <form
       action="/marketplace"
-      className="grid gap-3 border-y border-blue-100 bg-white py-5 md:grid-cols-2 xl:grid-cols-[1.5fr_0.8fr_0.8fr_1fr_auto]"
+      className="grid gap-3 border-y border-blue-100 bg-white py-5 md:grid-cols-2 xl:grid-cols-[1.4fr_0.75fr_0.8fr_0.9fr_0.9fr_auto]"
     >
       <label>
         <span className="mb-2 block text-xs font-black uppercase text-blue-900">
@@ -72,6 +74,18 @@ export function MarketplaceFilters({
           placeholder="Ciudad o pais"
           type="search"
         />
+      </label>
+
+      <label>
+        <span className="mb-2 block text-xs font-black uppercase text-blue-900">
+          Ordenar
+        </span>
+        <select className={fieldClass} defaultValue={sort} name="sort">
+          <option value="recent">Recientes</option>
+          <option value="price_asc">Menor precio</option>
+          <option value="price_desc">Mayor precio</option>
+          <option value="seller_rating">Mejor vendedor</option>
+        </select>
       </label>
 
       <div className="flex items-end gap-2">
