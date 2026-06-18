@@ -9,7 +9,7 @@ type AuthFormProps = {
 };
 
 export function AuthForm({ nextPath }: AuthFormProps) {
-  const [mode, setMode] = useState<"login" | "register">("login");
+  const [mode, setMode] = useState<"login" | "register" | "reset">("login");
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,6 +17,13 @@ export function AuthForm({ nextPath }: AuthFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  function changeMode(nextMode: "login" | "register" | "reset") {
+    setMode(nextMode);
+    setError(null);
+    setMessage(null);
+    if (nextMode === "reset") setPassword("");
+  }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -42,9 +49,7 @@ export function AuthForm({ nextPath }: AuthFormProps) {
           }
         });
 
-        if (signUpError) {
-          throw signUpError;
-        }
+        if (signUpError) throw signUpError;
 
         if (data.session) {
           window.location.assign(nextPath);
@@ -55,14 +60,26 @@ export function AuthForm({ nextPath }: AuthFormProps) {
         return;
       }
 
+      if (mode === "reset") {
+        const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(
+          "/account/password"
+        )}`;
+        const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo
+        });
+
+        if (resetError) throw resetError;
+
+        setMessage("Te enviamos un enlace para cambiar tu contraseña.");
+        return;
+      }
+
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password
       });
 
-      if (signInError) {
-        throw signInError;
-      }
+      if (signInError) throw signInError;
 
       window.location.assign(nextPath);
     } catch (authError) {
@@ -83,11 +100,7 @@ export function AuthForm({ nextPath }: AuthFormProps) {
           className={`rounded-md px-3 py-2 text-sm font-bold transition ${
             mode === "login" ? "bg-pokemonYellow text-slate-950" : "text-slate-300"
           }`}
-          onClick={() => {
-            setMode("login");
-            setError(null);
-            setMessage(null);
-          }}
+          onClick={() => changeMode("login")}
           type="button"
         >
           Ingresar
@@ -96,11 +109,7 @@ export function AuthForm({ nextPath }: AuthFormProps) {
           className={`rounded-md px-3 py-2 text-sm font-bold transition ${
             mode === "register" ? "bg-pokemonYellow text-slate-950" : "text-slate-300"
           }`}
-          onClick={() => {
-            setMode("register");
-            setError(null);
-            setMessage(null);
-          }}
+          onClick={() => changeMode("register")}
           type="button"
         >
           Crear cuenta
@@ -143,30 +152,36 @@ export function AuthForm({ nextPath }: AuthFormProps) {
           </div>
         </label>
 
-        <label className="mt-4 block text-sm font-bold text-slate-200">
-          Contraseña
-          <div className="relative mt-2">
-            <LockKeyhole className="pointer-events-none absolute left-3 top-3 h-5 w-5 text-slate-500" />
-            <input
-              autoComplete={mode === "login" ? "current-password" : "new-password"}
-              className="w-full rounded-lg border border-white/10 bg-slate-950/70 py-3 pl-10 pr-12 text-white outline-none focus:border-pokemonYellow/60"
-              minLength={6}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="Mínimo 6 caracteres"
-              required
-              type={showPassword ? "text" : "password"}
-              value={password}
-            />
-            <button
-              aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-              className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-md text-slate-400 transition hover:bg-white/10 hover:text-pokemonYellow"
-              onClick={() => setShowPassword((current) => !current)}
-              type="button"
-            >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
-          </div>
-        </label>
+        {mode !== "reset" ? (
+          <label className="mt-4 block text-sm font-bold text-slate-200">
+            Contraseña
+            <div className="relative mt-2">
+              <LockKeyhole className="pointer-events-none absolute left-3 top-3 h-5 w-5 text-slate-500" />
+              <input
+                autoComplete={mode === "login" ? "current-password" : "new-password"}
+                className="w-full rounded-lg border border-white/10 bg-slate-950/70 py-3 pl-10 pr-12 text-white outline-none focus:border-pokemonYellow/60"
+                minLength={6}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Mínimo 6 caracteres"
+                required
+                type={showPassword ? "text" : "password"}
+                value={password}
+              />
+              <button
+                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-md text-slate-400 transition hover:bg-white/10 hover:text-pokemonYellow"
+                onClick={() => setShowPassword((current) => !current)}
+                type="button"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </label>
+        ) : (
+          <p className="mt-4 rounded-lg border border-white/10 bg-white/5 p-3 text-sm leading-6 text-slate-300">
+            Ingresa tu email y te enviaremos un enlace para crear una nueva contraseña.
+          </p>
+        )}
 
         {error ? (
           <p className="mt-4 rounded-lg border border-red-400/30 bg-red-500/10 p-3 text-sm font-semibold text-red-100">
@@ -186,8 +201,30 @@ export function AuthForm({ nextPath }: AuthFormProps) {
           type="submit"
         >
           {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-          {mode === "login" ? "Ingresar" : "Crear cuenta"}
+          {mode === "login"
+            ? "Ingresar"
+            : mode === "register"
+              ? "Crear cuenta"
+              : "Enviar enlace"}
         </button>
+
+        {mode === "login" ? (
+          <button
+            className="mt-4 w-full text-center text-sm font-bold text-pokemonYellow transition hover:text-yellow-200"
+            onClick={() => changeMode("reset")}
+            type="button"
+          >
+            Olvidé mi contraseña
+          </button>
+        ) : mode === "reset" ? (
+          <button
+            className="mt-4 w-full text-center text-sm font-bold text-pokemonYellow transition hover:text-yellow-200"
+            onClick={() => changeMode("login")}
+            type="button"
+          >
+            Volver a ingresar
+          </button>
+        ) : null}
       </form>
     </>
   );
