@@ -5,16 +5,17 @@ import { Eye, EyeOff, Loader2, LockKeyhole, Mail, UserRound } from "lucide-react
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 type AuthFormProps = {
+  initialError?: string | null;
   nextPath: string;
 };
 
-export function AuthForm({ nextPath }: AuthFormProps) {
+export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
   const [mode, setMode] = useState<"login" | "register" | "reset">("login");
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(initialError);
   const [message, setMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 

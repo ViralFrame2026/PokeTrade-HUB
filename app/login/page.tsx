@@ -7,6 +7,7 @@ export const metadata = {
 
 type LoginPageProps = {
   searchParams: Promise<{
+    error?: string;
     next?: string;
   }>;
 };
@@ -15,8 +16,14 @@ function safeNextPath(value?: string) {
   return value?.startsWith("/") && !value.startsWith("//") ? value : "/";
 }
 
+function safeLoginError(value?: string) {
+  if (!value) return null;
+  return value.length > 200 ? "No pudimos completar el acceso." : value;
+}
+
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const params = await searchParams;
+  const initialError = safeLoginError(params.error);
   const nextPath = safeNextPath(params.next);
 
   return (
@@ -35,7 +42,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             la comunidad.
           </p>
         </div>
-        <AuthForm nextPath={nextPath} />
+        <AuthForm initialError={initialError} nextPath={nextPath} />
       </section>
     </main>
   );

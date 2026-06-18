@@ -21,5 +21,6 @@ export async function GET(request: Request) {
 
   const loginUrl = new URL("/login", url.origin);
   loginUrl.searchParams.set("error", "No pudimos confirmar la cuenta.");
+  loginUrl.searchParams.set("next", nextPath);
   return NextResponse.redirect(loginUrl);
 }
