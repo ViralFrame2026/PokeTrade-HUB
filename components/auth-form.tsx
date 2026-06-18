@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, LockKeyhole, Mail, UserRound } from "lucide-react";
+import { Eye, EyeOff, Loader2, LockKeyhole, Mail, UserRound } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 type AuthFormProps = {
@@ -13,6 +13,7 @@ export function AuthForm({ nextPath }: AuthFormProps) {
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -68,7 +69,7 @@ export function AuthForm({ nextPath }: AuthFormProps) {
       setError(
         authError instanceof Error
           ? authError.message
-          : "No pudimos completar la autenticacion."
+          : "No pudimos completar la autenticación."
       );
     } finally {
       setIsSubmitting(false);
@@ -109,7 +110,7 @@ export function AuthForm({ nextPath }: AuthFormProps) {
       <form className="mt-5" onSubmit={handleSubmit}>
         {mode === "register" ? (
           <label className="block text-sm font-bold text-slate-200">
-            Nombre publico
+            Nombre público
             <div className="relative mt-2">
               <UserRound className="pointer-events-none absolute left-3 top-3 h-5 w-5 text-slate-500" />
               <input
@@ -143,19 +144,27 @@ export function AuthForm({ nextPath }: AuthFormProps) {
         </label>
 
         <label className="mt-4 block text-sm font-bold text-slate-200">
-          Contrasena
+          Contraseña
           <div className="relative mt-2">
             <LockKeyhole className="pointer-events-none absolute left-3 top-3 h-5 w-5 text-slate-500" />
             <input
               autoComplete={mode === "login" ? "current-password" : "new-password"}
-              className="w-full rounded-lg border border-white/10 bg-slate-950/70 py-3 pl-10 pr-3 text-white outline-none focus:border-pokemonYellow/60"
+              className="w-full rounded-lg border border-white/10 bg-slate-950/70 py-3 pl-10 pr-12 text-white outline-none focus:border-pokemonYellow/60"
               minLength={6}
               onChange={(event) => setPassword(event.target.value)}
-              placeholder="Minimo 6 caracteres"
+              placeholder="Mínimo 6 caracteres"
               required
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={password}
             />
+            <button
+              aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+              className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-md text-slate-400 transition hover:bg-white/10 hover:text-pokemonYellow"
+              onClick={() => setShowPassword((current) => !current)}
+              type="button"
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
           </div>
         </label>
 

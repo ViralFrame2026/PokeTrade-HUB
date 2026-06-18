@@ -31,7 +31,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           </p>
           <h1 className="mt-2 text-4xl font-black text-white">Ingresar</h1>
           <p className="mt-4 leading-7 text-slate-300">
-            Accede para publicar, crear sorteos y construir reputacion dentro de
+            Accede para publicar, crear sorteos y construir reputación dentro de
             la comunidad.
           </p>
         </div>
