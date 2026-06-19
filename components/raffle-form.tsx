@@ -3,6 +3,16 @@
 import { CalendarClock, Gift, Loader2, Users } from "lucide-react";
 import { FormEvent, useState } from "react";
 
+const TITLE_MAX_LENGTH = 100;
+const PRIZE_MAX_LENGTH = 160;
+const REQUIREMENTS_MAX_LENGTH = 1000;
+
+function minimumCloseDateTime() {
+  const value = new Date(Date.now() + 60 * 60 * 1000);
+  value.setMinutes(value.getMinutes() - value.getTimezoneOffset());
+  return value.toISOString().slice(0, 16);
+}
+
 export function RaffleForm() {
   const [title, setTitle] = useState("");
   const [prize, setPrize] = useState("");
@@ -13,6 +23,10 @@ export function RaffleForm() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const minCloseDateTime = minimumCloseDateTime();
+  const titleRemaining = TITLE_MAX_LENGTH - title.length;
+  const prizeRemaining = PRIZE_MAX_LENGTH - prize.length;
+  const requirementsRemaining = REQUIREMENTS_MAX_LENGTH - requirements.length;
 
   async function submitRaffle(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -61,34 +75,39 @@ export function RaffleForm() {
         <Field icon={Gift} label="Titulo">
           <input
             className="field-input"
-            maxLength={100}
+            maxLength={TITLE_MAX_LENGTH}
             minLength={5}
             onChange={(event) => setTitle(event.target.value)}
             placeholder="Ej: Sorteo ETB Caos Creciente"
             required
             value={title}
           />
+          <Counter current={title.length} max={TITLE_MAX_LENGTH} min={5} remaining={titleRemaining} />
         </Field>
         <Field icon={Gift} label="Premio">
           <input
             className="field-input"
-            maxLength={160}
+            maxLength={PRIZE_MAX_LENGTH}
             minLength={5}
             onChange={(event) => setPrize(event.target.value)}
             placeholder="Describe el producto entregado"
             required
             value={prize}
           />
+          <Counter current={prize.length} max={PRIZE_MAX_LENGTH} min={5} remaining={prizeRemaining} />
         </Field>
         <Field icon={CalendarClock} label="Fecha de cierre">
           <input
             className="field-input"
-            min={new Date().toISOString().slice(0, 16)}
+            min={minCloseDateTime}
             onChange={(event) => setClosesAt(event.target.value)}
             required
             type="datetime-local"
             value={closesAt}
           />
+          <span className="mt-1 block text-xs text-slate-500">
+            Debe cerrar al menos una hora despues de crearlo.
+          </span>
         </Field>
         <Field icon={Users} label="Limite de participantes">
           <input
@@ -117,12 +136,18 @@ export function RaffleForm() {
         Requisitos
         <textarea
           className="mt-2 min-h-32 w-full rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3 text-white outline-none focus:border-pokemonYellow/60"
-          maxLength={1000}
+          maxLength={REQUIREMENTS_MAX_LENGTH}
           minLength={10}
           onChange={(event) => setRequirements(event.target.value)}
           placeholder="Explica las condiciones de participacion y entrega"
           required
           value={requirements}
+        />
+        <Counter
+          current={requirements.length}
+          max={REQUIREMENTS_MAX_LENGTH}
+          min={10}
+          remaining={requirementsRemaining}
         />
       </label>
 
@@ -149,6 +174,24 @@ export function RaffleForm() {
         Enviar sorteo a revision
       </button>
     </form>
+  );
+}
+
+function Counter({
+  current,
+  max,
+  min,
+  remaining
+}: {
+  current: number;
+  max: number;
+  min: number;
+  remaining: number;
+}) {
+  return (
+    <span className="mt-1 block text-xs text-slate-500">
+      {current}/{min} minimo | {remaining} de {max} caracteres restantes
+    </span>
   );
 }
 
