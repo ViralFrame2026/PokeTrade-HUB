@@ -130,6 +130,11 @@ export default async function PublicProfilePage({
   const location =
     [profile.city, profile.country].filter(Boolean).join(", ") ||
     "Ubicacion no informada";
+  const joinedLabel = new Intl.DateTimeFormat("es-AR", {
+    month: "long",
+    year: "numeric"
+  }).format(new Date(profile.joined_at));
+  const averageRating = Number(profile.reputation_average).toFixed(1);
 
   return (
     <main className="min-h-screen bg-[#eaf2ff] text-slate-900">
@@ -178,7 +183,7 @@ export default async function PublicProfilePage({
             <Stat
               icon={Star}
               label={`${profile.reputation_count} valoraciones`}
-              value={Number(profile.reputation_average).toFixed(1)}
+              value={averageRating}
             />
             <Stat
               icon={Store}
@@ -186,6 +191,20 @@ export default async function PublicProfilePage({
               value={String(listings.length)}
             />
           </div>
+        </div>
+        <div className="mx-auto grid max-w-7xl gap-3 border-t border-blue-100 px-4 py-4 text-sm font-bold text-slate-600 sm:grid-cols-3 sm:px-6">
+          <p className="inline-flex items-center gap-2">
+            <CalendarDays className="h-4 w-4 text-blue-600" />
+            Miembro desde {joinedLabel}
+          </p>
+          <p className="inline-flex items-center gap-2">
+            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+            Promedio {averageRating} de 5
+          </p>
+          <p className="inline-flex items-center gap-2">
+            <ShieldCheck className="h-4 w-4 text-blue-600" />
+            {profile.reputation_count} operacion{profile.reputation_count === 1 ? "" : "es"} valorada{profile.reputation_count === 1 ? "" : "s"}
+          </p>
         </div>
       </section>
 
@@ -199,11 +218,7 @@ export default async function PublicProfilePage({
           </div>
           <span className="hidden items-center gap-2 text-sm font-semibold text-slate-500 sm:flex">
             <CalendarDays className="h-4 w-4 text-blue-600" />
-            Miembro desde{" "}
-            {new Intl.DateTimeFormat("es-AR", {
-              month: "long",
-              year: "numeric"
-            }).format(new Date(profile.joined_at))}
+            Miembro desde {joinedLabel}
           </span>
         </div>
         {listings.length ? (
