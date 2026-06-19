@@ -31,6 +31,9 @@ type CreateListingResponse = {
   error: string | null;
 };
 
+const DESCRIPTION_MAX_LENGTH = 2000;
+const TRADE_WANTS_MAX_LENGTH = 1000;
+
 export function PublishForm() {
   const [query, setQuery] = useState("");
   const [cards, setCards] = useState<PokemonTcgCard[]>([]);
@@ -49,6 +52,8 @@ export function PublishForm() {
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
+  const descriptionRemaining = DESCRIPTION_MAX_LENGTH - description.length;
+  const tradeWantsRemaining = TRADE_WANTS_MAX_LENGTH - tradeWants.length;
 
   useEffect(() => {
     const previews = photos.map((photo) => URL.createObjectURL(photo));
@@ -460,11 +465,15 @@ export function PublishForm() {
             Busca a cambio
             <input
               className="mt-2 w-full rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3 text-white outline-none focus:border-pokemonYellow/60"
+              maxLength={TRADE_WANTS_MAX_LENGTH}
               onChange={(event) => setTradeWants(event.target.value)}
               placeholder="Ej: cartas de Gengar o Mew"
               required
               value={tradeWants}
             />
+            <span className="mt-1 block text-xs text-slate-500">
+              {tradeWantsRemaining} caracteres restantes
+            </span>
           </label>
         ) : null}
         <label className="text-sm font-bold text-slate-200">
@@ -492,12 +501,16 @@ export function PublishForm() {
         Descripcion
         <textarea
           className="mt-2 min-h-32 w-full rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3 text-white outline-none focus:border-pokemonYellow/60"
+          maxLength={DESCRIPTION_MAX_LENGTH}
           minLength={10}
           onChange={(event) => setDescription(event.target.value)}
           placeholder="Describe condicion, detalles y forma de entrega"
           required
           value={description}
         />
+        <span className="mt-1 block text-xs text-slate-500">
+          {description.length}/10 minimo | {descriptionRemaining} caracteres restantes
+        </span>
       </label>
       <section className="mt-5 rounded-lg border border-white/10 bg-slate-950/45 p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">

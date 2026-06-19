@@ -21,6 +21,8 @@ type EditListingFormProps = {
 
 const inputClass =
   "mt-2 w-full rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3 text-white outline-none focus:border-pokemonYellow/60";
+const DESCRIPTION_MAX_LENGTH = 2000;
+const TRADE_WANTS_MAX_LENGTH = 1000;
 
 export function EditListingForm({ initial, listingId }: EditListingFormProps) {
   const router = useRouter();
@@ -33,6 +35,8 @@ export function EditListingForm({ initial, listingId }: EditListingFormProps) {
   const [locationCountry, setLocationCountry] = useState(initial.locationCountry);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const descriptionRemaining = DESCRIPTION_MAX_LENGTH - description.length;
+  const tradeWantsRemaining = TRADE_WANTS_MAX_LENGTH - tradeWants.length;
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -130,10 +134,14 @@ export function EditListingForm({ initial, listingId }: EditListingFormProps) {
             Busca a cambio
             <input
               className={inputClass}
+              maxLength={TRADE_WANTS_MAX_LENGTH}
               onChange={(event) => setTradeWants(event.target.value)}
               required
               value={tradeWants}
             />
+            <span className="mt-1 block text-xs text-slate-500">
+              {tradeWantsRemaining} caracteres restantes
+            </span>
           </label>
         ) : null}
 
@@ -162,11 +170,15 @@ export function EditListingForm({ initial, listingId }: EditListingFormProps) {
         Descripcion
         <textarea
           className={`${inputClass} min-h-36`}
+          maxLength={DESCRIPTION_MAX_LENGTH}
           minLength={10}
           onChange={(event) => setDescription(event.target.value)}
           required
           value={description}
         />
+        <span className="mt-1 block text-xs text-slate-500">
+          {description.length}/10 minimo | {descriptionRemaining} caracteres restantes
+        </span>
       </label>
 
       {error ? (
