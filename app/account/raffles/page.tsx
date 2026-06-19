@@ -74,6 +74,12 @@ export default async function MyRafflesPage() {
     .eq("creator_id", user.id)
     .order("created_at", { ascending: false });
   const raffles = (data ?? []) as RaffleRow[];
+  const approved = raffles.filter((raffle) => raffle.moderation_status === "approved").length;
+  const pending = raffles.filter((raffle) => raffle.moderation_status === "pending").length;
+  const closed = raffles.filter(
+    (raffle) => new Date(raffle.closes_at).getTime() <= Date.now()
+  ).length;
+  const withWinner = raffles.filter((raffle) => Boolean(raffle.winner_id)).length;
 
   return (
     <main className="min-h-screen bg-[#eaf2ff] text-slate-900">
@@ -104,6 +110,17 @@ export default async function MyRafflesPage() {
         <p className="mt-2 text-slate-600">
           Controla la moderacion, participantes y selección del ganador.
         </p>
+
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <SummaryCard label="Total creados" value={raffles.length} />
+          <SummaryCard label="En revision" value={pending} variant="blue" />
+          <SummaryCard label="Aprobados" value={approved} variant="green" />
+          <SummaryCard
+            label={withWinner > 0 ? "Con ganador" : "Finalizados"}
+            value={withWinner > 0 ? withWinner : closed}
+            variant={withWinner > 0 ? "yellow" : "slate"}
+          />
+        </div>
 
         {raffles.length ? (
           <div className="mt-8 space-y-4">
@@ -206,5 +223,29 @@ export default async function MyRafflesPage() {
         )}
       </section>
     </main>
+  );
+}
+
+function SummaryCard({
+  label,
+  value,
+  variant = "blue"
+}: {
+  label: string;
+  value: number;
+  variant?: "blue" | "green" | "slate" | "yellow";
+}) {
+  const colors = {
+    blue: "border-blue-200 bg-blue-50 text-blue-800",
+    green: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    slate: "border-slate-200 bg-slate-50 text-slate-700",
+    yellow: "border-yellow-300 bg-yellow-50 text-amber-800"
+  };
+
+  return (
+    <div className={`rounded-lg border p-5 ${colors[variant]}`}>
+      <p className="text-3xl font-black">{value}</p>
+      <p className="mt-1 text-sm font-bold">{label}</p>
+    </div>
   );
 }
