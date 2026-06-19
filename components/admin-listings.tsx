@@ -1,20 +1,49 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Loader2, X } from "lucide-react";
+import Image from "next/image";
+import { Check, Loader2, MapPin, Store, X } from "lucide-react";
 
 export type AdminListing = {
+  cardImage: string | null;
+  cardName: string;
+  condition: string;
   created_at: string;
+  description: string;
   id: string;
+  location: string;
   moderation_status: string;
+  price: number | null;
+  rarity: string | null;
   seller: string;
+  setName: string;
   title: string;
+  tradeWants: string | null;
   type: string;
 };
 
 type AdminListingsProps = {
   listings: AdminListing[];
 };
+
+function typeLabel(type: string) {
+  return {
+    free: "Gratis",
+    sale: "Venta",
+    trade: "Intercambio"
+  }[type] ?? type;
+}
+
+function valueLabel(listing: AdminListing) {
+  if (listing.type === "trade") return listing.tradeWants ? `Busca ${listing.tradeWants}` : "Intercambio";
+  if (listing.type === "free") return "Gratis";
+
+  return new Intl.NumberFormat("es-AR", {
+    currency: "ARS",
+    maximumFractionDigits: 0,
+    style: "currency"
+  }).format(listing.price ?? 0);
+}
 
 export function AdminListings({ listings: initialListings }: AdminListingsProps) {
   const [listings, setListings] = useState(initialListings);
@@ -82,72 +111,100 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
           {error}
         </div>
       ) : null}
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[900px] text-left text-sm">
-          <thead className="bg-white/[0.04] text-slate-400">
-            <tr>
-              <th className="px-5 py-4">Titulo</th>
-              <th className="px-5 py-4">Tipo</th>
-              <th className="px-5 py-4">Usuario</th>
-              <th className="px-5 py-4">Creada</th>
-              <th className="px-5 py-4">Moderacion</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/10">
-            {listings.map((listing) => (
-              <tr key={listing.id}>
-                <td className="px-5 py-4 font-bold text-white">{listing.title}</td>
-                <td className="px-5 py-4 capitalize text-slate-300">{listing.type}</td>
-                <td className="px-5 py-4 text-slate-300">{listing.seller}</td>
-                <td className="px-5 py-4 text-slate-400">
+      <div className="divide-y divide-white/10">
+        {listings.map((listing) => (
+          <article
+            className="grid gap-5 p-5 lg:grid-cols-[112px_minmax(0,1fr)_340px] lg:items-center"
+            key={listing.id}
+          >
+            <div className="relative h-36 overflow-hidden rounded-lg border border-white/10 bg-slate-950/70">
+              {listing.cardImage ? (
+                <Image
+                  alt={listing.cardName}
+                  className="object-contain p-2"
+                  fill
+                  sizes="112px"
+                  src={listing.cardImage}
+                />
+              ) : (
+                <Store className="absolute inset-0 m-auto h-8 w-8 text-slate-500" />
+              )}
+            </div>
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full bg-yellow-400 px-3 py-1 text-xs font-black text-slate-950">
+                  {typeLabel(listing.type)}
+                </span>
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-slate-200">
+                  {listing.condition}
+                </span>
+                {listing.rarity ? (
+                  <span className="rounded-full bg-blue-400/15 px-3 py-1 text-xs font-bold text-blue-100">
+                    {listing.rarity}
+                  </span>
+                ) : null}
+              </div>
+              <h3 className="mt-3 truncate text-xl font-black text-white">{listing.cardName}</h3>
+              <p className="mt-1 text-sm font-semibold text-yellow-300">{listing.setName}</p>
+              <p className="mt-3 line-clamp-2 text-sm leading-6 text-slate-300">
+                {listing.description}
+              </p>
+              <div className="mt-3 flex flex-wrap items-center gap-3 text-xs font-semibold text-slate-400">
+                <span>{listing.seller}</span>
+                {listing.location ? (
+                  <span className="inline-flex items-center gap-1">
+                    <MapPin className="h-3.5 w-3.5" />
+                    {listing.location}
+                  </span>
+                ) : null}
+                <span>
                   {new Intl.DateTimeFormat("es", {
                     dateStyle: "medium",
                     timeStyle: "short"
                   }).format(new Date(listing.created_at))}
-                </td>
-                <td className="px-5 py-4">
-                  <div className="flex min-w-72 flex-col gap-2">
-                    <input
-                      className="rounded-md border border-white/10 bg-slate-950/70 px-3 py-2 text-white outline-none focus:border-red-300/60"
-                      onChange={(event) =>
-                        setRejectionReasons((current) => ({
-                          ...current,
-                          [listing.id]: event.target.value
-                        }))
-                      }
-                      placeholder="Motivo si se rechaza"
-                      value={rejectionReasons[listing.id] ?? ""}
-                    />
-                    <div className="flex gap-2">
-                      <button
-                        className="inline-flex flex-1 items-center justify-center gap-2 rounded-md bg-emerald-400 px-3 py-2 font-black text-emerald-950 disabled:opacity-60"
-                        disabled={busyId === listing.id}
-                        onClick={() => moderate(listing.id, "approve")}
-                        type="button"
-                      >
-                        {busyId === listing.id ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <Check className="h-4 w-4" />
-                        )}
-                        Aprobar
-                      </button>
-                      <button
-                        className="inline-flex flex-1 items-center justify-center gap-2 rounded-md border border-red-300/30 bg-red-500/10 px-3 py-2 font-black text-red-100 disabled:opacity-60"
-                        disabled={busyId === listing.id}
-                        onClick={() => moderate(listing.id, "reject")}
-                        type="button"
-                      >
-                        <X className="h-4 w-4" />
-                        Rechazar
-                      </button>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </span>
+              </div>
+              <p className="mt-3 text-sm font-black text-yellow-300">{valueLabel(listing)}</p>
+            </div>
+            <div className="flex min-w-0 flex-col gap-2">
+              <input
+                className="rounded-md border border-white/10 bg-slate-950/70 px-3 py-2 text-white outline-none focus:border-red-300/60"
+                onChange={(event) =>
+                  setRejectionReasons((current) => ({
+                    ...current,
+                    [listing.id]: event.target.value
+                  }))
+                }
+                placeholder="Motivo si se rechaza"
+                value={rejectionReasons[listing.id] ?? ""}
+              />
+              <div className="flex gap-2">
+                <button
+                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-md bg-emerald-400 px-3 py-2 font-black text-emerald-950 disabled:opacity-60"
+                  disabled={busyId === listing.id}
+                  onClick={() => moderate(listing.id, "approve")}
+                  type="button"
+                >
+                  {busyId === listing.id ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Check className="h-4 w-4" />
+                  )}
+                  Aprobar
+                </button>
+                <button
+                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-md border border-red-300/30 bg-red-500/10 px-3 py-2 font-black text-red-100 disabled:opacity-60"
+                  disabled={busyId === listing.id}
+                  onClick={() => moderate(listing.id, "reject")}
+                  type="button"
+                >
+                  <X className="h-4 w-4" />
+                  Rechazar
+                </button>
+              </div>
+            </div>
+          </article>
+        ))}
       </div>
     </>
   );

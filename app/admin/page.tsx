@@ -14,11 +14,52 @@ export const dynamic = "force-dynamic";
 
 type ListingRow = {
   created_at: string;
+  description: string;
   id: string;
+  location_city: string | null;
+  location_country: string | null;
   moderation_status: string;
+  price: number | null;
   profiles: { display_name: string } | { display_name: string }[] | null;
   title: string;
+  trade_wants: string | null;
   type: string;
+  products:
+    | {
+        condition: string;
+        cards:
+          | {
+              image_large: string;
+              official_name: string;
+              rarity: string | null;
+              set_name: string;
+            }
+          | {
+              image_large: string;
+              official_name: string;
+              rarity: string | null;
+              set_name: string;
+            }[]
+          | null;
+      }
+    | {
+        condition: string;
+        cards:
+          | {
+              image_large: string;
+              official_name: string;
+              rarity: string | null;
+              set_name: string;
+            }
+          | {
+              image_large: string;
+              official_name: string;
+              rarity: string | null;
+              set_name: string;
+            }[]
+          | null;
+      }[]
+    | null;
 };
 
 type ReportRow = {
@@ -46,6 +87,10 @@ function sellerName(profile: ListingRow["profiles"]) {
   return profile?.display_name ?? "Usuario";
 }
 
+function firstRelated<T>(value: T | T[] | null) {
+  return Array.isArray(value) ? value[0] ?? null : value;
+}
+
 export default async function AdminPage() {
   const supabase = await createSupabaseServerClient();
   const {
@@ -64,7 +109,7 @@ export default async function AdminPage() {
   const [pendingResult, rafflesResult, reportsResult, usersResult, approvedResult, userRolesResult] = await Promise.all([
     supabase
       .from("listings")
-      .select("id, title, type, moderation_status, created_at, profiles!listings_seller_id_fkey(display_name)")
+      .select("id, title, description, type, moderation_status, price, trade_wants, location_city, location_country, created_at, profiles!listings_seller_id_fkey(display_name), products!listings_product_id_fkey(condition, cards!products_card_id_fkey(official_name, image_large, set_name, rarity))")
       .eq("moderation_status", "pending")
       .order("created_at", { ascending: true }),
     supabase
@@ -94,14 +139,28 @@ export default async function AdminPage() {
   ]);
 
   const listings: AdminListing[] = ((pendingResult.data ?? []) as ListingRow[]).map(
-    (listing) => ({
-      created_at: listing.created_at,
-      id: listing.id,
-      moderation_status: listing.moderation_status,
-      seller: sellerName(listing.profiles),
-      title: listing.title,
-      type: listing.type
-    })
+    (listing) => {
+      const product = firstRelated(listing.products);
+      const card = firstRelated(product?.cards ?? null);
+
+      return {
+        cardImage: card?.image_large ?? null,
+        cardName: card?.official_name ?? listing.title,
+        condition: product?.condition ?? "Sin condicion",
+        created_at: listing.created_at,
+        description: listing.description,
+        id: listing.id,
+        location: [listing.location_city, listing.location_country].filter(Boolean).join(", "),
+        moderation_status: listing.moderation_status,
+        price: listing.price,
+        rarity: card?.rarity ?? null,
+        seller: sellerName(listing.profiles),
+        setName: card?.set_name ?? "Set no disponible",
+        title: listing.title,
+        tradeWants: listing.trade_wants,
+        type: listing.type
+      };
+    }
   );
   const reports: AdminReport[] = ((reportsResult.data ?? []) as ReportRow[]).flatMap(
     (report) => report.listing_id ? [{
