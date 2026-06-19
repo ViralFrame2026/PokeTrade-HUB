@@ -16,6 +16,7 @@ export function AdminRaffles({ raffles: initialRaffles }: { raffles: AdminRaffle
   const [reasons, setReasons] = useState<Record<string, string>>({});
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   async function moderate(raffleId: string, action: "approve" | "reject") {
     const reason = reasons[raffleId]?.trim();
@@ -26,7 +27,9 @@ export function AdminRaffles({ raffles: initialRaffles }: { raffles: AdminRaffle
 
     setBusyId(raffleId);
     setError(null);
+    setNotice(null);
     try {
+      const moderatedRaffle = raffles.find((raffle) => raffle.id === raffleId);
       const response = await fetch(`/api/admin/raffles/${raffleId}`, {
         body: JSON.stringify({ action, reason: action === "reject" ? reason : null }),
         headers: { "Content-Type": "application/json" },
@@ -37,6 +40,11 @@ export function AdminRaffles({ raffles: initialRaffles }: { raffles: AdminRaffle
         throw new Error(payload.error ?? "No pudimos moderar el sorteo.");
       }
       setRaffles((current) => current.filter((raffle) => raffle.id !== raffleId));
+      setNotice(
+        action === "approve"
+          ? `Sorteo aprobado: ${moderatedRaffle?.title ?? "sorteo"}`
+          : `Sorteo rechazado: ${moderatedRaffle?.title ?? "sorteo"}`
+      );
     } catch (moderationError) {
       setError(
         moderationError instanceof Error
@@ -61,6 +69,11 @@ export function AdminRaffles({ raffles: initialRaffles }: { raffles: AdminRaffle
       {error ? (
         <div className="m-5 rounded-lg border border-red-400/30 bg-red-500/10 p-4 text-sm font-semibold text-red-100">
           {error}
+        </div>
+      ) : null}
+      {notice ? (
+        <div className="m-5 rounded-lg border border-emerald-400/30 bg-emerald-500/10 p-4 text-sm font-semibold text-emerald-100">
+          {notice}
         </div>
       ) : null}
       <div className="divide-y divide-white/10">

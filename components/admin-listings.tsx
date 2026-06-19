@@ -50,6 +50,7 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
   const [rejectionReasons, setRejectionReasons] = useState<Record<string, string>>({});
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   async function moderate(
     listingId: string,
@@ -64,8 +65,10 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
 
     setBusyId(listingId);
     setError(null);
+    setNotice(null);
 
     try {
+      const moderatedListing = listings.find((listing) => listing.id === listingId);
       const response = await fetch(`/api/admin/listings/${listingId}`, {
         body: JSON.stringify({
           action,
@@ -85,6 +88,11 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
       }
 
       setListings((current) => current.filter((listing) => listing.id !== listingId));
+      setNotice(
+        action === "approve"
+          ? `Publicacion aprobada: ${moderatedListing?.cardName ?? "carta"}`
+          : `Publicacion rechazada: ${moderatedListing?.cardName ?? "carta"}`
+      );
     } catch (moderationError) {
       setError(
         moderationError instanceof Error
@@ -109,6 +117,11 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
       {error ? (
         <div className="m-5 rounded-lg border border-red-400/30 bg-red-500/10 p-4 text-sm font-semibold text-red-100">
           {error}
+        </div>
+      ) : null}
+      {notice ? (
+        <div className="m-5 rounded-lg border border-emerald-400/30 bg-emerald-500/10 p-4 text-sm font-semibold text-emerald-100">
+          {notice}
         </div>
       ) : null}
       <div className="divide-y divide-white/10">
