@@ -218,7 +218,9 @@ export default async function AccountPage() {
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           <QuickLink href="/account/profile" icon={UserRound} label="Editar perfil" />
+          <QuickLink href={`/users/${user.id}`} icon={UserRound} label="Ver perfil publico" />
           <QuickLink href="/account/password" icon={LockKeyhole} label="Cambiar contraseña" />
+          <QuickLink href="/raffles/new" icon={Trophy} label="Crear sorteo" />
           <QuickLink href="/marketplace" icon={Store} label="Explorar marketplace" />
           {profile.is_admin ? (
             <QuickLink href="/admin" icon={ShieldCheck} label="Panel administrador" />
