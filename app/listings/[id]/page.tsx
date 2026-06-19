@@ -199,6 +199,7 @@ export default async function ListingDetailPage({
     data: { user }
   } = await supabase.auth.getUser();
   const isCompleted = ["sold", "traded", "finished"].includes(listing.status);
+  const isAvailable = listing.status === "active";
   const [favoriteResult, ratingResult, existingReportResult, reviewsResult] =
     await Promise.all([
       user
@@ -346,7 +347,18 @@ export default async function ListingDetailPage({
               </div>
             ) : null}
 
-            {user?.id !== listing.seller_id ? (
+            {!isAvailable ? (
+              <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4 text-center">
+                <p className="font-black text-slate-800">
+                  Esta publicacion ya no esta disponible.
+                </p>
+                <p className="mt-1 text-sm text-slate-500">
+                  Estado actual: {statusLabel(listing.status)}.
+                </p>
+              </div>
+            ) : null}
+
+            {user?.id !== listing.seller_id && isAvailable ? (
               <>
                 <StartConversationButton
                   isAuthenticated={Boolean(user)}
