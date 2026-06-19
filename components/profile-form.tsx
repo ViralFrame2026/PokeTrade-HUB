@@ -16,6 +16,8 @@ type ProfileFormProps = {
 
 const inputClass =
   "mt-2 w-full rounded-lg border border-blue-200 bg-white px-3 py-3 text-blue-950 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100";
+const BIO_MAX_LENGTH = 500;
+const DISPLAY_NAME_MAX_LENGTH = 80;
 
 export function ProfileForm({ initial }: ProfileFormProps) {
   const [displayName, setDisplayName] = useState(initial.displayName);
@@ -27,6 +29,8 @@ export function ProfileForm({ initial }: ProfileFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const bioRemaining = BIO_MAX_LENGTH - bio.length;
+  const displayNameRemaining = DISPLAY_NAME_MAX_LENGTH - displayName.length;
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -75,12 +79,15 @@ export function ProfileForm({ initial }: ProfileFormProps) {
           Nombre visible
           <input
             className={inputClass}
-            maxLength={80}
+            maxLength={DISPLAY_NAME_MAX_LENGTH}
             minLength={2}
             onChange={(event) => setDisplayName(event.target.value)}
             required
             value={displayName}
           />
+          <span className="mt-1 block text-xs text-slate-500">
+            {displayName.length}/2 minimo | {displayNameRemaining} caracteres restantes
+          </span>
         </label>
 
         <label className="text-sm font-bold text-blue-950">
@@ -132,11 +139,14 @@ export function ProfileForm({ initial }: ProfileFormProps) {
           Presentacion
           <textarea
             className={`${inputClass} min-h-32`}
-            maxLength={500}
+            maxLength={BIO_MAX_LENGTH}
             onChange={(event) => setBio(event.target.value)}
             placeholder="Cuenta brevemente que coleccionas o que tipos de intercambios buscas."
             value={bio}
           />
+          <span className="mt-1 block text-xs text-slate-500">
+            {bioRemaining} caracteres restantes
+          </span>
         </label>
       </div>
 
