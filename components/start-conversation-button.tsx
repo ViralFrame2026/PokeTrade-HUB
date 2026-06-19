@@ -15,12 +15,14 @@ export function StartConversationButton({
   const router = useRouter();
 
   function openConversation() {
+    const conversationPath = `/account/messages/${listingId}/${sellerId}`;
+
     if (!isAuthenticated) {
-      router.push(`/login?next=${encodeURIComponent(`/listings/${listingId}`)}`);
+      router.push(`/login?next=${encodeURIComponent(conversationPath)}`);
       return;
     }
 
-    router.push(`/account/messages/${listingId}/${sellerId}`);
+    router.push(conversationPath);
   }
 
   return (
