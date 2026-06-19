@@ -27,7 +27,7 @@ export default async function RaffleDetailPage({
   const { data: raffle } = await supabase
     .from("raffles")
     .select(
-      "id, creator_id, title, prize, image_path, requirements, closes_at, entry_limit, moderation_status, winner_id, drawn_at, profiles!raffles_creator_id_fkey(display_name), winner:profiles!raffles_winner_id_fkey(display_name)"
+      "id, creator_id, title, prize, image_path, requirements, closes_at, entry_limit, moderation_status, winner_id, drawn_at, raffle_entries(count), profiles!raffles_creator_id_fkey(display_name), winner:profiles!raffles_winner_id_fkey(display_name)"
     )
     .eq("id", id)
     .eq("moderation_status", "approved")
@@ -47,6 +47,7 @@ export default async function RaffleDetailPage({
     : { data: null };
   const isClosed = new Date(raffle.closes_at).getTime() <= Date.now();
   const isCreator = user?.id === raffle.creator_id;
+  const entryCount = raffle.raffle_entries[0]?.count ?? 0;
 
   return (
     <main className="min-h-screen bg-[#eaf2ff] text-slate-900">
@@ -98,8 +99,8 @@ export default async function RaffleDetailPage({
               icon={Users}
               text={
                 raffle.entry_limit
-                  ? `Limite: ${raffle.entry_limit} participantes`
-                  : "Sin limite definido"
+                  ? `${entryCount}/${raffle.entry_limit} participantes`
+                  : `${entryCount} participante${entryCount === 1 ? "" : "s"}`
               }
             />
             <Meta icon={ShieldCheck} text="Revisado por moderacion" />

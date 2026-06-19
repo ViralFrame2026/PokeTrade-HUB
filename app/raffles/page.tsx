@@ -13,6 +13,7 @@ type RaffleRow = {
   image_path: string | null;
   prize: string;
   profiles: { display_name: string } | { display_name: string }[] | null;
+  raffle_entries: Array<{ count: number }>;
   title: string;
 };
 
@@ -27,7 +28,7 @@ export default async function RafflesPage() {
   const { data } = await supabase
     .from("raffles")
     .select(
-      "id, title, prize, image_path, closes_at, entry_limit, profiles!raffles_creator_id_fkey(display_name)"
+      "id, title, prize, image_path, closes_at, entry_limit, raffle_entries(count), profiles!raffles_creator_id_fkey(display_name)"
     )
     .eq("moderation_status", "approved")
     .gt("closes_at", new Date().toISOString())
@@ -62,11 +63,17 @@ export default async function RafflesPage() {
 
         {raffles.length ? (
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {raffles.map((raffle) => (
-              <article
-                className="overflow-hidden rounded-lg border border-blue-100 bg-white shadow-[0_12px_35px_rgba(30,64,175,0.10)]"
-                key={raffle.id}
-              >
+            {raffles.map((raffle) => {
+              const entryCount = raffle.raffle_entries[0]?.count ?? 0;
+              const capacityLabel = raffle.entry_limit
+                ? `${entryCount}/${raffle.entry_limit} participantes`
+                : `${entryCount} participante${entryCount === 1 ? "" : "s"}`;
+
+              return (
+                <article
+                  className="overflow-hidden rounded-lg border border-blue-100 bg-white shadow-[0_12px_35px_rgba(30,64,175,0.10)]"
+                  key={raffle.id}
+                >
                 <div className="relative aspect-[16/10] bg-[linear-gradient(145deg,#1d4ed8,#10245e)]">
                   {raffle.image_path ? (
                     <Image
@@ -98,9 +105,7 @@ export default async function RafflesPage() {
                     </p>
                     <p className="flex items-center gap-2">
                       <Users className="h-4 w-4 text-blue-600" />
-                      {raffle.entry_limit
-                        ? `Hasta ${raffle.entry_limit} participantes`
-                        : "Sin limite definido"}
+                      {capacityLabel}
                     </p>
                   </div>
                   <p className="mt-4 text-xs font-bold text-slate-400">
@@ -114,7 +119,8 @@ export default async function RafflesPage() {
                   </Link>
                 </div>
               </article>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="mt-8 grid min-h-72 place-items-center rounded-lg border-2 border-dashed border-blue-200 bg-white px-6 text-center">
