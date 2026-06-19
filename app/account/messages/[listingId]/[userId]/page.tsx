@@ -1,4 +1,5 @@
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft, ExternalLink, Store } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { MessageComposer } from "@/components/message-composer";
@@ -13,6 +14,63 @@ type MessageRow = {
   recipient_id: string;
   sender_id: string;
 };
+
+type Related<T> = T | T[] | null;
+
+type ListingContext = {
+  id: string;
+  moderation_status: string;
+  price: number | null;
+  seller_id: string;
+  status: string;
+  title: string;
+  trade_wants: string | null;
+  type: string;
+  products: Related<{
+    condition: string;
+    cards: Related<{
+      image_large: string;
+      official_name: string;
+      set_name: string;
+    }>;
+  }>;
+};
+
+function firstRelated<T>(value: Related<T>) {
+  return Array.isArray(value) ? value[0] ?? null : value;
+}
+
+function typeLabel(type: string) {
+  return {
+    free: "Gratis",
+    sale: "Venta",
+    trade: "Intercambio"
+  }[type] ?? type;
+}
+
+function valueLabel(listing: ListingContext) {
+  if (listing.type === "trade") {
+    return listing.trade_wants ? `Busca ${listing.trade_wants}` : "Intercambio";
+  }
+
+  if (listing.type === "free") return "Gratis";
+
+  return new Intl.NumberFormat("es-AR", {
+    currency: "ARS",
+    maximumFractionDigits: 0,
+    style: "currency"
+  }).format(listing.price ?? 0);
+}
+
+function statusLabel(status: string) {
+  return {
+    active: "Disponible",
+    finished: "Finalizada",
+    reserved: "Reservada",
+    sold: "Vendida",
+    traded: "Intercambiada"
+  }[status] ?? status;
+}
 
 export default async function ConversationPage({
   params
@@ -32,7 +90,7 @@ export default async function ConversationPage({
   const [{ data: listing }, { data: profile }] = await Promise.all([
     supabase
       .from("listings")
-      .select("id, title, seller_id, moderation_status")
+      .select("id, title, seller_id, moderation_status, type, status, price, trade_wants, products!listings_product_id_fkey(condition, cards!products_card_id_fkey(official_name, image_large, set_name))")
       .eq("id", listingId)
       .maybeSingle(),
     supabase.from("profiles").select("id, display_name").eq("id", otherId).maybeSingle()
@@ -47,6 +105,10 @@ export default async function ConversationPage({
   ) {
     notFound();
   }
+
+  const listingContext = listing as ListingContext;
+  const product = firstRelated(listingContext.products);
+  const card = firstRelated(product?.cards ?? null);
 
   const { data } = await supabase
     .from("messages")
@@ -94,6 +156,47 @@ export default async function ConversationPage({
 
       <section className="mx-auto max-w-4xl px-4 py-6 sm:px-6">
         <div className="overflow-hidden rounded-lg border border-blue-100 bg-white shadow-[0_18px_48px_rgba(30,64,175,0.10)]">
+          <div className="grid gap-4 border-b border-blue-100 bg-white p-4 sm:grid-cols-[88px_minmax(0,1fr)_auto] sm:items-center">
+            <div className="relative h-24 overflow-hidden rounded-lg bg-blue-50">
+              {card?.image_large ? (
+                <Image
+                  alt={card.official_name}
+                  className="object-contain p-2"
+                  fill
+                  sizes="88px"
+                  src={card.image_large}
+                />
+              ) : (
+                <Store className="absolute inset-0 m-auto h-7 w-7 text-blue-300" />
+              )}
+            </div>
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full bg-yellow-100 px-3 py-1 text-xs font-black text-amber-800">
+                  {typeLabel(listingContext.type)}
+                </span>
+                <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">
+                  {statusLabel(listingContext.status)}
+                </span>
+              </div>
+              <h1 className="mt-2 truncate text-lg font-black text-blue-950">
+                {card?.official_name ?? listingContext.title}
+              </h1>
+              <p className="mt-1 truncate text-sm font-semibold text-slate-500">
+                {[card?.set_name, product?.condition].filter(Boolean).join(" | ")}
+              </p>
+              <p className="mt-2 text-sm font-black text-red-500">
+                {valueLabel(listingContext)}
+              </p>
+            </div>
+            <Link
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-blue-200 px-4 py-3 text-sm font-black text-blue-800 transition hover:bg-blue-50"
+              href={`/listings/${listingId}`}
+            >
+              <ExternalLink className="h-4 w-4" />
+              Ver publicacion
+            </Link>
+          </div>
           <div className="min-h-[55vh] space-y-3 bg-blue-50/60 p-4 sm:p-6">
             {messages.length ? (
               messages.map((message) => {
