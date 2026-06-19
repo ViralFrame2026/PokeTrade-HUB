@@ -1,4 +1,14 @@
-import { AlertTriangle, CheckCircle2, FileWarning, Gift, ShieldCheck, Users } from "lucide-react";
+import {
+  AlertTriangle,
+  CheckCircle2,
+  DollarSign,
+  FileWarning,
+  Gift,
+  Percent,
+  ShieldCheck,
+  Store,
+  Users
+} from "lucide-react";
 import { AdminListings, type AdminListing } from "@/components/admin-listings";
 import { AdminRaffles, type AdminRaffle } from "@/components/admin-raffles";
 import { AdminReports, type AdminReport } from "@/components/admin-reports";
@@ -11,6 +21,8 @@ export const metadata = {
 };
 
 export const dynamic = "force-dynamic";
+
+const PLATFORM_COMMISSION_RATE = 0.05;
 
 type ListingRow = {
   created_at: string;
@@ -71,6 +83,10 @@ type ReportRow = {
   reason: string;
 };
 
+type ClosedSaleRow = {
+  price: number | null;
+};
+
 function listingTitle(listing: ReportRow["listings"]) {
   if (Array.isArray(listing)) {
     return listing[0]?.title ?? "Publicacion no disponible";
@@ -91,6 +107,14 @@ function firstRelated<T>(value: T | T[] | null) {
   return Array.isArray(value) ? value[0] ?? null : value;
 }
 
+function moneyLabel(value: number) {
+  return new Intl.NumberFormat("es-AR", {
+    currency: "ARS",
+    maximumFractionDigits: 0,
+    style: "currency"
+  }).format(value);
+}
+
 export default async function AdminPage() {
   const supabase = await createSupabaseServerClient();
   const {
@@ -106,7 +130,16 @@ export default async function AdminPage() {
   const startOfToday = new Date();
   startOfToday.setHours(0, 0, 0, 0);
 
-  const [pendingResult, rafflesResult, reportsResult, usersResult, approvedResult, userRolesResult] = await Promise.all([
+  const [
+    pendingResult,
+    rafflesResult,
+    reportsResult,
+    usersResult,
+    approvedResult,
+    activeListingsResult,
+    closedSalesResult,
+    userRolesResult
+  ] = await Promise.all([
     supabase
       .from("listings")
       .select("id, title, description, type, moderation_status, price, trade_wants, location_city, location_country, created_at, profiles!listings_seller_id_fkey(display_name), products!listings_product_id_fkey(condition, cards!products_card_id_fkey(official_name, image_large, set_name, rarity))")
@@ -128,6 +161,17 @@ export default async function AdminPage() {
       .select("id", { count: "exact", head: true })
       .eq("moderation_status", "approved")
       .gte("approved_at", startOfToday.toISOString()),
+    supabase
+      .from("listings")
+      .select("id", { count: "exact", head: true })
+      .eq("moderation_status", "approved")
+      .eq("status", "active"),
+    supabase
+      .from("listings")
+      .select("price")
+      .eq("moderation_status", "approved")
+      .eq("type", "sale")
+      .eq("status", "sold"),
     currentProfile?.is_super_admin
       ? supabase
           .from("profiles")
@@ -137,6 +181,9 @@ export default async function AdminPage() {
           .order("joined_at", { ascending: true })
       : Promise.resolve({ data: [] })
   ]);
+  const closedSales = (closedSalesResult.data ?? []) as ClosedSaleRow[];
+  const grossSales = closedSales.reduce((total, sale) => total + Number(sale.price ?? 0), 0);
+  const estimatedCommission = grossSales * PLATFORM_COMMISSION_RATE;
 
   const listings: AdminListing[] = ((pendingResult.data ?? []) as ListingRow[]).map(
     (listing) => {
@@ -214,6 +261,33 @@ export default async function AdminPage() {
       value: String(approvedResult.count ?? 0)
     }
   ];
+  const revenueMetrics = [
+    {
+      icon: Users,
+      label: "Usuarios registrados",
+      value: String(usersResult.count ?? 0)
+    },
+    {
+      icon: Store,
+      label: "Publicaciones activas",
+      value: String(activeListingsResult.count ?? 0)
+    },
+    {
+      icon: CheckCircle2,
+      label: "Ventas cerradas",
+      value: String(closedSales.length)
+    },
+    {
+      icon: DollarSign,
+      label: "Volumen vendido",
+      value: moneyLabel(grossSales)
+    },
+    {
+      icon: Percent,
+      label: "Comision estimada 5%",
+      value: moneyLabel(estimatedCommission)
+    }
+  ];
 
   return (
     <main className="mx-auto min-h-screen max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -238,6 +312,33 @@ export default async function AdminPage() {
           </article>
         ))}
       </section>
+      {currentProfile?.is_super_admin ? (
+        <section className="glass mt-8 rounded-lg p-5">
+          <div className="flex flex-col justify-between gap-3 border-b border-white/10 pb-5 sm:flex-row sm:items-end">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-yellow-300">
+                Solo dueño de la pagina
+              </p>
+              <h2 className="mt-2 text-xl font-black text-white">Ingresos estimados</h2>
+              <p className="mt-2 text-sm text-slate-400">
+                Métricas internas para sponsors, publicidad y comisión por ventas cerradas.
+              </p>
+            </div>
+            <span className="rounded-full bg-yellow-400 px-3 py-1 text-xs font-black text-slate-950">
+              Sin pagos reales conectados
+            </span>
+          </div>
+          <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+            {revenueMetrics.map((metric) => (
+              <article className="rounded-lg border border-white/10 bg-white/[0.04] p-4" key={metric.label}>
+                <metric.icon className="h-5 w-5 text-pokemonYellow" />
+                <p className="mt-3 break-words text-2xl font-black text-white">{metric.value}</p>
+                <p className="mt-1 text-xs font-semibold text-slate-400">{metric.label}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
       <section className="glass mt-8 overflow-hidden rounded-lg">
         <div className="border-b border-white/10 p-5">
           <h2 className="text-xl font-black text-white">Cola de sorteos</h2>
