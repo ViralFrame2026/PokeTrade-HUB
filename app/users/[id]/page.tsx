@@ -106,25 +106,27 @@ export default async function PublicProfilePage({
 
     if (!card) return [];
 
-    return [{
-      cardMeta: `${card.set_name} | ${card.rarity ?? "Rareza no informada"} | #${card.number ?? "N/D"}`,
-      description:
-        row.description ??
-        (row.type === "trade" ? `Busca: ${row.trade_wants ?? "propuestás"}` : ""),
-      id: row.id,
-      image: card.image_large,
-      location:
-        [row.location_city, row.location_country].filter(Boolean).join(", ") ||
-        "Ubicación no informada",
-      price: priceLabel(row.type, row.price),
-      seller: profile.display_name,
-      sellerId: profile.id,
-      sellerRating: Number(profile.reputation_average).toFixed(1),
-      status: "Activa",
-      title: card.official_name,
-      type: typeLabel(row.type),
-      verified: profile.is_verified
-    }];
+    return [
+      {
+        cardMeta: `${card.set_name} | ${card.rarity ?? "Rareza no informada"} | #${card.number ?? "N/D"}`,
+        description:
+          row.description ??
+          (row.type === "trade" ? `Busca: ${row.trade_wants ?? "propuestas"}` : ""),
+        id: row.id,
+        image: card.image_large,
+        location:
+          [row.location_city, row.location_country].filter(Boolean).join(", ") ||
+          "Ubicación no informada",
+        price: priceLabel(row.type, row.price),
+        seller: profile.display_name,
+        sellerId: profile.id,
+        sellerRating: Number(profile.reputation_average).toFixed(1),
+        status: "Activa",
+        title: card.official_name,
+        type: typeLabel(row.type),
+        verified: profile.is_verified
+      }
+    ];
   });
   const ratings = (ratingData ?? []) as RatingRow[];
   const location =
@@ -137,7 +139,7 @@ export default async function PublicProfilePage({
   const averageRating = Number(profile.reputation_average).toFixed(1);
 
   return (
-    <main className="min-h-screen bg-[#eaf2ff] text-slate-900">
+    <main className="min-h-screen bg-[#071535] text-slate-900">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
           <Link className="flex items-center gap-3" href="/">
@@ -146,7 +148,7 @@ export default async function PublicProfilePage({
               <p className="text-sm font-black tracking-[0.2em] text-yellow-300">
                 POKETRADE
               </p>
-              <p className="text-xs font-bold text-blue-100">PERFIL PUBLICO</p>
+              <p className="text-xs font-bold text-blue-100">PERFIL PÚBLICO</p>
             </div>
           </Link>
           <Link
@@ -159,24 +161,25 @@ export default async function PublicProfilePage({
         </nav>
       </header>
 
-      <section className="border-b border-blue-100 bg-white">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[auto_1fr_auto] lg:items-center">
-          <div className="grid h-24 w-24 place-items-center overflow-hidden rounded-full bg-blue-700 text-3xl font-black text-yellow-300">
+      <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_82%_0%,rgba(250,204,21,.18),transparent_30%),linear-gradient(135deg,#123cba_0%,#071535_72%)]">
+        <div className="absolute inset-0 opacity-15 [background-image:linear-gradient(120deg,rgba(255,255,255,.16)_1px,transparent_1px)] [background-size:34px_34px]" />
+        <div className="relative mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[auto_1fr_auto] lg:items-center">
+          <div className="grid h-24 w-24 place-items-center overflow-hidden rounded-full border-4 border-yellow-300 bg-blue-950 text-3xl font-black text-yellow-300">
             {profile.display_name.slice(0, 2).toUpperCase()}
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-4xl font-black text-blue-950">{profile.display_name}</h1>
+              <h1 className="text-4xl font-black text-white">{profile.display_name}</h1>
               {profile.is_verified ? (
-                <BadgeCheck className="h-6 w-6 text-blue-600" aria-label="Perfil verificado" />
+                <BadgeCheck className="h-6 w-6 text-yellow-300" aria-label="Perfil verificado" />
               ) : null}
             </div>
-            <p className="mt-3 flex items-center gap-2 text-slate-500">
-              <MapPin className="h-4 w-4 text-blue-600" />
+            <p className="mt-3 flex items-center gap-2 text-blue-100">
+              <MapPin className="h-4 w-4 text-yellow-300" />
               {location}
             </p>
             {profile.bio ? (
-              <p className="mt-4 max-w-2xl leading-7 text-slate-600">{profile.bio}</p>
+              <p className="mt-4 max-w-2xl leading-7 text-blue-100">{profile.bio}</p>
             ) : null}
           </div>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
@@ -192,9 +195,9 @@ export default async function PublicProfilePage({
             />
           </div>
         </div>
-        <div className="mx-auto grid max-w-7xl gap-3 border-t border-blue-100 px-4 py-4 text-sm font-bold text-slate-600 sm:grid-cols-3 sm:px-6">
+        <div className="relative mx-auto grid max-w-7xl gap-3 border-t border-white/10 px-4 py-4 text-sm font-bold text-blue-100 sm:grid-cols-3 sm:px-6">
           <p className="inline-flex items-center gap-2">
-            <CalendarDays className="h-4 w-4 text-blue-600" />
+            <CalendarDays className="h-4 w-4 text-yellow-300" />
             Miembro desde {joinedLabel}
           </p>
           <p className="inline-flex items-center gap-2">
@@ -202,7 +205,7 @@ export default async function PublicProfilePage({
             Promedio {averageRating} de 5
           </p>
           <p className="inline-flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-blue-600" />
+            <ShieldCheck className="h-4 w-4 text-yellow-300" />
             {profile.reputation_count} operación{profile.reputation_count === 1 ? "" : "es"} valorada{profile.reputation_count === 1 ? "" : "s"}
           </p>
         </div>
@@ -211,13 +214,13 @@ export default async function PublicProfilePage({
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
         <div className="mb-6 flex items-end justify-between gap-4">
           <div>
-            <p className="text-sm font-black uppercase tracking-[0.16em] text-red-500">
+            <p className="text-sm font-black uppercase tracking-[0.16em] text-yellow-300">
               Marketplace
             </p>
-            <h2 className="mt-2 text-3xl font-black text-blue-950">Publicaciones activas</h2>
+            <h2 className="mt-2 text-3xl font-black text-white">Publicaciones activas</h2>
           </div>
-          <span className="hidden items-center gap-2 text-sm font-semibold text-slate-500 sm:flex">
-            <CalendarDays className="h-4 w-4 text-blue-600" />
+          <span className="hidden items-center gap-2 text-sm font-semibold text-blue-100 sm:flex">
+            <CalendarDays className="h-4 w-4 text-yellow-300" />
             Miembro desde {joinedLabel}
           </span>
         </div>
@@ -228,15 +231,15 @@ export default async function PublicProfilePage({
             ))}
           </div>
         ) : (
-          <div className="rounded-lg border-2 border-dashed border-blue-200 bg-white p-10 text-center text-slate-600">
+          <div className="rounded-lg border-2 border-dashed border-white/15 bg-white/[0.05] p-10 text-center text-blue-100">
             Este vendedor no tiene publicaciones activas.
           </div>
         )}
 
         <div className="mt-12">
           <div className="flex items-center gap-3">
-            <ShieldCheck className="h-7 w-7 text-blue-600" />
-            <h2 className="text-3xl font-black text-blue-950">Valoraciones verificadas</h2>
+            <ShieldCheck className="h-7 w-7 text-yellow-300" />
+            <h2 className="text-3xl font-black text-white">Valoraciones verificadas</h2>
           </div>
           {ratings.length ? (
             <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -245,24 +248,24 @@ export default async function PublicProfilePage({
 
                 return (
                   <article
-                    className="rounded-lg border border-blue-100 bg-white p-5 shadow-sm"
+                    className="rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-[0_18px_45px_rgba(0,0,0,.18)]"
                     key={rating.id}
                   >
                     <div className="flex items-center justify-between gap-3">
-                      <p className="font-black text-blue-950">
+                      <p className="font-black text-white">
                         {reviewer?.display_name ?? "Entrenador TCG"}
                       </p>
-                      <span className="flex items-center gap-1 font-black text-amber-600">
+                      <span className="flex items-center gap-1 font-black text-amber-300">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                         {rating.stars}
                       </span>
                     </div>
                     {rating.comment ? (
-                      <p className="mt-3 leading-6 text-slate-600">{rating.comment}</p>
+                      <p className="mt-3 leading-6 text-blue-100">{rating.comment}</p>
                     ) : (
-                      <p className="mt-3 text-sm italic text-slate-400">Sin comentario.</p>
+                      <p className="mt-3 text-sm italic text-blue-200">Sin comentario.</p>
                     )}
-                    <p className="mt-3 text-xs font-semibold text-slate-400">
+                    <p className="mt-3 text-xs font-semibold text-blue-200">
                       {new Intl.DateTimeFormat("es-AR", {
                         dateStyle: "medium"
                       }).format(new Date(rating.created_at))}
@@ -272,7 +275,7 @@ export default async function PublicProfilePage({
               })}
             </div>
           ) : (
-            <div className="mt-6 rounded-lg border border-blue-100 bg-white p-8 text-center text-slate-500">
+            <div className="mt-6 rounded-lg border border-white/10 bg-white/[0.05] p-8 text-center text-blue-100">
               Todavía no recibió valoraciones.
             </div>
           )}
@@ -292,10 +295,10 @@ function Stat({
   value: string;
 }) {
   return (
-    <div className="rounded-lg border border-blue-100 bg-blue-50 p-4">
-      <Icon className="h-5 w-5 text-blue-600" />
-      <p className="mt-2 text-2xl font-black text-blue-950">{value}</p>
-      <p className="text-xs font-bold text-slate-500">{label}</p>
+    <div className="rounded-lg border border-white/10 bg-white/10 p-4 shadow-[0_14px_35px_rgba(0,0,0,.18)]">
+      <Icon className="h-5 w-5 text-yellow-300" />
+      <p className="mt-2 text-2xl font-black text-white">{value}</p>
+      <p className="text-xs font-bold text-blue-100">{label}</p>
     </div>
   );
 }

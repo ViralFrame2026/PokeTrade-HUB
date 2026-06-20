@@ -190,7 +190,7 @@ function Counter({
 }) {
   return (
     <span className="mt-1 block text-xs text-slate-500">
-      {current}/{min} minimo | {remaining} de {max} caracteres restantes
+      {current}/{min} mínimo | {remaining} de {max} caracteres restantes
     </span>
   );
 }

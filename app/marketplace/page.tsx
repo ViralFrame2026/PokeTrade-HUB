@@ -150,7 +150,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
       cardMeta: `${card.set_name} | ${card.rarity ?? "Rareza no informada"} | #${card.number ?? "N/D"}`,
       description:
         row.description ??
-        (row.type === "trade" ? `Busca: ${row.trade_wants ?? "propuestás"}` : ""),
+        (row.type === "trade" ? `Busca: ${row.trade_wants ?? "propuestas"}` : ""),
       id: row.id,
       image: card.image_large,
       location:

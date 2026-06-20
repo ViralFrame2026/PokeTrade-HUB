@@ -15,7 +15,7 @@ type ProfileFormProps = {
 };
 
 const inputClass =
-  "mt-2 w-full rounded-lg border border-blue-200 bg-white px-3 py-3 text-blue-950 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100";
+  "mt-2 w-full rounded-lg border border-white/10 bg-white/10 px-3 py-3 text-white outline-none transition placeholder:text-blue-200 focus:border-yellow-300 focus:ring-2 focus:ring-yellow-300/20";
 const BIO_MAX_LENGTH = 500;
 const DISPLAY_NAME_MAX_LENGTH = 80;
 
@@ -71,11 +71,11 @@ export function ProfileForm({ initial }: ProfileFormProps) {
 
   return (
     <form
-      className="rounded-lg border border-blue-100 bg-white p-5 shadow-sm sm:p-7"
+      className="rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-[0_18px_45px_rgba(0,0,0,.18)] sm:p-7"
       onSubmit={handleSubmit}
     >
       <div className="grid gap-5 sm:grid-cols-2">
-        <label className="text-sm font-bold text-blue-950 sm:col-span-2">
+        <label className="text-sm font-bold text-white sm:col-span-2">
           Nombre visible
           <input
             className={inputClass}
@@ -85,12 +85,12 @@ export function ProfileForm({ initial }: ProfileFormProps) {
             required
             value={displayName}
           />
-          <span className="mt-1 block text-xs text-slate-500">
-            {displayName.length}/2 minimo | {displayNameRemaining} caracteres restantes
+          <span className="mt-1 block text-xs text-blue-200">
+            {displayName.length}/2 mínimo | {displayNameRemaining} caracteres restantes
           </span>
         </label>
 
-        <label className="text-sm font-bold text-blue-950">
+        <label className="text-sm font-bold text-white">
           Ciudad
           <input
             className={inputClass}
@@ -101,8 +101,8 @@ export function ProfileForm({ initial }: ProfileFormProps) {
           />
         </label>
 
-        <label className="text-sm font-bold text-blue-950">
-          Pais
+        <label className="text-sm font-bold text-white">
+          País
           <input
             className={inputClass}
             maxLength={100}
@@ -112,7 +112,7 @@ export function ProfileForm({ initial }: ProfileFormProps) {
           />
         </label>
 
-        <label className="text-sm font-bold text-blue-950">
+        <label className="text-sm font-bold text-white">
           WhatsApp
           <input
             className={inputClass}
@@ -124,7 +124,7 @@ export function ProfileForm({ initial }: ProfileFormProps) {
           />
         </label>
 
-        <label className="text-sm font-bold text-blue-950">
+        <label className="text-sm font-bold text-white">
           Instagram
           <input
             className={inputClass}
@@ -135,34 +135,34 @@ export function ProfileForm({ initial }: ProfileFormProps) {
           />
         </label>
 
-        <label className="text-sm font-bold text-blue-950 sm:col-span-2">
-          Presentacion
+        <label className="text-sm font-bold text-white sm:col-span-2">
+          Presentación
           <textarea
             className={`${inputClass} min-h-32`}
             maxLength={BIO_MAX_LENGTH}
             onChange={(event) => setBio(event.target.value)}
-            placeholder="Cuenta brevemente que coleccionas o que tipos de intercambios buscas."
+            placeholder="Cuenta brevemente qué coleccionás o qué tipos de intercambios buscas."
             value={bio}
           />
-          <span className="mt-1 block text-xs text-slate-500">
+          <span className="mt-1 block text-xs text-blue-200">
             {bioRemaining} caracteres restantes
           </span>
         </label>
       </div>
 
-      <p className="mt-4 text-sm leading-6 text-slate-500">
+      <p className="mt-4 text-sm leading-6 text-blue-100">
         WhatsApp e Instagram solo se muestran como opciones de contacto en tus
         publicaciones. Son opcionales porque PokeTrade también tiene mensajes internos.
       </p>
 
       {error ? (
-        <div className="mt-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">
+        <div className="mt-5 rounded-lg border border-red-300/30 bg-red-500/10 p-4 text-sm font-semibold text-red-200">
           {error}
         </div>
       ) : null}
 
       {success ? (
-        <div className="mt-5 flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm font-bold text-emerald-700">
+        <div className="mt-5 flex items-center gap-2 rounded-lg border border-emerald-300/30 bg-emerald-500/10 p-4 text-sm font-bold text-emerald-200">
           <CheckCircle2 className="h-5 w-5" />
           Perfil actualizado correctamente.
         </div>

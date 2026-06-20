@@ -23,7 +23,7 @@ export default async function ProfilePage() {
   if (!profile) redirect("/");
 
   return (
-    <main className="min-h-screen bg-[#eaf2ff] text-slate-900">
+    <main className="min-h-screen bg-[#071535] text-white">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
         <nav className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
           <Link className="flex items-center gap-3" href="/">
@@ -62,23 +62,27 @@ export default async function ProfilePage() {
         </nav>
       </header>
 
-      <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+      <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_82%_0%,rgba(250,204,21,.18),transparent_30%),linear-gradient(135deg,#123cba_0%,#071535_72%)]">
+        <div className="absolute inset-0 opacity-15 [background-image:linear-gradient(120deg,rgba(255,255,255,.16)_1px,transparent_1px)] [background-size:34px_34px]" />
+        <div className="relative mx-auto max-w-5xl px-4 py-10 sm:px-6">
         <Link
-          className="inline-flex items-center gap-2 text-sm font-bold text-blue-700 hover:text-blue-900"
-          href="/"
+          className="inline-flex items-center gap-2 text-sm font-bold text-blue-100 hover:text-yellow-300"
+          href="/account"
         >
           <ArrowLeft className="h-4 w-4" />
-          Volver al inicio
+          Volver a mi cuenta
         </Link>
 
         <div className="mt-6 grid gap-8 lg:grid-cols-[0.72fr_1.28fr]">
           <section>
-            <div className="grid h-16 w-16 place-items-center rounded-full bg-blue-700 text-white">
+            <div className="grid h-16 w-16 place-items-center rounded-full border-2 border-yellow-300 bg-blue-950 text-yellow-300">
               <IdCard className="h-8 w-8" />
             </div>
-            <p className="mt-6 text-sm font-black uppercase text-red-500">Cuenta de vendedor</p>
-            <h1 className="mt-2 text-4xl font-black text-blue-950">Mi perfil</h1>
-            <p className="mt-4 leading-7 text-slate-600">
+            <p className="mt-6 text-sm font-black uppercase tracking-[0.16em] text-yellow-300">
+              Cuenta de vendedor
+            </p>
+            <h1 className="mt-2 text-4xl font-black text-white">Mi perfil</h1>
+            <p className="mt-4 leading-7 text-blue-100">
               Estos datos ayudan a generar confianza y permiten que los compradores
               se comuniquen contigo.
             </p>
@@ -100,7 +104,8 @@ export default async function ProfilePage() {
             }}
           />
         </div>
-      </div>
+        </div>
+      </section>
     </main>
   );
 }

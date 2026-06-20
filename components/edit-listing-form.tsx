@@ -156,7 +156,7 @@ export function EditListingForm({ initial, listingId }: EditListingFormProps) {
         </label>
 
         <label className="text-sm font-bold text-slate-200">
-          Pais
+          País
           <input
             className={inputClass}
             onChange={(event) => setLocationCountry(event.target.value)}
@@ -177,7 +177,7 @@ export function EditListingForm({ initial, listingId }: EditListingFormProps) {
           value={description}
         />
         <span className="mt-1 block text-xs text-slate-500">
-          {description.length}/10 minimo | {descriptionRemaining} caracteres restantes
+          {description.length}/10 mínimo | {descriptionRemaining} caracteres restantes
         </span>
       </label>
 
