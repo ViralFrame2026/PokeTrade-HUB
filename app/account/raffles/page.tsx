@@ -82,7 +82,7 @@ export default async function MyRafflesPage() {
   const withWinner = raffles.filter((raffle) => Boolean(raffle.winner_id)).length;
 
   return (
-    <main className="min-h-screen bg-[#eaf2ff] text-slate-900">
+    <main className="min-h-screen bg-[#071535] text-white">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
           <Link className="flex items-center gap-3" href="/">
@@ -98,16 +98,18 @@ export default async function MyRafflesPage() {
         </nav>
       </header>
 
-      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+      <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_82%_0%,rgba(250,204,21,.18),transparent_30%),linear-gradient(135deg,#123cba_0%,#071535_72%)]">
+        <div className="absolute inset-0 opacity-15 [background-image:linear-gradient(120deg,rgba(255,255,255,.16)_1px,transparent_1px)] [background-size:34px_34px]" />
+        <div className="relative mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <Link
-          className="inline-flex items-center gap-2 text-sm font-bold text-blue-700 hover:text-blue-900"
+          className="inline-flex items-center gap-2 text-sm font-bold text-blue-100 hover:text-yellow-300"
           href="/raffles"
         >
           <ArrowLeft className="h-4 w-4" />
           Ver sorteos públicos
         </Link>
-        <h1 className="mt-5 text-4xl font-black text-blue-950">Mis sorteos</h1>
-        <p className="mt-2 text-slate-600">
+        <h1 className="mt-5 text-4xl font-black text-white">Mis sorteos</h1>
+        <p className="mt-2 text-blue-100">
           Controla la moderación, participantes y selección del ganador.
         </p>
 
@@ -121,7 +123,10 @@ export default async function MyRafflesPage() {
             variant={withWinner > 0 ? "yellow" : "slate"}
           />
         </div>
+        </div>
+      </section>
 
+      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
         {raffles.length ? (
           <div className="mt-8 space-y-4">
             {raffles.map((raffle) => {
@@ -133,7 +138,7 @@ export default async function MyRafflesPage() {
 
               return (
                 <article
-                  className="grid gap-5 rounded-lg border border-blue-100 bg-white p-5 shadow-sm lg:grid-cols-[1fr_230px] lg:items-center"
+                  className="grid gap-5 rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-[0_18px_45px_rgba(0,0,0,.18)] lg:grid-cols-[1fr_230px] lg:items-center"
                   key={raffle.id}
                 >
                   <div className="min-w-0">
@@ -148,9 +153,9 @@ export default async function MyRafflesPage() {
                         Gratuito
                       </span>
                     </div>
-                    <h2 className="mt-3 text-xl font-black text-blue-950">{raffle.title}</h2>
-                    <p className="mt-1 font-semibold text-blue-700">{raffle.prize}</p>
-                    <div className="mt-4 flex flex-wrap gap-4 text-sm font-semibold text-slate-500">
+                    <h2 className="mt-3 text-xl font-black text-white">{raffle.title}</h2>
+                    <p className="mt-1 font-semibold text-yellow-300">{raffle.prize}</p>
+                    <div className="mt-4 flex flex-wrap gap-4 text-sm font-semibold text-blue-100">
                       <span className="inline-flex items-center gap-2">
                         <CalendarClock className="h-4 w-4 text-blue-600" />
                         {isClosed ? "Finalizado" : "Cierra"}{" "}
@@ -172,7 +177,7 @@ export default async function MyRafflesPage() {
                     ) : null}
                     {raffle.rejection_reason ? (
                       <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
-                        <strong>Revision:</strong> {raffle.rejection_reason}
+                        <strong>Revisión:</strong> {raffle.rejection_reason}
                       </div>
                     ) : null}
                   </div>
@@ -209,13 +214,13 @@ export default async function MyRafflesPage() {
             })}
           </div>
         ) : (
-          <div className="mt-8 grid min-h-72 place-items-center rounded-lg border-2 border-dashed border-blue-200 bg-white px-6 text-center">
+          <div className="grid min-h-72 place-items-center rounded-lg border-2 border-dashed border-white/15 bg-white/[0.05] px-6 text-center">
             <div>
-              <Gift className="mx-auto h-11 w-11 text-blue-500" />
-              <h2 className="mt-4 text-xl font-black text-blue-950">
+              <Gift className="mx-auto h-11 w-11 text-yellow-300" />
+              <h2 className="mt-4 text-xl font-black text-white">
                 Todavía no creaste sorteos
               </h2>
-              <p className="mt-2 text-slate-600">
+              <p className="mt-2 text-blue-100">
                 Crea uno gratuito y envíalo a moderación.
               </p>
             </div>

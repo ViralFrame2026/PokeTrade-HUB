@@ -31,7 +31,7 @@ const links = [
     label: "Mis publicaciones",
     badge: "listings"
   },
-  { href: "/account/operations", icon: Handshake, label: "Mis operaciónes" },
+  { href: "/account/operations", icon: Handshake, label: "Mis operaciones" },
   { href: "/account/messages", icon: MessagesSquare, label: "Mensajes", badge: "messages" },
   { href: "/account/profile", icon: UserRound, label: "Mi perfil" },
   { href: "/account/favorites", icon: Heart, label: "Favoritos" },

@@ -104,7 +104,7 @@ export default async function FavoritesPage() {
   });
 
   return (
-    <main className="min-h-screen bg-[#eaf2ff] text-slate-900">
+    <main className="min-h-screen bg-[#071535] text-white">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <Link className="flex items-center gap-3" href="/">
@@ -120,31 +120,36 @@ export default async function FavoritesPage() {
         </nav>
       </header>
 
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_82%_0%,rgba(250,204,21,.18),transparent_30%),linear-gradient(135deg,#123cba_0%,#071535_72%)]">
+        <div className="absolute inset-0 opacity-15 [background-image:linear-gradient(120deg,rgba(255,255,255,.16)_1px,transparent_1px)] [background-size:34px_34px]" />
+        <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <Link
-          className="inline-flex items-center gap-2 text-sm font-bold text-blue-700 hover:text-blue-900"
-          href="/"
+          className="inline-flex items-center gap-2 text-sm font-bold text-blue-100 hover:text-yellow-300"
+          href="/account"
         >
           <ArrowLeft className="h-4 w-4" />
-          Volver al inicio
+          Volver a mi cuenta
         </Link>
-        <h1 className="mt-5 text-4xl font-black text-blue-950">Mis favoritos</h1>
-        <p className="mt-2 text-slate-600">Cartas guardadas para revisar más tarde.</p>
+        <h1 className="mt-5 text-4xl font-black text-white">Mis favoritos</h1>
+        <p className="mt-2 text-blue-100">Cartas guardadas para revisar más tarde.</p>
+        </div>
+      </section>
 
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         {listings.length > 0 ? (
-          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {listings.map((listing) => (
               <ListingCard key={listing.id} listing={listing} />
             ))}
           </div>
         ) : (
-          <div className="mt-8 grid min-h-72 place-items-center rounded-lg border-2 border-dashed border-blue-200 bg-white px-6 text-center">
+          <div className="grid min-h-72 place-items-center rounded-lg border-2 border-dashed border-white/15 bg-white/[0.05] px-6 text-center">
             <div>
               <Heart className="mx-auto h-10 w-10 text-red-400" />
-              <h2 className="mt-4 text-xl font-black text-blue-950">
+              <h2 className="mt-4 text-xl font-black text-white">
                 Todavía no guardaste publicaciones
               </h2>
-              <p className="mt-2 text-slate-600">
+              <p className="mt-2 text-blue-100">
                 Usa el botón de favoritos en una carta que te interese.
               </p>
               <div className="mt-5">

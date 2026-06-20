@@ -73,7 +73,7 @@ export default async function NotificationsPage() {
   const unreadCount = notifications.filter((notification) => !notification.read_at).length;
 
   return (
-    <main className="min-h-screen bg-[#eaf2ff] text-slate-900">
+    <main className="min-h-screen bg-[#071535] text-white">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
         <nav className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4 sm:px-6">
           <Link className="flex items-center gap-3" href="/">
@@ -89,25 +89,30 @@ export default async function NotificationsPage() {
         </nav>
       </header>
 
-      <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+      <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_82%_0%,rgba(250,204,21,.18),transparent_30%),linear-gradient(135deg,#123cba_0%,#071535_72%)]">
+        <div className="absolute inset-0 opacity-15 [background-image:linear-gradient(120deg,rgba(255,255,255,.16)_1px,transparent_1px)] [background-size:34px_34px]" />
+        <div className="relative mx-auto max-w-4xl px-4 py-10 sm:px-6">
         <Link
-          className="inline-flex items-center gap-2 text-sm font-bold text-blue-700 hover:text-blue-900"
-          href="/"
+          className="inline-flex items-center gap-2 text-sm font-bold text-blue-100 hover:text-yellow-300"
+          href="/account"
         >
           <ArrowLeft className="h-4 w-4" />
-          Volver al inicio
+          Volver a mi cuenta
         </Link>
 
         <div className="mt-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <h1 className="text-4xl font-black text-blue-950">Notificaciones</h1>
-            <p className="mt-2 text-slate-600">
+            <h1 className="text-4xl font-black text-white">Notificaciones</h1>
+            <p className="mt-2 text-blue-100">
               Avisos sobre moderación y actividad de tu cuenta.
             </p>
           </div>
           <MarkAllNotificationsReadButton disabled={unreadCount === 0} />
         </div>
+        </div>
+      </section>
 
+      <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
         {notifications.length > 0 ? (
           <div className="mt-8 space-y-3">
             {notifications.map((notification) => {
@@ -132,8 +137,8 @@ export default async function NotificationsPage() {
                 <article
                   className={`rounded-lg border p-5 ${
                     notification.read_at
-                      ? "border-blue-100 bg-white"
-                      : "border-yellow-300 bg-yellow-50 shadow-sm"
+                      ? "border-white/10 bg-white/[0.06]"
+                      : "border-yellow-300/60 bg-yellow-400/10 shadow-sm"
                   }`}
                   key={notification.id}
                 >
@@ -143,7 +148,7 @@ export default async function NotificationsPage() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-start justify-between gap-2">
-                        <h2 className="font-black text-blue-950">{notification.title}</h2>
+                        <h2 className="font-black text-white">{notification.title}</h2>
                         {!notification.read_at ? (
                           <span className="rounded-full bg-red-500 px-2 py-1 text-[10px] font-black uppercase text-white">
                             Nueva
@@ -151,7 +156,7 @@ export default async function NotificationsPage() {
                         ) : null}
                       </div>
                       {notification.body ? (
-                        <p className="mt-2 leading-6 text-slate-600">{notification.body}</p>
+                        <p className="mt-2 leading-6 text-blue-100">{notification.body}</p>
                       ) : null}
                       <p className="mt-3 text-xs font-semibold text-slate-400">
                         {new Intl.DateTimeFormat("es-AR", {
@@ -179,11 +184,11 @@ export default async function NotificationsPage() {
             })}
           </div>
         ) : (
-          <div className="mt-8 grid min-h-72 place-items-center rounded-lg border-2 border-dashed border-blue-200 bg-white px-6 text-center">
+          <div className="grid min-h-72 place-items-center rounded-lg border-2 border-dashed border-white/15 bg-white/[0.05] px-6 text-center">
             <div>
-              <Bell className="mx-auto h-10 w-10 text-blue-400" />
-              <h2 className="mt-4 text-xl font-black text-blue-950">No tienes notificaciones</h2>
-              <p className="mt-2 text-slate-600">
+              <Bell className="mx-auto h-10 w-10 text-yellow-300" />
+              <h2 className="mt-4 text-xl font-black text-white">No tienes notificaciones</h2>
+              <p className="mt-2 text-blue-100">
                 Los avisos de moderación aparecerán aquí.
               </p>
             </div>

@@ -41,7 +41,7 @@ export function ListingStatusControl({
     if (status === currentStatus) return;
 
     if (closing && !counterpartyId) {
-      setError("Selecciona con quien concretaste la operación.");
+      setError("Selecciona con quién concretaste la operación.");
       return;
     }
     if (
@@ -137,7 +137,7 @@ export function ListingStatusControl({
             {moneyLabel(sellerNet)}
           </p>
           <p className="mt-1 text-yellow-800">
-            Está vista es informativa; todavia no hay cobro automatico conectado.
+            Está vista es informativa; todavía no hay cobro automatico conectado.
           </p>
         </div>
       ) : null}

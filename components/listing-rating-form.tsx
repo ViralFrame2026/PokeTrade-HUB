@@ -28,14 +28,14 @@ export function ListingRatingForm({ listingId }: { listingId: string }) {
       });
       const payload = (await response.json()) as { error?: string | null };
       if (!response.ok || payload.error) {
-        throw new Error(payload.error ?? "No pudimos guardar tu valoracion.");
+        throw new Error(payload.error ?? "No pudimos guardar tu valoración.");
       }
       router.refresh();
     } catch (ratingError) {
       setError(
         ratingError instanceof Error
           ? ratingError.message
-          : "No pudimos guardar tu valoracion."
+          : "No pudimos guardar tu valoración."
       );
     } finally {
       setIsSubmitting(false);
@@ -77,7 +77,7 @@ export function ListingRatingForm({ listingId }: { listingId: string }) {
           className="mt-2 min-h-24 w-full resize-none rounded-lg border border-yellow-200 bg-white px-3 py-3 text-slate-800 outline-none focus:border-blue-500"
           maxLength={500}
           onChange={(event) => setComment(event.target.value)}
-          placeholder="Cuenta brevemente como fue la operación"
+          placeholder="Cuenta brevemente cómo fue la operación"
           value={comment}
         />
       </label>
@@ -87,7 +87,7 @@ export function ListingRatingForm({ listingId }: { listingId: string }) {
         type="submit"
       >
         {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Star className="h-4 w-4" />}
-        Publicar valoracion
+        Publicar valoración
       </button>
       {error ? <p className="mt-3 text-sm font-semibold text-red-600">{error}</p> : null}
     </form>

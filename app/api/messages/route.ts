@@ -61,7 +61,7 @@ export async function POST(request: Request) {
 
   if (listing.status !== "active" && !existingConversation) {
     return NextResponse.json(
-      { error: "Esta publicación ya no acepta nuevas conversaciónes." },
+      { error: "Esta publicación ya no acepta nuevas conversaciones." },
       { status: 403 }
     );
   }
@@ -69,7 +69,7 @@ export async function POST(request: Request) {
   if (listing.seller_id === user.id) {
     if (!existingConversation) {
       return NextResponse.json(
-        { error: "Solo puedes responder conversaciónes existentes." },
+        { error: "Solo puedes responder conversaciones existentes." },
         { status: 403 }
       );
     }

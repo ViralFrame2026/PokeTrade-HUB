@@ -128,7 +128,7 @@ export default async function OperationsPage() {
   const pendingRatings = operations.filter((operation) => !ratedIds.has(operation.id)).length;
 
   return (
-    <main className="min-h-screen bg-[#eaf2ff] text-slate-900">
+    <main className="min-h-screen bg-[#071535] text-white">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
           <Link className="flex items-center gap-3" href="/">
@@ -144,23 +144,24 @@ export default async function OperationsPage() {
         </nav>
       </header>
 
-      <section className="border-b border-blue-100 bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+      <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_82%_0%,rgba(250,204,21,.18),transparent_30%),linear-gradient(135deg,#123cba_0%,#071535_72%)]">
+        <div className="absolute inset-0 opacity-15 [background-image:linear-gradient(120deg,rgba(255,255,255,.16)_1px,transparent_1px)] [background-size:34px_34px]" />
+        <div className="relative mx-auto max-w-6xl px-4 py-10 sm:px-6">
           <Link
-            className="inline-flex items-center gap-2 text-sm font-bold text-blue-700 hover:text-blue-900"
-            href="/"
+            className="inline-flex items-center gap-2 text-sm font-bold text-blue-100 hover:text-yellow-300"
+            href="/account"
           >
             <ArrowLeft className="h-4 w-4" />
-            Volver al inicio
+            Volver a mi cuenta
           </Link>
 
           <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
             <div>
-              <p className="text-sm font-black uppercase tracking-[0.18em] text-red-500">
+              <p className="text-sm font-black uppercase tracking-[0.18em] text-yellow-300">
                 Historial comprador
               </p>
-              <h1 className="mt-2 text-4xl font-black text-blue-950">Mis operaciónes</h1>
-              <p className="mt-3 max-w-2xl leading-7 text-slate-600">
+              <h1 className="mt-2 text-4xl font-black text-white">Mis operaciones</h1>
+              <p className="mt-3 max-w-2xl leading-7 text-blue-100">
                 Revisa tus compras e intercambios cerrados. Desde aquí puedes volver a
                 la publicación para valorar al vendedor.
               </p>
@@ -187,7 +188,7 @@ export default async function OperationsPage() {
 
               return (
                 <article
-                  className="grid gap-5 rounded-lg border border-blue-100 bg-white p-4 shadow-sm sm:grid-cols-[124px_minmax(0,1fr)_auto] sm:items-center"
+                  className="grid gap-5 rounded-lg border border-white/10 bg-white/[0.06] p-4 shadow-[0_18px_45px_rgba(0,0,0,.18)] sm:grid-cols-[124px_minmax(0,1fr)_auto] sm:items-center"
                   key={operation.id}
                 >
                   <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-blue-50">
@@ -226,19 +227,19 @@ export default async function OperationsPage() {
                       )}
                     </div>
 
-                    <h2 className="mt-3 truncate text-xl font-black text-blue-950">{title}</h2>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <h2 className="mt-3 truncate text-xl font-black text-white">{title}</h2>
+                    <p className="mt-1 text-sm text-blue-100">
                       {[card?.set_name, card?.number ? `#${card.number}` : null, card?.rarity, product?.condition]
                         .filter(Boolean)
                         .join(" | ")}
                     </p>
 
-                    <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-600">
-                      <span className="font-black text-red-500">{valueLabel(operation)}</span>
+                    <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-blue-100">
+                      <span className="font-black text-yellow-300">{valueLabel(operation)}</span>
                       <span>{dateLabel(operation.approved_at ?? operation.created_at)}</span>
                       {seller ? (
                         <Link
-                          className="inline-flex items-center gap-1 font-bold text-blue-700 hover:text-blue-900"
+                          className="inline-flex items-center gap-1 font-bold text-yellow-300 hover:text-yellow-200"
                           href={`/users/${seller.id}`}
                         >
                           <UserRound className="h-4 w-4" />
@@ -250,7 +251,7 @@ export default async function OperationsPage() {
 
                   <div className="flex flex-wrap gap-2 sm:w-48 sm:justify-end">
                     <Link
-                      className="inline-flex items-center justify-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-black text-blue-800 transition hover:border-blue-400"
+                        className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/10 px-4 py-2 text-sm font-black text-white transition hover:border-yellow-300 hover:text-yellow-300"
                       href={`/listings/${operation.id}`}
                     >
                       <Eye className="h-4 w-4" />
@@ -271,13 +272,13 @@ export default async function OperationsPage() {
             })}
           </div>
         ) : (
-          <div className="grid min-h-80 place-items-center rounded-lg border-2 border-dashed border-blue-200 bg-white px-6 text-center">
+          <div className="grid min-h-80 place-items-center rounded-lg border-2 border-dashed border-white/15 bg-white/[0.05] px-6 text-center">
             <div>
-              <Handshake className="mx-auto h-12 w-12 text-blue-500" />
-              <h2 className="mt-4 text-2xl font-black text-blue-950">
-                Aún no tienes operaciónes cerradas
+              <Handshake className="mx-auto h-12 w-12 text-yellow-300" />
+              <h2 className="mt-4 text-2xl font-black text-white">
+                Aún no tienes operaciones cerradas
               </h2>
-              <p className="mt-2 max-w-md text-slate-600">
+              <p className="mt-2 max-w-md text-blue-100">
                 Cuando un vendedor marque una publicación como vendida o intercambiada
                 contigo, aparecerá aquí para que puedas valorar la experiencia.
               </p>

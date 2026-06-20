@@ -332,7 +332,7 @@ export default async function MyListingsPage({
 
                     {listing.rejection_reason ? (
                       <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
-                        <strong>Revision:</strong> {listing.rejection_reason}
+                        <strong>Revisión:</strong> {listing.rejection_reason}
                       </div>
                     ) : null}
                   </div>

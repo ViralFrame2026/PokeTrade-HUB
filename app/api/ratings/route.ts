@@ -21,7 +21,7 @@ export async function POST(request: Request) {
   const parsed = ratingSchema.safeParse(await request.json());
   if (!parsed.success) {
     return NextResponse.json(
-      { error: parsed.error.issues[0]?.message ?? "Revisa la valoracion." },
+      { error: parsed.error.issues[0]?.message ?? "Revisa la valoración." },
       { status: 400 }
     );
   }
@@ -37,8 +37,8 @@ export async function POST(request: Request) {
       "Only the selected counterparty can rate this operation":
         "Solo la persona con quien se concreto la operación puede valorar.",
       "Sellers cannot rate themselves": "No puedes valorar tu propia publicación.",
-      "The operation is not completed": "La operación todavia no fue finalizada.",
-      "This operation has already been rated": "Ya valoraste está operación."
+      "The operation is not completed": "La operación todavía no fue finalizada.",
+      "This operation has already been rated": "Ya valoraste esta operación."
     };
     return NextResponse.json(
       { error: messages[error.message] ?? error.message },

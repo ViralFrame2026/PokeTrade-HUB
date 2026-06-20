@@ -284,7 +284,7 @@ export default async function HomePage() {
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-blue-100">
               Publicaciones moderadas, reputación visible, sorteos de la comunidad y
-              operaciónes más seguras.
+              operaciones más seguras.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href="/marketplace" icon={Search}>
@@ -398,7 +398,7 @@ export default async function HomePage() {
             </h2>
             <p className="mt-4 max-w-xl leading-7 text-blue-100">
               Cada operación ayuda a construir reputación. Los perfiles muestran
-              valoraciones, actividad y verificación.
+              valoraciónes, actividad y verificación.
             </p>
             <div className="mt-8 flex gap-3" aria-hidden="true">
               <span className="energy-dot bg-yellow-400 text-blue-950">
@@ -441,7 +441,7 @@ export default async function HomePage() {
             </div>
           ) : (
             <div className="relative z-10 rounded-lg border border-yellow-300 bg-white p-8 text-slate-600 shadow-sm">
-              Los coleccionistas destacados aparecerán cuando reciban sus primeras valoraciones.
+              Los coleccionistas destacados aparecerán cuando reciban sus primeras valoraciónes.
             </div>
           )}
         </div>
