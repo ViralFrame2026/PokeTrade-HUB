@@ -1,5 +1,6 @@
 import {
   AlertTriangle,
+  ArrowLeft,
   CheckCircle2,
   DollarSign,
   FileWarning,
@@ -8,6 +9,7 @@ import {
   MessageCircle,
   Percent,
   ShieldCheck,
+  Sparkles,
   Store,
   Users
 } from "lucide-react";
@@ -273,7 +275,7 @@ export default async function AdminPage() {
       return {
         cardImage: card?.image_large ?? null,
         cardName: card?.official_name ?? listing.title,
-        condition: product?.condition ?? "Sin condicion",
+        condition: product?.condition ?? "Sin condición",
         created_at: listing.created_at,
         description: listing.description,
         id: listing.id,
@@ -364,7 +366,7 @@ export default async function AdminPage() {
     },
     {
       icon: Percent,
-      label: "Comision estimada 5%",
+      label: "Comisión estimada 5%",
       value: moneyLabel(estimatedCommission)
     }
   ];
@@ -391,26 +393,61 @@ export default async function AdminPage() {
     }
   ];
 
+  const totalPending = listings.length + raffles.length + reports.length;
+
   return (
-    <main className="mx-auto min-h-screen max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <ButtonLink href="/" variant="ghost">
-        Volver
-      </ButtonLink>
-      <div className="mt-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-        <div>
-          <p className="text-sm font-bold uppercase tracking-[0.22em] text-pokemonYellow">
-            Administracion
-          </p>
-          <h1 className="mt-2 text-4xl font-black text-white">Centro de moderación</h1>
+    <main className="min-h-screen bg-[#071535] text-white">
+      <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_80%_0%,rgba(250,204,21,0.18),transparent_32%),linear-gradient(135deg,#123cba_0%,#071535_72%)]">
+        <div className="absolute inset-0 opacity-15 [background-image:linear-gradient(120deg,rgba(255,255,255,.16)_1px,transparent_1px)] [background-size:34px_34px]" />
+        <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+          <ButtonLink href="/account" icon={ArrowLeft} variant="secondary">
+            Volver a mi cuenta
+          </ButtonLink>
+          <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_360px] lg:items-end">
+            <div>
+              <p className="inline-flex items-center gap-2 rounded-full border border-yellow-300/70 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-yellow-300">
+                <Sparkles className="h-4 w-4" />
+                Administración
+              </p>
+              <h1 className="mt-5 text-4xl font-black leading-tight sm:text-6xl">
+                Centro de moderación
+              </h1>
+              <p className="mt-4 max-w-2xl text-lg leading-8 text-blue-100">
+                Revisa publicaciones, sorteos, reportes, permisos y métricas internas
+                para mantener el marketplace confiable.
+              </p>
+            </div>
+            <div className="rounded-lg border border-white/15 bg-white/10 p-5 shadow-[0_20px_60px_rgba(0,0,0,.25)] backdrop-blur">
+              <p className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.14em] text-yellow-300">
+                <ShieldCheck className="h-4 w-4" />
+                Acción pendiente
+              </p>
+              <p className="mt-3 text-5xl font-black">{totalPending}</p>
+              <p className="mt-1 text-sm font-bold text-blue-100">
+                Elementos esperando revisión
+              </p>
+              <div className="mt-5 grid grid-cols-3 gap-2 text-center text-xs font-black">
+                <span className="rounded-md bg-white/10 px-2 py-2">{listings.length} cartas</span>
+                <span className="rounded-md bg-white/10 px-2 py-2">{raffles.length} sorteos</span>
+                <span className="rounded-md bg-white/10 px-2 py-2">{reports.length} reportes</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <ShieldCheck className="h-12 w-12 text-pokemonYellow" />
-      </div>
-      <section className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+      </section>
+
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
         {queues.map((item) => (
-          <article className="glass rounded-lg p-5" key={item.label}>
-            <item.icon className="h-6 w-6 text-pokemonYellow" />
+          <article
+            className="rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-[0_18px_45px_rgba(0,0,0,.18)]"
+            key={item.label}
+          >
+            <span className="grid h-11 w-11 place-items-center rounded-lg bg-yellow-400 text-blue-950">
+              <item.icon className="h-5 w-5" />
+            </span>
             <p className="mt-4 text-3xl font-black text-white">{item.value}</p>
-            <p className="mt-1 text-sm font-semibold text-slate-400">{item.label}</p>
+            <p className="mt-1 text-sm font-semibold text-blue-100">{item.label}</p>
           </article>
         ))}
       </section>
@@ -476,7 +513,7 @@ export default async function AdminPage() {
                       <th className="px-4 py-3">Vendedor</th>
                       <th className="px-4 py-3">Fecha</th>
                       <th className="px-4 py-3 text-right">Venta</th>
-                      <th className="px-4 py-3 text-right">Comision</th>
+                      <th className="px-4 py-3 text-right">Comisión</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/10">
@@ -543,6 +580,7 @@ export default async function AdminPage() {
           <AdminUsers currentUserId={user.id} users={adminUsers} />
         </section>
       ) : null}
+      </div>
     </main>
   );
 }

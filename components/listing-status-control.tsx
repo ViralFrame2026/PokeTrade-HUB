@@ -131,9 +131,9 @@ export function ListingStatusControl({
       ) : null}
       {closing && status !== currentStatus && listingType === "sale" && listingPrice ? (
         <div className="mt-3 rounded-md border border-yellow-200 bg-yellow-50 p-3 text-xs text-yellow-900">
-          <p className="font-black">Comision estimada PokeTrade: 5%</p>
+          <p className="font-black">Comisión estimada PokeTrade: 5%</p>
           <p className="mt-1 font-semibold">
-            Comision: {moneyLabel(estimatedCommission)} | Neto vendedor:{" "}
+            Comisión: {moneyLabel(estimatedCommission)} | Neto vendedor:{" "}
             {moneyLabel(sellerNet)}
           </p>
           <p className="mt-1 text-yellow-800">

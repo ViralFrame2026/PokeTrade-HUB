@@ -504,7 +504,7 @@ export function PublishForm() {
           maxLength={DESCRIPTION_MAX_LENGTH}
           minLength={10}
           onChange={(event) => setDescription(event.target.value)}
-          placeholder="Describe condicion, detalles y forma de entrega"
+          placeholder="Describe condición, detalles y forma de entrega"
           required
           value={description}
         />

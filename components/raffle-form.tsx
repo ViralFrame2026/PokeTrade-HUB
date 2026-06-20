@@ -139,7 +139,7 @@ export function RaffleForm() {
           maxLength={REQUIREMENTS_MAX_LENGTH}
           minLength={10}
           onChange={(event) => setRequirements(event.target.value)}
-          placeholder="Explica las condiciones de participacion y entrega"
+          placeholder="Explica las condiciónes de participacion y entrega"
           required
           value={requirements}
         />

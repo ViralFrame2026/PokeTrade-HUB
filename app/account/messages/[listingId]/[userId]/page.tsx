@@ -240,7 +240,7 @@ export default async function ConversationPage({
                 <div>
                   <h1 className="text-xl font-black text-blue-950">Inicia la conversacion</h1>
                   <p className="mt-2 text-sm text-slate-500">
-                    Consulta disponibilidad, estado o condiciones del producto.
+                    Consulta disponibilidad, estado o condiciónes del producto.
                   </p>
                 </div>
               </div>

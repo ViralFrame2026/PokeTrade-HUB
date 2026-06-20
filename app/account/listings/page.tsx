@@ -325,7 +325,7 @@ export default async function MyListingsPage({
                     <p className="mt-2 font-black text-red-500">{priceLabel(listing)}</p>
                     {listing.type === "sale" && listing.status === "sold" ? (
                       <p className="mt-2 rounded-lg border border-yellow-200 bg-yellow-50 px-3 py-2 text-xs font-bold text-yellow-900">
-                        Comision estimada PokeTrade: {saleCommission.commission} | Neto vendedor:{" "}
+                        Comisión estimada PokeTrade: {saleCommission.commission} | Neto vendedor:{" "}
                         {saleCommission.sellerNet}
                       </p>
                     ) : null}
