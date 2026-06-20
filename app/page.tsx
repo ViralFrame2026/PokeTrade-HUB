@@ -496,6 +496,32 @@ export default async function HomePage() {
         </div>
         </div>
       </section>
+
+      <footer className="border-t border-white/10 bg-[#071535]">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-8 text-sm text-blue-100 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+          <div className="flex items-center gap-3">
+            <span className="pokeball h-9 w-9 shrink-0" aria-hidden="true" />
+            <div>
+              <p className="font-black tracking-[0.18em] text-yellow-300">POKETRADE</p>
+              <p className="text-xs text-blue-200">Marketplace de comunidad Pokemon TCG</p>
+            </div>
+          </div>
+          <nav className="flex flex-wrap gap-x-5 gap-y-2 font-bold" aria-label="Enlaces legales">
+            <Link className="hover:text-yellow-300" href="/safety">
+              Seguridad
+            </Link>
+            <Link className="hover:text-yellow-300" href="/rules">
+              Reglas
+            </Link>
+            <Link className="hover:text-yellow-300" href="/privacy">
+              Privacidad
+            </Link>
+            <Link className="hover:text-yellow-300" href="/terms">
+              Terminos
+            </Link>
+          </nav>
+        </div>
+      </footer>
     </main>
   );
 }
