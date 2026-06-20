@@ -89,6 +89,40 @@ type ClosedSaleRow = {
   price: number | null;
 };
 
+type RecentClosedSaleRow = {
+  created_at: string;
+  id: string;
+  price: number | null;
+  profiles: { display_name: string } | { display_name: string }[] | null;
+  title: string;
+  products:
+    | {
+        cards:
+          | {
+              official_name: string;
+              set_name: string;
+            }
+          | {
+              official_name: string;
+              set_name: string;
+            }[]
+          | null;
+      }
+    | {
+        cards:
+          | {
+              official_name: string;
+              set_name: string;
+            }
+          | {
+              official_name: string;
+              set_name: string;
+            }[]
+          | null;
+      }[]
+    | null;
+};
+
 function listingTitle(listing: ReportRow["listings"]) {
   if (Array.isArray(listing)) {
     return listing[0]?.title ?? "Publicacion no disponible";
@@ -143,6 +177,7 @@ export default async function AdminPage() {
     approvedResult,
     activeListingsResult,
     closedSalesResult,
+    recentClosedSalesResult,
     monthlyUsersResult,
     messagesResult,
     favoritesResult,
@@ -182,6 +217,14 @@ export default async function AdminPage() {
       .eq("type", "sale")
       .eq("status", "sold"),
     supabase
+      .from("listings")
+      .select("id, title, price, created_at, profiles!listings_seller_id_fkey(display_name), products!listings_product_id_fkey(cards!products_card_id_fkey(official_name, set_name))")
+      .eq("moderation_status", "approved")
+      .eq("type", "sale")
+      .eq("status", "sold")
+      .order("created_at", { ascending: false })
+      .limit(8),
+    supabase
       .from("profiles")
       .select("id", { count: "exact", head: true })
       .gte("joined_at", startOfMonth.toISOString()),
@@ -202,8 +245,25 @@ export default async function AdminPage() {
       : Promise.resolve({ data: [] })
   ]);
   const closedSales = (closedSalesResult.data ?? []) as ClosedSaleRow[];
+  const recentClosedSales = (recentClosedSalesResult.data ?? []) as RecentClosedSaleRow[];
   const grossSales = closedSales.reduce((total, sale) => total + Number(sale.price ?? 0), 0);
   const estimatedCommission = grossSales * PLATFORM_COMMISSION_RATE;
+  const closedSaleRows = recentClosedSales.map((sale) => {
+    const product = firstRelated(sale.products);
+    const card = firstRelated(product?.cards ?? null);
+    const price = Number(sale.price ?? 0);
+    const commission = price * PLATFORM_COMMISSION_RATE;
+
+    return {
+      cardName: card?.official_name ?? sale.title,
+      commission,
+      createdAt: sale.created_at,
+      id: sale.id,
+      price,
+      seller: sellerName(sale.profiles),
+      setName: card?.set_name ?? "Set no disponible"
+    };
+  });
 
   const listings: AdminListing[] = ((pendingResult.data ?? []) as ListingRow[]).map(
     (listing) => {
@@ -392,6 +452,62 @@ export default async function AdminPage() {
                 </article>
               ))}
             </div>
+          </div>
+          <div className="mt-5 border-t border-white/10 pt-5">
+            <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+              <div>
+                <h3 className="text-sm font-black uppercase tracking-[0.16em] text-slate-300">
+                  Ventas cerradas recientes
+                </h3>
+                <p className="mt-2 text-sm text-slate-400">
+                  Referencia interna para controlar comisiones manuales antes de conectar pagos.
+                </p>
+              </div>
+              <span className="rounded-full border border-yellow-300/30 px-3 py-1 text-xs font-black text-yellow-200">
+                5% por venta
+              </span>
+            </div>
+            {closedSaleRows.length > 0 ? (
+              <div className="mt-4 overflow-x-auto rounded-lg border border-white/10">
+                <table className="w-full min-w-[760px] text-left text-sm">
+                  <thead className="bg-white/[0.04] text-slate-400">
+                    <tr>
+                      <th className="px-4 py-3">Carta</th>
+                      <th className="px-4 py-3">Vendedor</th>
+                      <th className="px-4 py-3">Fecha</th>
+                      <th className="px-4 py-3 text-right">Venta</th>
+                      <th className="px-4 py-3 text-right">Comision</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/10">
+                    {closedSaleRows.map((sale) => (
+                      <tr key={sale.id}>
+                        <td className="px-4 py-3">
+                          <p className="font-black text-white">{sale.cardName}</p>
+                          <p className="mt-1 text-xs font-semibold text-slate-500">{sale.setName}</p>
+                        </td>
+                        <td className="px-4 py-3 font-semibold text-slate-300">{sale.seller}</td>
+                        <td className="px-4 py-3 text-slate-400">
+                          {new Intl.DateTimeFormat("es-AR", { dateStyle: "medium" }).format(
+                            new Date(sale.createdAt)
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-right font-black text-white">
+                          {moneyLabel(sale.price)}
+                        </td>
+                        <td className="px-4 py-3 text-right font-black text-yellow-300">
+                          {moneyLabel(sale.commission)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="mt-4 rounded-lg border border-white/10 bg-white/[0.04] p-4 text-sm font-semibold text-slate-400">
+                Todavia no hay ventas cerradas para calcular comisiones.
+              </div>
+            )}
           </div>
         </section>
       ) : null}
