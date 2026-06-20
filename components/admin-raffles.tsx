@@ -11,6 +11,13 @@ export type AdminRaffle = {
   title: string;
 };
 
+const RAFFLE_REJECTION_PRESETS = [
+  "El premio no está explicado con suficiente claridad.",
+  "Las condiciones de participación son incompletas.",
+  "La fecha de cierre o entrega no es clara.",
+  "El sorteo exige acciones o pagos fuera de las reglas."
+];
+
 export function AdminRaffles({ raffles: initialRaffles }: { raffles: AdminRaffle[] }) {
   const [raffles, setRaffles] = useState(initialRaffles);
   const [reasons, setReasons] = useState<Record<string, string>>({});
@@ -120,6 +127,23 @@ export function AdminRaffles({ raffles: initialRaffles }: { raffles: AdminRaffle
                 placeholder="Motivo si se rechaza"
                 value={reasons[raffle.id] ?? ""}
               />
+              <div className="flex flex-wrap gap-2">
+                {RAFFLE_REJECTION_PRESETS.map((preset) => (
+                  <button
+                    className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-left text-[11px] font-bold text-slate-300 transition hover:border-red-300/50 hover:text-red-100"
+                    key={preset}
+                    onClick={() =>
+                      setReasons((current) => ({
+                        ...current,
+                        [raffle.id]: preset
+                      }))
+                    }
+                    type="button"
+                  >
+                    {preset}
+                  </button>
+                ))}
+              </div>
               <div className="flex gap-2">
                 <button
                   className="inline-flex flex-1 items-center justify-center gap-2 rounded-md bg-emerald-400 px-3 py-2 text-sm font-black text-emerald-950 disabled:opacity-60"

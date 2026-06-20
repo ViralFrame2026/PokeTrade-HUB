@@ -26,6 +26,13 @@ type AdminListingsProps = {
   listings: AdminListing[];
 };
 
+const LISTING_REJECTION_PRESETS = [
+  "La descripción no explica el estado real de la carta.",
+  "El producto no coincide con la carta oficial seleccionada.",
+  "Faltan datos claros de precio, intercambio o entrega.",
+  "La publicación contiene información engañosa o fuera de reglas."
+];
+
 function typeLabel(type: string) {
   return {
     free: "Gratis",
@@ -206,6 +213,23 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
                 placeholder="Motivo si se rechaza"
                 value={rejectionReasons[listing.id] ?? ""}
               />
+              <div className="flex flex-wrap gap-2">
+                {LISTING_REJECTION_PRESETS.map((preset) => (
+                  <button
+                    className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-left text-[11px] font-bold text-slate-300 transition hover:border-red-300/50 hover:text-red-100"
+                    key={preset}
+                    onClick={() =>
+                      setRejectionReasons((current) => ({
+                        ...current,
+                        [listing.id]: preset
+                      }))
+                    }
+                    type="button"
+                  >
+                    {preset}
+                  </button>
+                ))}
+              </div>
               <div className="flex gap-2">
                 <button
                   className="inline-flex flex-1 items-center justify-center gap-2 rounded-md bg-emerald-400 px-3 py-2 font-black text-emerald-950 disabled:opacity-60"
