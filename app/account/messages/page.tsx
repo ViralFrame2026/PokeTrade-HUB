@@ -1,6 +1,7 @@
 import { ArrowLeft, Inbox, MessageCircle, MessagesSquare, Store } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -200,15 +201,24 @@ export default async function MessagesPage() {
             })}
           </div>
         ) : (
-          <div className="grid min-h-72 place-items-center rounded-lg border-2 border-dashed border-white/15 bg-white/[0.05] px-6 text-center">
-            <div>
+          <div className="grid min-h-80 place-items-center rounded-lg border-2 border-dashed border-white/15 bg-white/[0.05] px-6 text-center">
+            <div className="max-w-xl">
               <Inbox className="mx-auto h-10 w-10 text-yellow-300" />
               <h2 className="mt-4 text-xl font-black text-white">
                 Todavía no tienes conversaciones
               </h2>
-              <p className="mt-2 text-blue-100">
-                Abre una publicación y envía un mensaje al vendedor.
+              <p className="mt-2 leading-7 text-blue-100">
+                Explorá el marketplace, abrí una publicación y enviá un mensaje al
+                vendedor para iniciar una conversación vinculada a esa carta.
               </p>
+              <div className="mt-6 flex flex-wrap justify-center gap-3">
+                <ButtonLink href="/marketplace" icon={Store}>
+                  Explorar cartas
+                </ButtonLink>
+                <ButtonLink href="/publish" variant="secondary">
+                  Publicar una carta
+                </ButtonLink>
+              </div>
             </div>
           </div>
         )}

@@ -5,6 +5,7 @@ import {
   MarkAllNotificationsReadButton,
   NotificationLink
 } from "@/components/notification-actions";
+import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -184,13 +185,22 @@ export default async function NotificationsPage() {
             })}
           </div>
         ) : (
-          <div className="grid min-h-72 place-items-center rounded-lg border-2 border-dashed border-white/15 bg-white/[0.05] px-6 text-center">
-            <div>
+          <div className="grid min-h-80 place-items-center rounded-lg border-2 border-dashed border-white/15 bg-white/[0.05] px-6 text-center">
+            <div className="max-w-xl">
               <Bell className="mx-auto h-10 w-10 text-yellow-300" />
               <h2 className="mt-4 text-xl font-black text-white">No tienes notificaciones</h2>
-              <p className="mt-2 text-blue-100">
-                Los avisos de moderación aparecerán aquí.
+              <p className="mt-2 leading-7 text-blue-100">
+                Cuando publiques cartas, participes en sorteos o recibas actividad en tu
+                cuenta, los avisos importantes aparecerán acá.
               </p>
+              <div className="mt-6 flex flex-wrap justify-center gap-3">
+                <ButtonLink href="/publish" variant="light">
+                  Publicar carta
+                </ButtonLink>
+                <ButtonLink href="/raffles" variant="secondary">
+                  Ver sorteos
+                </ButtonLink>
+              </div>
             </div>
           </div>
         )}

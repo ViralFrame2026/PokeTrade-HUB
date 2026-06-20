@@ -214,15 +214,24 @@ export default async function MyRafflesPage() {
             })}
           </div>
         ) : (
-          <div className="grid min-h-72 place-items-center rounded-lg border-2 border-dashed border-white/15 bg-white/[0.05] px-6 text-center">
-            <div>
+          <div className="grid min-h-80 place-items-center rounded-lg border-2 border-dashed border-white/15 bg-white/[0.05] px-6 text-center">
+            <div className="max-w-xl">
               <Gift className="mx-auto h-11 w-11 text-yellow-300" />
               <h2 className="mt-4 text-xl font-black text-white">
                 Todavía no creaste sorteos
               </h2>
-              <p className="mt-2 text-blue-100">
-                Crea uno gratuito y envíalo a moderación.
+              <p className="mt-2 leading-7 text-blue-100">
+                Creá un sorteo gratuito, describí el premio con claridad y envialo a
+                moderación para que la comunidad pueda participar.
               </p>
+              <div className="mt-6 flex flex-wrap justify-center gap-3">
+                <ButtonLink href="/raffles/new" icon={Plus}>
+                  Crear sorteo
+                </ButtonLink>
+                <ButtonLink href="/rules" variant="secondary">
+                  Ver reglas
+                </ButtonLink>
+              </div>
             </div>
           </div>
         )}
