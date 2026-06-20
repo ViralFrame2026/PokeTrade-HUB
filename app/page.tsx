@@ -333,7 +333,7 @@ export default async function HomePage() {
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             {[
-              ["1", "Publicás tu carta", "Buscás la carta oficial, cargás precio, estado y condiciónes."],
+              ["1", "Publicás tu carta", "Buscás la carta oficial, cargás precio, estado y condiciones."],
               ["2", "El equipo revisa", "La publicación pasa por moderación antes de aparecer."],
               ["3", "Conectás seguro", "Usás mensajes, favoritos y reputación para operar con más confianza."]
             ].map(([step, title, copy]) => (

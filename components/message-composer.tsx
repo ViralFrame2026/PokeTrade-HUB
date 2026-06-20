@@ -51,13 +51,13 @@ export function MessageComposer({
   }
 
   return (
-    <form className="border-t border-blue-100 bg-white p-4" onSubmit={sendMessage}>
+    <form className="border-t border-white/10 bg-[#071535] p-4" onSubmit={sendMessage}>
       <label className="sr-only" htmlFor="message-body">
         Escribe un mensaje
       </label>
       <div className="flex items-end gap-2">
         <textarea
-          className="min-h-12 flex-1 resize-none rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+          className="min-h-12 flex-1 resize-none rounded-lg border border-white/10 bg-white/10 px-4 py-3 text-sm text-white outline-none transition placeholder:text-blue-200 focus:border-yellow-300 focus:ring-2 focus:ring-yellow-300/20"
           disabled={isSending}
           id="message-body"
           maxLength={MAX_MESSAGE_LENGTH}
@@ -85,12 +85,12 @@ export function MessageComposer({
         </button>
       </div>
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs font-semibold">
-        <span className="text-slate-500">Ctrl + Enter para enviar</span>
-        <span className={remainingCharacters < 120 ? "text-red-600" : "text-slate-400"}>
+        <span className="text-blue-200">Ctrl + Enter para enviar</span>
+        <span className={remainingCharacters < 120 ? "text-red-300" : "text-blue-200"}>
           {remainingCharacters} caracteres restantes
         </span>
       </div>
-      {error ? <p className="mt-2 text-sm font-semibold text-red-600">{error}</p> : null}
+      {error ? <p className="mt-2 text-sm font-semibold text-red-300">{error}</p> : null}
     </form>
   );
 }

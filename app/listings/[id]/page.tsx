@@ -394,7 +394,7 @@ export default async function ListingDetailPage({
               listingId={listing.id}
             />
             <p className="mt-3 text-center text-xs leading-5 text-slate-500">
-              Confirma identidad, estado y condiciónes antes de realizar cualquier operación.
+              Confirma identidad, estado y condiciones antes de realizar cualquier operación.
             </p>
           </div>
 

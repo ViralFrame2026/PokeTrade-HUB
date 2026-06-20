@@ -1,4 +1,4 @@
-import { ArrowLeft, Inbox, MessageCircle } from "lucide-react";
+import { ArrowLeft, Inbox, MessageCircle, MessagesSquare, Store } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -101,9 +101,9 @@ export default async function MessagesPage() {
   );
 
   return (
-    <main className="min-h-screen bg-[#eaf2ff] text-slate-900">
+    <main className="min-h-screen bg-[#071535] text-white">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
-        <nav className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4 sm:px-6">
+        <nav className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
           <Link className="flex items-center gap-3" href="/">
             <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
             <div>
@@ -115,21 +115,39 @@ export default async function MessagesPage() {
         </nav>
       </header>
 
-      <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-        <Link
-          className="inline-flex items-center gap-2 text-sm font-bold text-blue-700 hover:text-blue-900"
-          href="/"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Volver al inicio
-        </Link>
-        <h1 className="mt-5 text-4xl font-black text-blue-950">Mensajes</h1>
-        <p className="mt-2 text-slate-600">
-          Conversaciones vinculadas a publicaciones de la comunidad.
-        </p>
+      <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_82%_0%,rgba(250,204,21,.18),transparent_30%),linear-gradient(135deg,#123cba_0%,#071535_72%)]">
+        <div className="absolute inset-0 opacity-15 [background-image:linear-gradient(120deg,rgba(255,255,255,.16)_1px,transparent_1px)] [background-size:34px_34px]" />
+        <div className="relative mx-auto max-w-5xl px-4 py-10 sm:px-6">
+          <Link
+            className="inline-flex items-center gap-2 text-sm font-bold text-blue-100 hover:text-yellow-300"
+            href="/account"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Volver a mi cuenta
+          </Link>
 
+          <div className="mt-8 grid gap-5 sm:grid-cols-[1fr_auto] sm:items-end">
+            <div>
+              <p className="inline-flex items-center gap-2 rounded-full border border-yellow-300/70 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-yellow-300">
+                <MessagesSquare className="h-4 w-4" />
+                Centro de mensajes
+              </p>
+              <h1 className="mt-5 text-4xl font-black leading-tight sm:text-6xl">Mensajes</h1>
+              <p className="mt-4 max-w-2xl text-lg leading-8 text-blue-100">
+                Conversaciones vinculadas a cartas, ventas e intercambios de la comunidad.
+              </p>
+            </div>
+            <div className="rounded-lg border border-white/15 bg-white/10 p-5 text-center shadow-[0_20px_60px_rgba(0,0,0,.22)]">
+              <p className="text-4xl font-black">{conversations.length}</p>
+              <p className="mt-1 text-sm font-bold text-blue-100">conversaciones</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
         {conversations.length ? (
-          <div className="mt-8 overflow-hidden rounded-lg border border-blue-100 bg-white shadow-sm">
+          <div className="overflow-hidden rounded-lg border border-white/10 bg-white/[0.06] shadow-[0_18px_45px_rgba(0,0,0,.18)]">
             {conversations.map((conversation) => {
               const { key, lastMessage, unreadCount } = conversation;
               const [listingId, otherId] = key.split(":");
@@ -137,34 +155,37 @@ export default async function MessagesPage() {
 
               return (
                 <Link
-                  className={`flex items-center gap-4 border-b border-blue-100 p-4 transition last:border-b-0 hover:bg-blue-50 sm:p-5 ${
-                    unreadCount > 0 ? "bg-yellow-50/60" : ""
+                  className={`flex items-center gap-4 border-b border-white/10 p-4 transition last:border-b-0 hover:bg-white/10 sm:p-5 ${
+                    unreadCount > 0 ? "bg-yellow-400/10" : ""
                   }`}
                   href={`/account/messages/${listingId}/${otherId}`}
                   key={key}
                 >
-                  <div className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-blue-800 font-black text-yellow-300">
+                  <div className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-yellow-400 font-black text-blue-950">
                     {(profileNames.get(otherId) ?? "TC").slice(0, 2).toUpperCase()}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-3">
-                      <h2 className="truncate font-black text-blue-950">
+                      <h2 className="truncate font-black text-white">
                         {profileNames.get(otherId) ?? "Entrenador TCG"}
                       </h2>
-                      <span className="shrink-0 text-xs font-bold text-slate-400">
+                      <span className="shrink-0 text-xs font-bold text-blue-200">
                         {messageDateLabel(lastMessage.created_at)}
                       </span>
                     </div>
-                    <p className="truncate text-xs font-bold text-blue-600">
-                      {listingTitles.get(listingId) ?? "Publicación"}
+                    <p className="mt-1 inline-flex max-w-full items-center gap-1 truncate text-xs font-bold text-yellow-300">
+                      <Store className="h-3.5 w-3.5 shrink-0" />
+                      <span className="truncate">
+                        {listingTitles.get(listingId) ?? "Publicación"}
+                      </span>
                     </p>
                     <div className="mt-1 flex items-center gap-3">
                       <p
                         className={`min-w-0 flex-1 truncate text-sm ${
-                          unreadCount > 0 ? "font-bold text-slate-700" : "text-slate-500"
+                          unreadCount > 0 ? "font-bold text-white" : "text-blue-100"
                         }`}
                       >
-                        {isOwnLastMessage ? "Tu: " : ""}
+                        {isOwnLastMessage ? "Tú: " : ""}
                         {lastMessage.body}
                       </p>
                       {unreadCount > 0 ? (
@@ -179,13 +200,13 @@ export default async function MessagesPage() {
             })}
           </div>
         ) : (
-          <div className="mt-8 grid min-h-72 place-items-center rounded-lg border-2 border-dashed border-blue-200 bg-white px-6 text-center">
+          <div className="grid min-h-72 place-items-center rounded-lg border-2 border-dashed border-white/15 bg-white/[0.05] px-6 text-center">
             <div>
-              <Inbox className="mx-auto h-10 w-10 text-blue-400" />
-              <h2 className="mt-4 text-xl font-black text-blue-950">
+              <Inbox className="mx-auto h-10 w-10 text-yellow-300" />
+              <h2 className="mt-4 text-xl font-black text-white">
                 Todavía no tienes conversaciones
               </h2>
-              <p className="mt-2 text-slate-600">
+              <p className="mt-2 text-blue-100">
                 Abre una publicación y envía un mensaje al vendedor.
               </p>
             </div>

@@ -140,9 +140,9 @@ export default async function ConversationPage({
   const messages = (data ?? []) as MessageRow[];
 
   return (
-    <main className="min-h-screen bg-[#eaf2ff] text-slate-900">
+    <main className="min-h-screen bg-[#071535] text-slate-900">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
-        <nav className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4 sm:px-6">
+        <nav className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
           <Link className="flex items-center gap-3" href="/account/messages">
             <ArrowLeft className="h-5 w-5" />
             <div>
@@ -160,9 +160,9 @@ export default async function ConversationPage({
         </nav>
       </header>
 
-      <section className="mx-auto max-w-4xl px-4 py-6 sm:px-6">
-        <div className="overflow-hidden rounded-lg border border-blue-100 bg-white shadow-[0_18px_48px_rgba(30,64,175,0.10)]">
-          <div className="grid gap-4 border-b border-blue-100 bg-white p-4 sm:grid-cols-[88px_minmax(0,1fr)_auto] sm:items-center">
+      <section className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
+        <div className="overflow-hidden rounded-lg border border-white/10 bg-white/[0.06] shadow-[0_22px_65px_rgba(0,0,0,0.28)]">
+          <div className="grid gap-4 border-b border-white/10 bg-[linear-gradient(135deg,#123cba,#071535)] p-4 sm:grid-cols-[88px_minmax(0,1fr)_auto] sm:items-center">
             <div className="relative h-24 overflow-hidden rounded-lg bg-blue-50">
               {card?.image_large ? (
                 <Image
@@ -178,32 +178,32 @@ export default async function ConversationPage({
             </div>
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-yellow-100 px-3 py-1 text-xs font-black text-amber-800">
+                <span className="rounded-full bg-yellow-400 px-3 py-1 text-xs font-black text-blue-950">
                   {typeLabel(listingContext.type)}
                 </span>
-                <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-black text-blue-100">
                   {statusLabel(listingContext.status)}
                 </span>
               </div>
-              <h1 className="mt-2 truncate text-lg font-black text-blue-950">
+              <h1 className="mt-2 truncate text-lg font-black text-white">
                 {card?.official_name ?? listingContext.title}
               </h1>
-              <p className="mt-1 truncate text-sm font-semibold text-slate-500">
+              <p className="mt-1 truncate text-sm font-semibold text-blue-100">
                 {[card?.set_name, product?.condition].filter(Boolean).join(" | ")}
               </p>
-              <p className="mt-2 text-sm font-black text-red-500">
+              <p className="mt-2 text-sm font-black text-yellow-300">
                 {valueLabel(listingContext)}
               </p>
             </div>
             <Link
-              className="inline-flex items-center justify-center gap-2 rounded-lg border border-blue-200 px-4 py-3 text-sm font-black text-blue-800 transition hover:bg-blue-50"
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-black text-white transition hover:border-yellow-300 hover:text-yellow-300"
               href={`/listings/${listingId}`}
             >
               <ExternalLink className="h-4 w-4" />
               Ver publicación
             </Link>
           </div>
-          <div className="min-h-[55vh] space-y-3 bg-blue-50/60 p-4 sm:p-6">
+          <div className="min-h-[55vh] space-y-3 bg-[#0b1d46] p-4 sm:p-6">
             {messages.length ? (
               messages.map((message) => {
                 const isOwn = message.sender_id === user.id;
@@ -216,8 +216,8 @@ export default async function ConversationPage({
                     <div
                       className={`max-w-[82%] rounded-lg px-4 py-3 ${
                         isOwn
-                          ? "bg-blue-700 text-white"
-                          : "border border-blue-100 bg-white text-slate-700"
+                          ? "bg-blue-700 text-white shadow-[0_10px_25px_rgba(37,99,235,.25)]"
+                          : "border border-white/10 bg-white text-slate-700 shadow-[0_10px_25px_rgba(0,0,0,.18)]"
                       }`}
                     >
                       <p className="whitespace-pre-wrap text-sm leading-6">{message.body}</p>
@@ -238,9 +238,9 @@ export default async function ConversationPage({
             ) : (
               <div className="grid min-h-[50vh] place-items-center text-center">
                 <div>
-                  <h1 className="text-xl font-black text-blue-950">Inicia la conversacion</h1>
-                  <p className="mt-2 text-sm text-slate-500">
-                    Consulta disponibilidad, estado o condiciónes del producto.
+                  <h1 className="text-xl font-black text-white">Inicia la conversación</h1>
+                  <p className="mt-2 text-sm text-blue-100">
+                    Consulta disponibilidad, estado o condiciones del producto.
                   </p>
                 </div>
               </div>

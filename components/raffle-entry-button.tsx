@@ -31,14 +31,14 @@ export function RaffleEntryButton({
       });
       const payload = (await response.json()) as { error?: string | null };
       if (!response.ok || payload.error) {
-        throw new Error(payload.error ?? "No pudimos registrar tu participacion.");
+        throw new Error(payload.error ?? "No pudimos registrar tu participación.");
       }
       router.refresh();
     } catch (entryError) {
       setError(
         entryError instanceof Error
           ? entryError.message
-          : "No pudimos registrar tu participacion."
+          : "No pudimos registrar tu participación."
       );
     } finally {
       setIsBusy(false);
