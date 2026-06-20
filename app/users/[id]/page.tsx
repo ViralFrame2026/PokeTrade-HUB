@@ -185,7 +185,7 @@ export default async function PublicProfilePage({
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
             <Stat
               icon={Star}
-              label={`${profile.reputation_count} valoraciónes`}
+              label={`${profile.reputation_count} valoraciones`}
               value={averageRating}
             />
             <Stat
@@ -276,7 +276,7 @@ export default async function PublicProfilePage({
             </div>
           ) : (
             <div className="mt-6 rounded-lg border border-white/10 bg-white/[0.05] p-8 text-center text-blue-100">
-              Todavía no recibió valoraciónes.
+              Todavía no recibió valoraciones.
             </div>
           )}
         </div>

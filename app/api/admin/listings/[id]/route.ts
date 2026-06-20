@@ -47,7 +47,7 @@ export async function PATCH(request: Request, context: RouteContext) {
 
   if (!parsed.success) {
     return NextResponse.json(
-      { data: null, error: parsed.error.issues[0]?.message ?? "Acción invalida." },
+      { data: null, error: parsed.error.issues[0]?.message ?? "Acción inválida." },
       { status: 400 }
     );
   }

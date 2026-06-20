@@ -46,7 +46,7 @@ export async function PATCH(
   const parsed = schema.safeParse(await request.json());
   if (!parsed.success) {
     return NextResponse.json(
-      { error: parsed.error.issues[0]?.message ?? "Acción invalida." },
+      { error: parsed.error.issues[0]?.message ?? "Acción inválida." },
       { status: 400 }
     );
   }

@@ -418,7 +418,7 @@ export default async function ListingDetailPage({
                 <p className="mt-1 flex items-center gap-1 text-sm text-blue-100">
                   <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                   {Number(seller.reputation_average).toFixed(1)} ·{" "}
-                  {seller.reputation_count} valoraciónes
+                  {seller.reputation_count} valoraciones
                 </p>
                 <p className="mt-3 flex items-center gap-2 text-sm text-blue-200">
                   <Store className="h-4 w-4" />

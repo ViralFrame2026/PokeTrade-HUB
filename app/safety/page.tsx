@@ -4,24 +4,24 @@ import { ButtonLink } from "@/components/ui/button-link";
 export const metadata = {
   title: "Seguridad",
   description:
-    "Buenas practicas para comprar, vender e intercambiar cartas Pokemon TCG en PokeTrade HUB."
+    "Buenas prácticas para comprar, vender e intercambiar cartas Pokémon TCG en PokeTrade HUB."
 };
 
 const safeSteps = [
   {
     icon: ShieldCheck,
-    title: "Usa publicaciones oficiales",
-    copy: "Cada publicacion debe estar vinculada a una carta real del catalogo Pokemon TCG."
+    title: "Usá publicaciones oficiales",
+    copy: "Cada publicación debe estar vinculada a una carta real del catálogo Pokémon TCG."
   },
   {
     icon: Handshake,
     title: "Acorda todo por mensajes",
-    copy: "Deja precio, estado, entrega y condiciones claros antes de cerrar una operacion."
+    copy: "Dejá precio, estado, entrega y condiciones claros antes de cerrar una operación."
   },
   {
     icon: CheckCircle2,
-    title: "Revisa reputacion",
-    copy: "Antes de comprar o intercambiar, mira el perfil, historial y valoraciones del usuario."
+    title: "Revisá reputación",
+    copy: "Antes de comprar o intercambiar, mirá el perfil, historial y valoraciones del usuario."
   }
 ];
 
@@ -37,11 +37,11 @@ export default function SafetyPage() {
             Centro de confianza
           </p>
           <h1 className="mt-3 max-w-3xl text-4xl font-black leading-tight sm:text-6xl">
-            Seguridad para operar con cartas Pokemon TCG
+            Seguridad para operar con cartas Pokémon TCG
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-blue-100">
-            PokeTrade HUB ayuda a ordenar publicaciones, perfiles y reputacion. Aun asi,
-            cada operacion entre usuarios requiere criterio, confirmacion y cuidado.
+            PokeTrade HUB ayuda a ordenar publicaciones, perfiles y reputación. Aun así,
+            cada operación entre usuarios requiere criterio, confirmación y cuidado.
           </p>
         </div>
       </section>
@@ -63,9 +63,9 @@ export default function SafetyPage() {
           <div className="flex items-start gap-3">
             <AlertTriangle className="mt-1 h-5 w-5 shrink-0 text-yellow-300" />
             <div>
-              <h2 className="text-xl font-black">Evita operaciones sospechosas</h2>
+              <h2 className="text-xl font-black">Evitá operaciones sospechosas</h2>
               <p className="mt-3 leading-7 text-blue-100">
-                Desconfia de precios demasiado bajos, presion para salir de la plataforma,
+                Desconfiá de precios demasiado bajos, presión para salir de la plataforma,
                 pedidos de pago sin comprobante o usuarios que no quieran mostrar fotos reales
                 cuando el caso lo amerita.
               </p>

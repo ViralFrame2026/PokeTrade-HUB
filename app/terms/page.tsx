@@ -2,8 +2,8 @@ import { Scale } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button-link";
 
 export const metadata = {
-  title: "Terminos",
-  description: "Condiciones basicas de uso para PokeTrade HUB."
+  title: "Términos",
+  description: "Condiciones básicas de uso para PokeTrade HUB."
 };
 
 export default function TermsPage() {
@@ -17,10 +17,10 @@ export default function TermsPage() {
           <div className="mt-10 grid h-14 w-14 place-items-center rounded-full bg-yellow-400 text-blue-950">
             <Scale className="h-7 w-7" />
           </div>
-          <h1 className="mt-5 text-4xl font-black sm:text-6xl">Terminos de uso</h1>
+          <h1 className="mt-5 text-4xl font-black sm:text-6xl">Términos de uso</h1>
           <p className="mt-5 text-lg leading-8 text-blue-100">
             PokeTrade HUB es una plataforma de comunidad para publicar, encontrar y
-            coordinar operaciones de cartas Pokemon TCG entre usuarios.
+            coordinar operaciones de cartas Pokémon TCG entre usuarios.
           </p>
         </div>
       </section>

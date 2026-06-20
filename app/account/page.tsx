@@ -214,7 +214,7 @@ export default async function AccountPage() {
                 {Number(profile.reputation_average ?? 0).toFixed(1)}
               </p>
               <p className="mt-1 text-sm font-bold text-blue-100">
-                {profile.reputation_count} valoraciónes
+                {profile.reputation_count} valoraciones
               </p>
               <div className="mt-5 rounded-lg border border-white/10 bg-blue-950/35 p-4">
                 <p className="text-sm font-bold text-blue-100">

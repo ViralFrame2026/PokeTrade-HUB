@@ -398,7 +398,7 @@ export default async function HomePage() {
             </h2>
             <p className="mt-4 max-w-xl leading-7 text-blue-100">
               Cada operación ayuda a construir reputación. Los perfiles muestran
-              valoraciónes, actividad y verificación.
+              valoraciones, actividad y verificación.
             </p>
             <div className="mt-8 flex gap-3" aria-hidden="true">
               <span className="energy-dot bg-yellow-400 text-blue-950">
@@ -441,7 +441,7 @@ export default async function HomePage() {
             </div>
           ) : (
             <div className="relative z-10 rounded-lg border border-yellow-300 bg-white p-8 text-slate-600 shadow-sm">
-              Los coleccionistas destacados aparecerán cuando reciban sus primeras valoraciónes.
+              Los coleccionistas destacados aparecerán cuando reciban sus primeras valoraciones.
             </div>
           )}
         </div>
@@ -503,7 +503,7 @@ export default async function HomePage() {
             <span className="pokeball h-9 w-9 shrink-0" aria-hidden="true" />
             <div>
               <p className="font-black tracking-[0.18em] text-yellow-300">POKETRADE</p>
-              <p className="text-xs text-blue-200">Marketplace de comunidad Pokemon TCG</p>
+              <p className="text-xs text-blue-200">Marketplace de comunidad Pokémon TCG</p>
             </div>
           </div>
           <nav className="flex flex-wrap gap-x-5 gap-y-2 font-bold" aria-label="Enlaces legales">
@@ -517,7 +517,7 @@ export default async function HomePage() {
               Privacidad
             </Link>
             <Link className="hover:text-yellow-300" href="/terms">
-              Terminos
+              Términos
             </Link>
           </nav>
         </div>

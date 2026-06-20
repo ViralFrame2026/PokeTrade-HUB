@@ -35,7 +35,7 @@ export async function PATCH(request: Request) {
 
   if (!parsed.success) {
     return NextResponse.json(
-      { error: parsed.error.issues[0]?.message ?? "Datos de perfil invalidos." },
+      { error: parsed.error.issues[0]?.message ?? "Datos de perfil inválidos." },
       { status: 400 }
     );
   }
