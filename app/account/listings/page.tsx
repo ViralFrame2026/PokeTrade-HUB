@@ -102,6 +102,24 @@ function priceLabel(listing: ListingRow) {
   }).format(listing.price ?? 0);
 }
 
+function commissionLabel(price: number | null) {
+  const commission = Number(price ?? 0) * 0.05;
+  const sellerNet = Number(price ?? 0) - commission;
+
+  return {
+    commission: new Intl.NumberFormat("es-AR", {
+      currency: "ARS",
+      maximumFractionDigits: 0,
+      style: "currency"
+    }).format(commission),
+    sellerNet: new Intl.NumberFormat("es-AR", {
+      currency: "ARS",
+      maximumFractionDigits: 0,
+      style: "currency"
+    }).format(sellerNet)
+  };
+}
+
 function availabilityLabel(status: string) {
   return {
     active: "Disponible",
@@ -259,6 +277,7 @@ export default async function MyListingsPage({
               const card = firstRelated(product?.cards ?? null);
               const status = moderationMeta(listing.moderation_status);
               const StatusIcon = status.icon;
+              const saleCommission = commissionLabel(listing.price);
 
               return (
                 <article
@@ -303,6 +322,12 @@ export default async function MyListingsPage({
                       {[card?.set_name, product?.condition].filter(Boolean).join(" | ")}
                     </p>
                     <p className="mt-2 font-black text-red-500">{priceLabel(listing)}</p>
+                    {listing.type === "sale" && listing.status === "sold" ? (
+                      <p className="mt-2 rounded-lg border border-yellow-200 bg-yellow-50 px-3 py-2 text-xs font-bold text-yellow-900">
+                        Comision estimada PokeTrade: {saleCommission.commission} | Neto vendedor:{" "}
+                        {saleCommission.sellerNet}
+                      </p>
+                    ) : null}
 
                     {listing.rejection_reason ? (
                       <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
