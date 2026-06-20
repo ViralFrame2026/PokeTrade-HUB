@@ -3,7 +3,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { PublishForm } from "@/components/publish-form";
 
 export const metadata = {
-  title: "Publicar Producto"
+  title: "Publicar carta"
 };
 
 export default function PublishPage() {
@@ -47,6 +47,18 @@ export default function PublishPage() {
                 <span className="font-semibold text-white">{step.label}</span>
               </div>
             ))}
+          </div>
+          <div className="mt-5 rounded-lg border border-yellow-300/30 bg-yellow-400/10 p-5">
+            <p className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.14em] text-yellow-300">
+              <ShieldCheck className="h-4 w-4" />
+              Qué revisamos
+            </p>
+            <ul className="mt-4 space-y-2 text-sm leading-6 text-blue-100">
+              <li>Carta oficial vinculada al catálogo.</li>
+              <li>Estado, precio y descripción coherentes.</li>
+              <li>Datos de ubicación y operación claros.</li>
+              <li>Fotos reales si el vendedor decide agregarlas.</li>
+            </ul>
           </div>
         </section>
         <PublishForm />

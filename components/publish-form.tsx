@@ -519,7 +519,7 @@ export function PublishForm() {
               Fotos reales del producto <span className="text-slate-400">(opcional)</span>
             </p>
             <p className="mt-1 text-xs leading-5 text-slate-400">
-              Puedes subir hasta 5 fotos. Si no agregas ninguna, se usara la imagen oficial.
+              Puedes subir hasta 5 fotos. Si no agregas ninguna, se usará la imagen oficial.
             </p>
           </div>
           <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-pokemonYellow/50 bg-pokemonYellow/10 px-4 py-2 text-sm font-black text-pokemonYellow transition hover:bg-pokemonYellow/20">
@@ -591,10 +591,27 @@ export function PublishForm() {
           Queda pendiente
         </div>
       </div>
+      <section className="mt-5 rounded-lg border border-blue-300/20 bg-blue-500/10 p-4">
+        <p className="flex items-center gap-2 text-sm font-black text-white">
+          <CheckCircle2 className="h-5 w-5 text-pokemonYellow" />
+          Antes de enviar a moderación
+        </p>
+        <ul className="mt-3 grid gap-2 text-xs leading-5 text-blue-100 sm:grid-cols-2">
+          <li>La carta seleccionada debe coincidir con tu producto real.</li>
+          <li>El estado debe ser honesto: Mint, Near Mint, Played, etc.</li>
+          <li>La descripción debe aclarar detalles, entrega y observaciones.</li>
+          <li>Si es venta, el precio debe ser el acordado para publicar.</li>
+        </ul>
+      </section>
       {success ? (
         <div className="mt-5 rounded-lg border border-emerald-400/30 bg-emerald-500/10 p-4 text-sm font-semibold text-emerald-100">
           {success}
         </div>
+      ) : null}
+      {!selectedCard ? (
+        <p className="mt-4 text-center text-sm font-semibold text-slate-400">
+          Primero selecciona una carta oficial para habilitar el envío.
+        </p>
       ) : null}
       <button
         className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-pokemonYellow px-5 py-3 font-black text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
