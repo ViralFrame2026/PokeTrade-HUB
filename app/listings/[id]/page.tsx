@@ -120,6 +120,13 @@ function instagramUrl(value: string) {
   return `https://instagram.com/${value.replace(/^@/, "")}`;
 }
 
+function listingLocation(listing: ListingDetailRow) {
+  return (
+    [listing.location_city, listing.location_country].filter(Boolean).join(", ") ||
+    "Ubicación no informada"
+  );
+}
+
 async function getListing(id: string) {
   if (
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
@@ -152,15 +159,41 @@ export async function generateMetadata({
   const card = firstRelated(product?.cards ?? null);
 
   if (!listing || !card) {
-    return { title: "Publicación no encontrada" };
+    return {
+      robots: { follow: false, index: false },
+      title: "Publicación no encontrada"
+    };
   }
 
+  const seller = firstRelated(listing.profiles);
+  const title = `${card.official_name} ${priceLabel(listing)} - ${typeLabel(listing.type)}`;
+  const description =
+    listing.description?.slice(0, 150) ||
+    `${card.official_name} de ${card.set_name}, ${card.rarity ?? "rareza no informada"}, publicado por ${seller?.display_name ?? "Entrenador TCG"} en ${listingLocation(listing)}.`;
+  const canonical = `/listings/${listing.id}`;
+
   return {
-    description: listing.description ?? `${card.official_name} en PokeTrade HUB`,
+    alternates: { canonical },
+    description,
     openGraph: {
-      images: [card.image_large]
+      description,
+      images: [
+        {
+          alt: `${card.official_name} en PokeTrade HUB`,
+          url: card.image_large
+        }
+      ],
+      title,
+      type: "article",
+      url: canonical
     },
-    title: card.official_name
+    title,
+    twitter: {
+      card: "summary_large_image",
+      description,
+      images: [card.image_large],
+      title
+    }
   };
 }
 
@@ -180,9 +213,7 @@ export default async function ListingDetailPage({
 
   if (!product || !card || !seller) notFound();
 
-  const location =
-    [listing.location_city, listing.location_country].filter(Boolean).join(", ") ||
-    "Ubicación no informada";
+  const location = listingLocation(listing);
   const publishedAt = new Intl.DateTimeFormat("es-AR", {
     dateStyle: "long"
   }).format(new Date(listing.approved_at ?? listing.created_at));

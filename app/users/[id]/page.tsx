@@ -8,6 +8,7 @@ import {
   Store,
   Trophy
 } from "lucide-react";
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -63,6 +64,54 @@ function priceLabel(type: string, price: number | null) {
     maximumFractionDigits: 0,
     style: "currency"
   }).format(price ?? 0);
+}
+
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const supabase = await createSupabaseServerClient();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("id, display_name, city, country, bio, is_verified, reputation_average, reputation_count")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (!profile) {
+    return {
+      robots: { follow: false, index: false },
+      title: "Perfil no encontrado"
+    };
+  }
+
+  const location =
+    [profile.city, profile.country].filter(Boolean).join(", ") || "Comunidad PokeTrade";
+  const title = `${profile.display_name} - Perfil PokeTrade`;
+  const description =
+    profile.bio?.slice(0, 150) ||
+    `${profile.display_name} en PokeTrade HUB: ${Number(profile.reputation_average ?? 0).toFixed(1)} de reputación, ${profile.reputation_count ?? 0} valoraciones y ubicación ${location}.`;
+  const canonical = `/users/${profile.id}`;
+
+  return {
+    alternates: { canonical },
+    description,
+    openGraph: {
+      description,
+      images: ["/assets/pokemon-card-banner.webp"],
+      title,
+      type: "profile",
+      url: canonical
+    },
+    title,
+    twitter: {
+      card: "summary_large_image",
+      description,
+      images: ["/assets/pokemon-card-banner.webp"],
+      title
+    }
+  };
 }
 
 export default async function PublicProfilePage({
