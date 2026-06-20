@@ -6,6 +6,7 @@ import {
   Clock3,
   Eye,
   Gift,
+  Info,
   Plus,
   Trophy,
   Users
@@ -56,6 +57,39 @@ function moderationMeta(status: string) {
 
 function winnerName(value: RaffleRow["winner"]) {
   return Array.isArray(value) ? value[0]?.display_name : value?.display_name;
+}
+
+function raffleNextStep({
+  entryCount,
+  isClosed,
+  moderationStatus,
+  rejectionReason,
+  winnerId
+}: {
+  entryCount: number;
+  isClosed: boolean;
+  moderationStatus: string;
+  rejectionReason: string | null;
+  winnerId: string | null;
+}) {
+  if (moderationStatus === "pending") {
+    return "Está en revisión. Cuando se apruebe, aparecerá público y podrá recibir participantes.";
+  }
+  if (moderationStatus === "rejected") {
+    return rejectionReason
+      ? "Revisá el motivo del rechazo antes de crear una versión corregida."
+      : "Fue rechazado por moderación. Creá una versión corregida con reglas más claras.";
+  }
+  if (winnerId) {
+    return "Ganador seleccionado. El resultado ya queda visible para la comunidad.";
+  }
+  if (isClosed && entryCount > 0) {
+    return "El sorteo ya cerró. Elegí el ganador para publicar el resultado.";
+  }
+  if (isClosed) {
+    return "El sorteo cerró sin participantes. No se puede elegir ganador.";
+  }
+  return "Sorteo activo. Compartí el enlace para sumar participantes antes del cierre.";
 }
 
 export default async function MyRafflesPage() {
@@ -157,7 +191,7 @@ export default async function MyRafflesPage() {
                     <p className="mt-1 font-semibold text-yellow-300">{raffle.prize}</p>
                     <div className="mt-4 flex flex-wrap gap-4 text-sm font-semibold text-blue-100">
                       <span className="inline-flex items-center gap-2">
-                        <CalendarClock className="h-4 w-4 text-blue-600" />
+                        <CalendarClock className="h-4 w-4 text-yellow-300" />
                         {isClosed ? "Finalizado" : "Cierra"}{" "}
                         {new Intl.DateTimeFormat("es-AR", {
                           dateStyle: "medium",
@@ -165,9 +199,23 @@ export default async function MyRafflesPage() {
                         }).format(new Date(raffle.closes_at))}
                       </span>
                       <span className="inline-flex items-center gap-2">
-                        <Users className="h-4 w-4 text-blue-600" />
+                        <Users className="h-4 w-4 text-yellow-300" />
                         {entryCount} participante{entryCount === 1 ? "" : "s"}
                       </span>
+                    </div>
+                    <div className="mt-4 rounded-lg border border-blue-300/20 bg-blue-500/10 p-3 text-sm font-semibold leading-6 text-blue-100">
+                      <p className="flex items-start gap-2">
+                        <Info className="mt-0.5 h-4 w-4 shrink-0 text-yellow-300" />
+                        <span>
+                          {raffleNextStep({
+                            entryCount,
+                            isClosed,
+                            moderationStatus: raffle.moderation_status,
+                            rejectionReason: raffle.rejection_reason,
+                            winnerId: raffle.winner_id
+                          })}
+                        </span>
+                      </p>
                     </div>
                     {selectedWinner ? (
                       <div className="mt-4 inline-flex items-center gap-2 rounded-lg border border-yellow-300 bg-yellow-50 px-4 py-3 font-black text-amber-800">
@@ -185,7 +233,7 @@ export default async function MyRafflesPage() {
                   <div className="flex flex-col gap-2">
                     {raffle.moderation_status === "approved" ? (
                       <Link
-                        className="inline-flex items-center justify-center gap-2 rounded-lg border border-blue-200 px-4 py-3 text-sm font-black text-blue-800 transition hover:bg-blue-50"
+                        className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/[0.08] px-4 py-3 text-sm font-black text-white transition hover:border-yellow-300/50 hover:bg-yellow-300/10 hover:text-yellow-200"
                         href={`/raffles/${raffle.id}`}
                       >
                         <Eye className="h-4 w-4" />
