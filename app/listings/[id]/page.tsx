@@ -264,7 +264,7 @@ export default async function ListingDetailPage({
   ];
 
   return (
-    <main className="min-h-screen bg-[#eaf2ff] text-slate-900">
+    <main className="min-h-screen bg-[#071535] text-slate-900">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <Link className="flex items-center gap-3" href="/">
@@ -284,11 +284,11 @@ export default async function ListingDetailPage({
         </nav>
       </header>
 
-      <section className="border-b border-blue-100 bg-white">
+      <section className="border-b border-white/10 bg-[linear-gradient(135deg,#123cba,#071535)]">
         <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
-          <p className="text-sm font-semibold text-slate-500">
+          <p className="text-sm font-semibold text-blue-100">
             Marketplace / {card.set_name} /{" "}
-            <span className="text-blue-800">{card.official_name}</span>
+            <span className="text-yellow-300">{card.official_name}</span>
           </p>
         </div>
       </section>
@@ -430,7 +430,7 @@ export default async function ListingDetailPage({
           {canRate ? <ListingRatingForm listingId={listing.id} /> : null}
           {existingRating ? (
             <div className="mt-5 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-center text-sm font-black text-emerald-700">
-              Ya valoraste está operacion.
+              Ya valoraste está operación.
             </div>
           ) : null}
           {reviews.length > 0 ? (

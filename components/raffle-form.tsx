@@ -171,7 +171,7 @@ export function RaffleForm() {
         type="submit"
       >
         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Gift className="h-5 w-5" />}
-        Enviar sorteo a revision
+        Enviar sorteo a revisión
       </button>
     </form>
   );

@@ -159,7 +159,7 @@ export default async function OperationsPage() {
               <p className="text-sm font-black uppercase tracking-[0.18em] text-red-500">
                 Historial comprador
               </p>
-              <h1 className="mt-2 text-4xl font-black text-blue-950">Mis operaciones</h1>
+              <h1 className="mt-2 text-4xl font-black text-blue-950">Mis operaciónes</h1>
               <p className="mt-3 max-w-2xl leading-7 text-slate-600">
                 Revisa tus compras e intercambios cerrados. Desde aquí puedes volver a
                 la publicación para valorar al vendedor.
@@ -275,7 +275,7 @@ export default async function OperationsPage() {
             <div>
               <Handshake className="mx-auto h-12 w-12 text-blue-500" />
               <h2 className="mt-4 text-2xl font-black text-blue-950">
-                Aún no tienes operaciones cerradas
+                Aún no tienes operaciónes cerradas
               </h2>
               <p className="mt-2 max-w-md text-slate-600">
                 Cuando un vendedor marque una publicación como vendida o intercambiada

@@ -77,7 +77,7 @@ export function ListingRatingForm({ listingId }: { listingId: string }) {
           className="mt-2 min-h-24 w-full resize-none rounded-lg border border-yellow-200 bg-white px-3 py-3 text-slate-800 outline-none focus:border-blue-500"
           maxLength={500}
           onChange={(event) => setComment(event.target.value)}
-          placeholder="Cuenta brevemente como fue la operacion"
+          placeholder="Cuenta brevemente como fue la operación"
           value={comment}
         />
       </label>

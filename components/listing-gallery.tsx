@@ -19,9 +19,10 @@ export function ListingGallery({ images }: { images: GalleryImage[] }) {
 
   return (
     <section>
-      <div className="relative grid min-h-[520px] place-items-center overflow-hidden rounded-lg border border-blue-100 bg-[linear-gradient(145deg,#dbeafe,#fff7cc)] p-6 sm:p-10">
+      <div className="relative grid min-h-[520px] place-items-center overflow-hidden rounded-lg border border-white/15 bg-[radial-gradient(circle_at_20%_10%,rgba(250,204,21,.22),transparent_28%),linear-gradient(145deg,#123cba,#071535)] p-6 shadow-[0_24px_70px_rgba(0,0,0,.32)] sm:p-10">
+        <div className="absolute inset-0 opacity-15 [background-image:linear-gradient(120deg,rgba(255,255,255,.16)_1px,transparent_1px)] [background-size:36px_36px]" />
         <div className="absolute left-0 top-0 h-2 w-full bg-[linear-gradient(90deg,#ef4444_0_33%,#facc15_33%_66%,#2563eb_66%)]" />
-        <span className="absolute left-4 top-5 inline-flex items-center gap-2 rounded-full bg-blue-950/90 px-3 py-1.5 text-xs font-black uppercase text-white">
+        <span className="absolute left-4 top-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-blue-950/90 px-3 py-1.5 text-xs font-black uppercase text-white">
           {selectedImage.type === "real" ? (
             <Camera className="h-4 w-4 text-yellow-300" />
           ) : (
@@ -32,7 +33,7 @@ export function ListingGallery({ images }: { images: GalleryImage[] }) {
         <Image
           alt={selectedImage.alt}
           className={cn(
-            "h-auto max-h-[610px] w-auto max-w-full drop-shadow-[0_28px_28px_rgba(30,64,175,0.25)]",
+            "relative h-auto max-h-[610px] w-auto max-w-full drop-shadow-[0_30px_28px_rgba(0,0,0,0.38)]",
             selectedImage.type === "real" ? "rounded-md object-contain" : "object-contain"
           )}
           height={900}

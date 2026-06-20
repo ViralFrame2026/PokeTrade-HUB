@@ -186,7 +186,7 @@ export default async function MessagesPage() {
                 Todavía no tienes conversaciones
               </h2>
               <p className="mt-2 text-slate-600">
-                Abre una publicación y envia un mensaje al vendedor.
+                Abre una publicación y envía un mensaje al vendedor.
               </p>
             </div>
           </div>

@@ -31,7 +31,7 @@ const links = [
     label: "Mis publicaciones",
     badge: "listings"
   },
-  { href: "/account/operations", icon: Handshake, label: "Mis operaciones" },
+  { href: "/account/operations", icon: Handshake, label: "Mis operaciónes" },
   { href: "/account/messages", icon: MessagesSquare, label: "Mensajes", badge: "messages" },
   { href: "/account/profile", icon: UserRound, label: "Mi perfil" },
   { href: "/account/favorites", icon: Heart, label: "Favoritos" },
@@ -88,7 +88,7 @@ export function SiteMenu({ badges = {}, showAdmin = false }: SiteMenuProps) {
     <div className="relative" ref={menuRef}>
       <button
         aria-expanded={isOpen}
-        aria-label={isOpen ? "Cerrar menu" : "Abrir menu"}
+        aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
         className="inline-flex h-10 items-center gap-2 rounded-lg border border-blue-300 px-3 text-sm font-bold text-blue-100 transition hover:border-yellow-300 hover:bg-blue-700 hover:text-yellow-300"
         onClick={() => setIsOpen((current) => !current)}
         title="Menu"
@@ -118,7 +118,7 @@ export function SiteMenu({ badges = {}, showAdmin = false }: SiteMenuProps) {
           <p className="mt-1 text-xs text-blue-200">Accesos de tu cuenta y comunidad</p>
         </div>
 
-        <nav aria-label="Navegacion principal" className="max-h-[min(68vh,470px)] overflow-y-auto p-2">
+        <nav aria-label="Navegación principal" className="max-h-[min(68vh,470px)] overflow-y-auto p-2">
           <div className="space-y-1">
             {visibleLinks.map((item) => {
               const badge =

@@ -284,7 +284,7 @@ export default async function HomePage() {
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-blue-100">
               Publicaciones moderadas, reputación visible, sorteos de la comunidad y
-              operaciones más seguras.
+              operaciónes más seguras.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href="/marketplace" icon={Search}>

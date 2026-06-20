@@ -203,7 +203,7 @@ export default async function PublicProfilePage({
           </p>
           <p className="inline-flex items-center gap-2">
             <ShieldCheck className="h-4 w-4 text-blue-600" />
-            {profile.reputation_count} operacion{profile.reputation_count === 1 ? "" : "es"} valorada{profile.reputation_count === 1 ? "" : "s"}
+            {profile.reputation_count} operación{profile.reputation_count === 1 ? "" : "es"} valorada{profile.reputation_count === 1 ? "" : "s"}
           </p>
         </div>
       </section>

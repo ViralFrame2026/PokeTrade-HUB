@@ -6,11 +6,13 @@ import {
   Heart,
   Handshake,
   ListChecks,
+  LockKeyhole,
   MessageCircle,
+  MessagesSquare,
   ShieldCheck,
+  Sparkles,
   Store,
   Trophy,
-  LockKeyhole,
   UserRound
 } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button-link";
@@ -109,7 +111,7 @@ export default async function AccountPage() {
     {
       href: "/account/listings",
       icon: ShieldCheck,
-      label: "Requieren atencion",
+      label: "Requieren atención",
       tone: "yellow",
       value: pendingListingsResult.count ?? 0
     },
@@ -130,7 +132,7 @@ export default async function AccountPage() {
     {
       href: "/account/operations",
       icon: Handshake,
-      label: "Operaciónes cerradas",
+      label: "Operaciones cerradas",
       tone: "green",
       value: operationsResult.count ?? 0
     },
@@ -150,7 +152,7 @@ export default async function AccountPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-[#eaf2ff] text-slate-900">
+    <main className="min-h-screen bg-[#071535] text-white">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
           <Link className="flex items-center gap-3" href="/">
@@ -169,41 +171,58 @@ export default async function AccountPage() {
         </nav>
       </header>
 
-      <section className="border-b border-blue-100 bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+      <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_80%_0%,rgba(250,204,21,0.18),transparent_30%),linear-gradient(135deg,#123cba_0%,#071535_68%)]">
+        <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(120deg,rgba(255,255,255,.12)_1px,transparent_1px)] [background-size:34px_34px]" />
+        <div className="relative mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-14">
           <Link
-            className="inline-flex items-center gap-2 text-sm font-bold text-blue-700 hover:text-blue-900"
+            className="inline-flex items-center gap-2 text-sm font-bold text-blue-100 hover:text-yellow-300"
             href="/"
           >
             <ArrowLeft className="h-4 w-4" />
             Volver al inicio
           </Link>
 
-          <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_360px] lg:items-end">
             <div>
-              <p className="text-sm font-black uppercase tracking-[0.18em] text-red-500">
-                Centro de cuenta
+              <p className="inline-flex items-center gap-2 rounded-full border border-yellow-300/70 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-yellow-300">
+                <Sparkles className="h-4 w-4" />
+                Centro de entrenador
               </p>
-              <h1 className="mt-2 text-4xl font-black text-blue-950">
+              <h1 className="mt-5 max-w-3xl text-4xl font-black leading-tight sm:text-6xl">
                 Hola, {profile.display_name}
               </h1>
-              <p className="mt-3 max-w-2xl leading-7 text-slate-600">
-                Revisa tus publicaciones, mensajes, operaciones, sorteos y perfil desde un
-                solo lugar.
+              <p className="mt-4 max-w-2xl text-lg leading-8 text-blue-100">
+                Gestiona publicaciones, mensajes, operaciones, sorteos y reputación desde
+                un solo lugar, con señales claras para vender e intercambiar mejor.
               </p>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <ButtonLink href="/publish" icon={Store}>
+                  Publicar carta
+                </ButtonLink>
+                <ButtonLink href="/account/messages" icon={MessagesSquare} variant="secondary">
+                  Ver mensajes
+                </ButtonLink>
+              </div>
             </div>
 
-            <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 text-blue-950">
-              <p className="flex items-center gap-2 text-sm font-black">
-                <UserRound className="h-4 w-4 text-blue-700" />
+            <div className="rounded-lg border border-white/15 bg-white/10 p-5 shadow-[0_20px_60px_rgba(0,0,0,.25)] backdrop-blur">
+              <p className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.14em] text-yellow-300">
+                <UserRound className="h-4 w-4" />
                 Reputación
               </p>
-              <p className="mt-2 text-3xl font-black">
+              <p className="mt-3 text-5xl font-black">
                 {Number(profile.reputation_average ?? 0).toFixed(1)}
               </p>
-              <p className="text-xs font-bold text-slate-500">
+              <p className="mt-1 text-sm font-bold text-blue-100">
                 {profile.reputation_count} valoraciones
               </p>
+              <div className="mt-5 rounded-lg border border-white/10 bg-blue-950/35 p-4">
+                <p className="text-sm font-bold text-blue-100">
+                  {profile.is_verified
+                    ? "Perfil verificado por PokeTrade HUB."
+                    : "Completa tu perfil y cierra operaciones para ganar confianza."}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -218,7 +237,7 @@ export default async function AccountPage() {
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           <QuickLink href="/account/profile" icon={UserRound} label="Editar perfil" />
-          <QuickLink href={`/users/${user.id}`} icon={UserRound} label="Ver perfil publico" />
+          <QuickLink href={`/users/${user.id}`} icon={UserRound} label="Ver perfil público" />
           <QuickLink href="/account/password" icon={LockKeyhole} label="Cambiar contraseña" />
           <QuickLink href="/raffles/new" icon={Trophy} label="Crear sorteo" />
           <QuickLink href="/marketplace" icon={Store} label="Explorar marketplace" />
@@ -233,21 +252,23 @@ export default async function AccountPage() {
 
 function AccountCard({ stat }: { stat: DashboardStat }) {
   const colors = {
-    blue: "border-blue-100 bg-white text-blue-800",
-    green: "border-emerald-200 bg-emerald-50 text-emerald-700",
-    red: "border-red-200 bg-red-50 text-red-700",
-    yellow: "border-yellow-200 bg-yellow-50 text-yellow-800"
+    blue: "border-blue-400/25 bg-blue-950/70 text-blue-100",
+    green: "border-emerald-300/30 bg-emerald-950/40 text-emerald-100",
+    red: "border-red-300/30 bg-red-950/40 text-red-100",
+    yellow: "border-yellow-300/40 bg-yellow-400/12 text-yellow-100"
   };
   const tone = stat.tone ?? "blue";
 
   return (
     <Link
-      className={`rounded-lg border p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md ${colors[tone]}`}
+      className={`rounded-lg border p-5 shadow-[0_18px_45px_rgba(0,0,0,.18)] transition hover:-translate-y-1 hover:border-yellow-300/70 hover:bg-blue-900 ${colors[tone]}`}
       href={stat.href}
     >
-      <stat.icon className="h-6 w-6" />
-      <p className="mt-4 text-3xl font-black">{stat.value}</p>
-      <p className="mt-1 text-sm font-black">{stat.label}</p>
+      <span className="grid h-11 w-11 place-items-center rounded-lg bg-white/10 text-yellow-300">
+        <stat.icon className="h-5 w-5" />
+      </span>
+      <p className="mt-4 text-4xl font-black text-white">{stat.value}</p>
+      <p className="mt-1 text-sm font-black text-blue-100">{stat.label}</p>
     </Link>
   );
 }
@@ -263,10 +284,10 @@ function QuickLink({
 }) {
   return (
     <Link
-      className="flex items-center gap-3 rounded-lg border border-blue-100 bg-white p-4 font-black text-blue-950 shadow-sm transition hover:border-blue-300 hover:bg-blue-50"
+      className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 p-4 font-black text-white shadow-[0_18px_45px_rgba(0,0,0,.16)] transition hover:border-yellow-300/60 hover:bg-white/10"
       href={href}
     >
-      <span className="grid h-10 w-10 place-items-center rounded-lg bg-blue-700 text-white">
+      <span className="grid h-10 w-10 place-items-center rounded-lg bg-yellow-400 text-blue-950">
         <Icon className="h-5 w-5" />
       </span>
       {label}

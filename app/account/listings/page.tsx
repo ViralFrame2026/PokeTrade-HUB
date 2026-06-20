@@ -79,7 +79,7 @@ function moderationMeta(status: string) {
   return {
     className: "bg-blue-100 text-blue-700",
     icon: Clock3,
-    label: "En revision"
+    label: "En revisión"
   };
 }
 
@@ -204,7 +204,7 @@ export default async function MyListingsPage({
   ).length;
 
   return (
-    <main className="min-h-screen bg-[#eaf2ff] text-slate-900">
+    <main className="min-h-screen bg-[#071535] text-slate-900">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <Link className="flex items-center gap-3" href="/">
@@ -238,25 +238,26 @@ export default async function MyListingsPage({
         </nav>
       </header>
 
-      <section className="border-b border-blue-100 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_80%_0%,rgba(250,204,21,0.16),transparent_30%),linear-gradient(135deg,#123cba_0%,#071535_70%)]">
+        <div className="absolute inset-0 opacity-15 [background-image:linear-gradient(120deg,rgba(255,255,255,.15)_1px,transparent_1px)] [background-size:34px_34px]" />
+        <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
           <Link
-            className="inline-flex items-center gap-2 text-sm font-bold text-blue-700 hover:text-blue-900"
+            className="inline-flex items-center gap-2 text-sm font-bold text-blue-100 hover:text-yellow-300"
             href="/"
           >
             <ArrowLeft className="h-4 w-4" />
             Volver al inicio
           </Link>
-          <h1 className="mt-5 text-4xl font-black text-blue-950">Mis publicaciones</h1>
-          <p className="mt-2 text-slate-600">
+          <h1 className="mt-5 text-4xl font-black text-white">Mis publicaciones</h1>
+          <p className="mt-2 text-blue-100">
             Sigue el estado de las cartas que enviaste a moderación.
           </p>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-3">
             <SummaryCard label="Total enviadas" value={listings.length} />
-            <SummaryCard label="En revision" value={pending} variant="blue" />
+            <SummaryCard label="En revisión" value={pending} variant="blue" />
             <SummaryCard
-              label={needsAttention > 0 ? "Necesitan atencion" : "Aprobadas"}
+              label={needsAttention > 0 ? "Necesitan atención" : "Aprobadas"}
               value={needsAttention > 0 ? needsAttention : approved}
               variant={needsAttention > 0 ? "red" : "green"}
             />
@@ -267,7 +268,7 @@ export default async function MyListingsPage({
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         {params.resubmitted === "1" ? (
           <div className="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4 font-bold text-emerald-800">
-            Los cambios se guardaron y la publicación volvio a moderación.
+            Los cambios se guardaron y la publicación volvió a moderación.
           </div>
         ) : null}
         {listings.length > 0 ? (
@@ -381,7 +382,7 @@ export default async function MyListingsPage({
                 Todavía no publicaste cartas
               </h2>
               <p className="mt-2 text-slate-600">
-                Selecciona una carta oficial y enviala a revision.
+                Selecciona una carta oficial y envíala a revisión.
               </p>
               <div className="mt-5">
                 <ButtonLink href="/publish" icon={Plus}>

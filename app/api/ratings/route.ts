@@ -35,10 +35,10 @@ export async function POST(request: Request) {
   if (error) {
     const messages: Record<string, string> = {
       "Only the selected counterparty can rate this operation":
-        "Solo la persona con quien se concreto la operacion puede valorar.",
+        "Solo la persona con quien se concreto la operación puede valorar.",
       "Sellers cannot rate themselves": "No puedes valorar tu propia publicación.",
-      "The operation is not completed": "La operacion todavia no fue finalizada.",
-      "This operation has already been rated": "Ya valoraste está operacion."
+      "The operation is not completed": "La operación todavia no fue finalizada.",
+      "This operation has already been rated": "Ya valoraste está operación."
     };
     return NextResponse.json(
       { error: messages[error.message] ?? error.message },

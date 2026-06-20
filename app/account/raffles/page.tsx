@@ -50,7 +50,7 @@ function moderationMeta(status: string) {
   return {
     className: "bg-blue-100 text-blue-700",
     icon: Clock3,
-    label: "En revision"
+    label: "En revisión"
   };
 }
 
@@ -113,7 +113,7 @@ export default async function MyRafflesPage() {
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <SummaryCard label="Total creados" value={raffles.length} />
-          <SummaryCard label="En revision" value={pending} variant="blue" />
+          <SummaryCard label="En revisión" value={pending} variant="blue" />
           <SummaryCard label="Aprobados" value={approved} variant="green" />
           <SummaryCard
             label={withWinner > 0 ? "Con ganador" : "Finalizados"}
@@ -216,7 +216,7 @@ export default async function MyRafflesPage() {
                 Todavía no creaste sorteos
               </h2>
               <p className="mt-2 text-slate-600">
-                Crea uno gratuito y envialo a moderación.
+                Crea uno gratuito y envíalo a moderación.
               </p>
             </div>
           </div>

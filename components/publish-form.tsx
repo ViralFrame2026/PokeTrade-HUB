@@ -170,7 +170,7 @@ export function PublishForm() {
       try {
         if (photos.length === 0) {
           setSuccess(
-            `Publicación ${listingId} enviada. Quedo pendiente de moderación.`
+            `Publicación ${listingId} enviada. Quedó pendiente de moderación.`
           );
           setCards([]);
           setSelectedCard(null);
@@ -228,7 +228,7 @@ export function PublishForm() {
       }
 
       setSuccess(
-        `Publicación ${listingId} enviada con ${photos.length} foto(s). Quedo pendiente de moderación.`
+        `Publicación ${listingId} enviada con ${photos.length} foto(s). Quedó pendiente de moderación.`
       );
       setCards([]);
       setSelectedCard(null);
@@ -606,7 +606,7 @@ export function PublishForm() {
         ) : (
           <Store className="h-5 w-5" />
         )}
-        Enviar a revision
+        Enviar a revisión
       </button>
     </form>
   );

@@ -41,7 +41,7 @@ export function ListingStatusControl({
     if (status === currentStatus) return;
 
     if (closing && !counterpartyId) {
-      setError("Selecciona con quien concretaste la operacion.");
+      setError("Selecciona con quien concretaste la operación.");
       return;
     }
     if (

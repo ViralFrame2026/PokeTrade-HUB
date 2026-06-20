@@ -193,7 +193,7 @@ export function EditListingForm({ initial, listingId }: EditListingFormProps) {
         type="submit"
       >
         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
-        Guardar y reenviar a revision
+        Guardar y reenviar a revisión
       </button>
     </form>
   );
