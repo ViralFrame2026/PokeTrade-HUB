@@ -300,6 +300,19 @@ export default async function ListingDetailPage({
         <section>
           <ListingGallery images={galleryImages} />
 
+          <div className="mt-5 rounded-lg border border-yellow-300/30 bg-yellow-400/10 p-5 text-blue-100">
+            <p className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.14em] text-yellow-300">
+              <ShieldCheck className="h-4 w-4" />
+              Revisión visual recomendada
+            </p>
+            <ul className="mt-4 grid gap-2 text-sm font-semibold leading-6 sm:grid-cols-2">
+              <li>Compará la carta real con la imagen oficial.</li>
+              <li>Pedí fotos de frente, dorso y esquinas.</li>
+              <li>Confirmá estado, precio y forma de entrega.</li>
+              <li>Mantené el acuerdo registrado por mensaje.</li>
+            </ul>
+          </div>
+
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             <InfoItem label="Set" value={card.set_name} />
             <InfoItem label="Rareza" value={card.rarity ?? "No informada"} />

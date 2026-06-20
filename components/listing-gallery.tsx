@@ -14,6 +14,8 @@ type GalleryImage = {
 export function ListingGallery({ images }: { images: GalleryImage[] }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const selectedImage = images[selectedIndex] ?? images[0];
+  const realPhotoCount = images.filter((image) => image.type === "real").length;
+  const officialImageCount = images.filter((image) => image.type === "official").length;
 
   if (!selectedImage) return null;
 
@@ -77,6 +79,21 @@ export function ListingGallery({ images }: { images: GalleryImage[] }) {
             </span>
           </button>
         ))}
+      </div>
+
+      <div className="mt-4 grid gap-3 rounded-lg border border-white/10 bg-white/[0.06] p-4 text-sm text-blue-100 sm:grid-cols-3">
+        <div>
+          <p className="font-black text-yellow-300">{realPhotoCount}</p>
+          <p className="mt-1 font-semibold">foto{realPhotoCount === 1 ? "" : "s"} real{realPhotoCount === 1 ? "" : "es"} del vendedor</p>
+        </div>
+        <div>
+          <p className="font-black text-yellow-300">{officialImageCount}</p>
+          <p className="mt-1 font-semibold">imagen oficial de referencia</p>
+        </div>
+        <div>
+          <p className="font-black text-yellow-300">Revisá</p>
+          <p className="mt-1 font-semibold">bordes, esquinas, brillo y reverso antes de operar</p>
+        </div>
       </div>
     </section>
   );
