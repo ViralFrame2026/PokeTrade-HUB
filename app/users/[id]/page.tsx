@@ -5,8 +5,10 @@ import {
   MapPin,
   ShieldCheck,
   Star,
-  Store
+  Store,
+  Trophy
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ListingCard } from "@/components/listing-card";
@@ -70,7 +72,13 @@ export default async function PublicProfilePage({
 }) {
   const { id } = await params;
   const supabase = await createSupabaseServerClient();
-  const [{ data: profile }, { data: listingData }, { data: ratingData }] =
+  const [
+    { data: profile },
+    { data: listingData },
+    { data: ratingData },
+    operationsResult,
+    rafflesResult
+  ] =
     await Promise.all([
       supabase
         .from("profiles")
@@ -95,7 +103,17 @@ export default async function PublicProfilePage({
         )
         .eq("reviewed_id", id)
         .order("created_at", { ascending: false })
-        .limit(20)
+        .limit(20),
+      supabase
+        .from("listings")
+        .select("id", { count: "exact", head: true })
+        .eq("seller_id", id)
+        .in("status", ["sold", "traded", "finished"]),
+      supabase
+        .from("raffles")
+        .select("id", { count: "exact", head: true })
+        .eq("creator_id", id)
+        .eq("moderation_status", "approved")
     ]);
 
   if (!profile) notFound();
@@ -137,6 +155,14 @@ export default async function PublicProfilePage({
     year: "numeric"
   }).format(new Date(profile.joined_at));
   const averageRating = Number(profile.reputation_average).toFixed(1);
+  const closedOperations = operationsResult.count ?? 0;
+  const approvedRaffles = rafflesResult.count ?? 0;
+  const trustSignals = [
+    profile.is_verified ? "Perfil verificado por el equipo" : "Perfil público con actividad visible",
+    `${listings.length} publicación${listings.length === 1 ? "" : "es"} activa${listings.length === 1 ? "" : "s"}`,
+    `${closedOperations} operación${closedOperations === 1 ? "" : "es"} cerrada${closedOperations === 1 ? "" : "s"}`,
+    `${profile.reputation_count} valoración${profile.reputation_count === 1 ? "" : "es"} recibida${profile.reputation_count === 1 ? "" : "s"}`
+  ];
 
   return (
     <main className="min-h-screen bg-[#071535] text-slate-900">
@@ -164,8 +190,19 @@ export default async function PublicProfilePage({
       <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_82%_0%,rgba(250,204,21,.18),transparent_30%),linear-gradient(135deg,#123cba_0%,#071535_72%)]">
         <div className="absolute inset-0 opacity-15 [background-image:linear-gradient(120deg,rgba(255,255,255,.16)_1px,transparent_1px)] [background-size:34px_34px]" />
         <div className="relative mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[auto_1fr_auto] lg:items-center">
-          <div className="grid h-24 w-24 place-items-center overflow-hidden rounded-full border-4 border-yellow-300 bg-blue-950 text-3xl font-black text-yellow-300">
-            {profile.display_name.slice(0, 2).toUpperCase()}
+          <div className="relative grid h-24 w-24 place-items-center overflow-hidden rounded-full border-4 border-yellow-300 bg-blue-950 text-3xl font-black text-yellow-300">
+            {profile.avatar_url ? (
+              <Image
+                alt={profile.display_name}
+                className="object-cover"
+                fill
+                sizes="96px"
+                src={profile.avatar_url}
+                unoptimized
+              />
+            ) : (
+              profile.display_name.slice(0, 2).toUpperCase()
+            )}
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
@@ -193,6 +230,16 @@ export default async function PublicProfilePage({
               label="Publicaciones activas"
               value={String(listings.length)}
             />
+            <Stat
+              icon={ShieldCheck}
+              label="Operaciones cerradas"
+              value={String(closedOperations)}
+            />
+            <Stat
+              icon={Trophy}
+              label="Sorteos aprobados"
+              value={String(approvedRaffles)}
+            />
           </div>
         </div>
         <div className="relative mx-auto grid max-w-7xl gap-3 border-t border-white/10 px-4 py-4 text-sm font-bold text-blue-100 sm:grid-cols-3 sm:px-6">
@@ -212,6 +259,35 @@ export default async function PublicProfilePage({
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+        <div className="mb-10 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="rounded-lg border border-yellow-300/30 bg-yellow-400/10 p-5 shadow-[0_18px_45px_rgba(0,0,0,.16)]">
+            <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-yellow-300">
+              <ShieldCheck className="h-4 w-4" />
+              Señales de confianza
+            </p>
+            <div className="mt-4 grid gap-3">
+              {trustSignals.map((signal) => (
+                <p
+                  className="flex items-start gap-2 rounded-lg border border-white/10 bg-white/[0.06] p-3 text-sm font-semibold text-blue-100"
+                  key={signal}
+                >
+                  <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-yellow-300" />
+                  {signal}
+                </p>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-[0_18px_45px_rgba(0,0,0,.16)]">
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-yellow-300">
+              Recomendación de operación
+            </p>
+            <p className="mt-3 leading-7 text-blue-100">
+              Revisá las publicaciones activas, pedí fotos reales por mensaje y mantené los
+              acuerdos dentro de PokeTrade HUB para que la reputación pueda reflejar la operación.
+            </p>
+          </div>
+        </div>
+
         <div className="mb-6 flex items-end justify-between gap-4">
           <div>
             <p className="text-sm font-black uppercase tracking-[0.16em] text-yellow-300">
