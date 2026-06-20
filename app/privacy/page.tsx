@@ -30,7 +30,7 @@ export default function PrivacyPage() {
           ["Datos de cuenta", "Usamos tu email, nombre visible y datos de perfil para identificarte dentro de la comunidad."],
           ["Publicaciones y mensajes", "Guardamos publicaciones, operaciones, favoritos, notificaciones y mensajes necesarios para operar dentro del marketplace."],
           ["Seguridad", "Podemos revisar contenido reportado o sospechoso para proteger a la comunidad y aplicar reglas."],
-          ["Servicios externos", "La autenticacion y base de datos funcionan con Supabase. El despliegue funciona con Vercel."]
+          ["Servicios externos", "La autenticación y base de datos funcionan con Supabase. El despliegue funciona con Vercel."]
         ].map(([title, copy]) => (
           <article className="rounded-lg border border-white/10 bg-white/[0.06] p-6" key={title}>
             <h2 className="flex items-center gap-2 text-xl font-black">

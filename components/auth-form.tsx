@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Eye, EyeOff, Loader2, LockKeyhole, Mail, UserRound } from "lucide-react";
+import Link from "next/link";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 type AuthFormProps = {
@@ -119,22 +120,27 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
 
       <form className="mt-5" onSubmit={handleSubmit}>
         {mode === "register" ? (
-          <label className="block text-sm font-bold text-slate-200">
-            Nombre público
-            <div className="relative mt-2">
-              <UserRound className="pointer-events-none absolute left-3 top-3 h-5 w-5 text-slate-500" />
-              <input
-                autoComplete="name"
-                className="w-full rounded-lg border border-white/10 bg-slate-950/70 py-3 pl-10 pr-3 text-white outline-none focus:border-pokemonYellow/60"
-                minLength={2}
-                onChange={(event) => setDisplayName(event.target.value)}
-                placeholder="Entrenador TCG"
-                required
-                type="text"
-                value={displayName}
-              />
-            </div>
-          </label>
+          <>
+            <label className="block text-sm font-bold text-slate-200">
+              Nombre público
+              <div className="relative mt-2">
+                <UserRound className="pointer-events-none absolute left-3 top-3 h-5 w-5 text-slate-500" />
+                <input
+                  autoComplete="name"
+                  className="w-full rounded-lg border border-white/10 bg-slate-950/70 py-3 pl-10 pr-3 text-white outline-none focus:border-pokemonYellow/60"
+                  minLength={2}
+                  onChange={(event) => setDisplayName(event.target.value)}
+                  placeholder="Entrenador TCG"
+                  required
+                  type="text"
+                  value={displayName}
+                />
+              </div>
+            </label>
+            <p className="mt-2 text-xs leading-5 text-slate-400">
+              Este nombre se verá en tus publicaciones, mensajes y sorteos.
+            </p>
+          </>
         ) : null}
 
         <label className={`${mode === "register" ? "mt-4" : ""} block text-sm font-bold text-slate-200`}>
@@ -196,6 +202,13 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
           </p>
         ) : null}
 
+        {mode === "register" ? (
+          <div className="mt-4 rounded-lg border border-white/10 bg-white/[0.04] p-3 text-xs leading-5 text-slate-300">
+            Al crear la cuenta vas a poder publicar cartas, guardar favoritos, enviar
+            mensajes, participar en sorteos y construir reputación.
+          </div>
+        ) : null}
+
         <button
           className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-pokemonYellow px-5 py-3 font-black text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
           disabled={isSubmitting}
@@ -208,6 +221,22 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
               ? "Crear cuenta"
               : "Enviar enlace"}
         </button>
+
+        <p className="mt-4 text-center text-xs leading-5 text-slate-400">
+          Al usar PokeTrade aceptás operar bajo las{" "}
+          <Link className="font-bold text-pokemonYellow hover:text-yellow-200" href="/rules">
+            reglas de comunidad
+          </Link>
+          , la{" "}
+          <Link className="font-bold text-pokemonYellow hover:text-yellow-200" href="/privacy">
+            privacidad
+          </Link>{" "}
+          y los{" "}
+          <Link className="font-bold text-pokemonYellow hover:text-yellow-200" href="/terms">
+            términos
+          </Link>
+          .
+        </p>
 
         {mode === "login" ? (
           <button
