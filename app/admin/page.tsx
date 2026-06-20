@@ -4,6 +4,8 @@ import {
   DollarSign,
   FileWarning,
   Gift,
+  Heart,
+  MessageCircle,
   Percent,
   ShieldCheck,
   Store,
@@ -129,6 +131,9 @@ export default async function AdminPage() {
     : { data: null };
   const startOfToday = new Date();
   startOfToday.setHours(0, 0, 0, 0);
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
 
   const [
     pendingResult,
@@ -138,6 +143,10 @@ export default async function AdminPage() {
     approvedResult,
     activeListingsResult,
     closedSalesResult,
+    monthlyUsersResult,
+    messagesResult,
+    favoritesResult,
+    activeRafflesResult,
     userRolesResult
   ] = await Promise.all([
     supabase
@@ -172,6 +181,17 @@ export default async function AdminPage() {
       .eq("moderation_status", "approved")
       .eq("type", "sale")
       .eq("status", "sold"),
+    supabase
+      .from("profiles")
+      .select("id", { count: "exact", head: true })
+      .gte("joined_at", startOfMonth.toISOString()),
+    supabase.from("messages").select("id", { count: "exact", head: true }),
+    supabase.from("favorites").select("id", { count: "exact", head: true }),
+    supabase
+      .from("raffles")
+      .select("id", { count: "exact", head: true })
+      .eq("moderation_status", "approved")
+      .gt("closes_at", new Date().toISOString()),
     currentProfile?.is_super_admin
       ? supabase
           .from("profiles")
@@ -288,6 +308,28 @@ export default async function AdminPage() {
       value: moneyLabel(estimatedCommission)
     }
   ];
+  const sponsorMetrics = [
+    {
+      icon: Users,
+      label: "Usuarios nuevos del mes",
+      value: String(monthlyUsersResult.count ?? 0)
+    },
+    {
+      icon: MessageCircle,
+      label: "Mensajes enviados",
+      value: String(messagesResult.count ?? 0)
+    },
+    {
+      icon: Heart,
+      label: "Favoritos guardados",
+      value: String(favoritesResult.count ?? 0)
+    },
+    {
+      icon: Gift,
+      label: "Sorteos activos",
+      value: String(activeRafflesResult.count ?? 0)
+    }
+  ];
 
   return (
     <main className="mx-auto min-h-screen max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -336,6 +378,20 @@ export default async function AdminPage() {
                 <p className="mt-1 text-xs font-semibold text-slate-400">{metric.label}</p>
               </article>
             ))}
+          </div>
+          <div className="mt-5 border-t border-white/10 pt-5">
+            <h3 className="text-sm font-black uppercase tracking-[0.16em] text-slate-300">
+              Valor para sponsors
+            </h3>
+            <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              {sponsorMetrics.map((metric) => (
+                <article className="rounded-lg border border-white/10 bg-blue-500/10 p-4" key={metric.label}>
+                  <metric.icon className="h-5 w-5 text-pokemonYellow" />
+                  <p className="mt-3 text-2xl font-black text-white">{metric.value}</p>
+                  <p className="mt-1 text-xs font-semibold text-slate-400">{metric.label}</p>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
       ) : null}
