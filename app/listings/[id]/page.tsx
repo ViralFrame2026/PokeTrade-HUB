@@ -186,18 +186,19 @@ export default async function ListingDetailPage({
   }).format(new Date(listing.approved_at ?? listing.created_at));
   const whatsapp = seller.whatsapp ? whatsappUrl(seller.whatsapp) : null;
   const instagram = seller.instagram ? instagramUrl(seller.instagram) : null;
-  const contactUrl =
-    whatsapp ?? instagram ?? `/login?next=${encodeURIComponent(`/listings/${listing.id}`)}`;
-  const contactLabel = whatsapp
-    ? "Contactar por WhatsApp"
-    : instagram
-      ? "Contactar por Instagram"
-      : "Iniciar sesión para contactar";
-  const ContactIcon = whatsapp ? MessageCircle : instagram ? Instagram : MessageCircle;
   const supabase = await createSupabaseServerClient();
   const {
     data: { user }
   } = await supabase.auth.getUser();
+  const directContactUrl = user ? whatsapp ?? instagram : null;
+  const loginContactUrl = `/login?next=${encodeURIComponent(`/listings/${listing.id}`)}`;
+  const contactUrl = directContactUrl ?? loginContactUrl;
+  const contactLabel = !user
+    ? "Iniciar sesión para ver contacto"
+    : whatsapp
+      ? "Contactar por WhatsApp"
+      : "Contactar por Instagram";
+  const ContactIcon = user && instagram && !whatsapp ? Instagram : MessageCircle;
   const isCompleted = ["sold", "traded", "finished"].includes(listing.status);
   const isAvailable = listing.status === "active";
   const [favoriteResult, ratingResult, existingReportResult, reviewsResult] =
@@ -365,15 +366,21 @@ export default async function ListingDetailPage({
                   listingId={listing.id}
                   sellerId={listing.seller_id}
                 />
-                <a
-                  className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-blue-200 bg-white px-5 py-3 font-bold text-blue-800 transition hover:bg-blue-50"
-                  href={contactUrl}
-                  rel={whatsapp || instagram ? "noreferrer" : undefined}
-                  target={whatsapp || instagram ? "_blank" : undefined}
-                >
-                  <ContactIcon className="h-5 w-5" />
-                  {contactLabel}
-                </a>
+                {!user || directContactUrl ? (
+                  <a
+                    className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-blue-200 bg-white px-5 py-3 font-bold text-blue-800 transition hover:bg-blue-50"
+                    href={contactUrl}
+                    rel={directContactUrl ? "noreferrer" : undefined}
+                    target={directContactUrl ? "_blank" : undefined}
+                  >
+                    <ContactIcon className="h-5 w-5" />
+                    {contactLabel}
+                  </a>
+                ) : (
+                  <div className="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-center text-sm font-semibold text-blue-800">
+                    Este vendedor usa mensajes internos de PokeTrade.
+                  </div>
+                )}
               </>
             ) : null}
             <FavoriteButton
