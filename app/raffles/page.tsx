@@ -37,7 +37,7 @@ export default async function RafflesPage() {
   const raffles = (data ?? []) as RaffleRow[];
 
   return (
-    <main className="min-h-screen bg-[#070a12] text-white">
+    <main className="min-h-screen bg-[#071535] text-white">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <Link className="flex items-center gap-3" href="/">
@@ -53,15 +53,19 @@ export default async function RafflesPage() {
         </nav>
       </header>
 
-      <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_80%_10%,rgba(250,204,21,0.22),transparent_26rem),linear-gradient(180deg,#172554,#0f172a)]">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <p className="text-sm font-black uppercase tracking-[0.18em] text-yellow-300">
-          Premios de la comunidad
-        </p>
-        <h1 className="mt-2 text-4xl font-black text-white">Sorteos activos</h1>
-        <p className="mt-3 max-w-2xl text-blue-100">
-          Participá en eventos moderados por la comunidad o creá el primero para activar nuevos coleccionistas.
-        </p>
+      <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_82%_0%,rgba(250,204,21,.20),transparent_30%),linear-gradient(135deg,#123cba_0%,#071535_72%)]">
+        <div className="absolute inset-0 opacity-15 [background-image:linear-gradient(120deg,rgba(255,255,255,.16)_1px,transparent_1px)] [background-size:34px_34px]" />
+        <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          <p className="inline-flex items-center gap-2 rounded-full border border-yellow-300/70 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-yellow-300">
+            <Gift className="h-4 w-4" />
+            Premios de la comunidad
+          </p>
+          <h1 className="mt-5 text-4xl font-black leading-tight sm:text-6xl">
+            Sorteos activos
+          </h1>
+          <p className="mt-4 max-w-2xl text-lg leading-8 text-blue-100">
+            Participá en eventos moderados por la comunidad o creá el primero para activar nuevos coleccionistas.
+          </p>
         </div>
       </section>
 
@@ -77,7 +81,7 @@ export default async function RafflesPage() {
 
               return (
                 <article
-                  className="overflow-hidden rounded-lg border border-blue-100 bg-white shadow-[0_12px_35px_rgba(30,64,175,0.10)]"
+                  className="overflow-hidden rounded-lg border border-white/10 bg-white/[0.06] shadow-[0_18px_45px_rgba(0,0,0,.22)] transition hover:-translate-y-1 hover:border-yellow-300/60"
                   key={raffle.id}
                 >
                 <div className="relative aspect-[16/10] bg-[linear-gradient(145deg,#1d4ed8,#10245e)]">
@@ -95,14 +99,14 @@ export default async function RafflesPage() {
                   )}
                 </div>
                 <div className="p-5">
-                  <p className="text-xs font-black uppercase tracking-[0.15em] text-red-500">
+                  <p className="text-xs font-black uppercase tracking-[0.15em] text-yellow-300">
                     Sorteo gratuito
                   </p>
-                  <h2 className="mt-2 text-xl font-black text-blue-950">{raffle.title}</h2>
-                  <p className="mt-2 text-sm font-semibold text-slate-600">{raffle.prize}</p>
-                  <div className="mt-4 space-y-2 text-sm text-slate-500">
+                  <h2 className="mt-2 text-xl font-black text-white">{raffle.title}</h2>
+                  <p className="mt-2 text-sm font-semibold text-blue-100">{raffle.prize}</p>
+                  <div className="mt-4 space-y-2 text-sm text-blue-100">
                     <p className="flex items-center gap-2">
-                      <CalendarClock className="h-4 w-4 text-blue-600" />
+                      <CalendarClock className="h-4 w-4 text-yellow-300" />
                       Cierra{" "}
                       {new Intl.DateTimeFormat("es-AR", {
                         dateStyle: "medium",
@@ -110,15 +114,15 @@ export default async function RafflesPage() {
                       }).format(new Date(raffle.closes_at))}
                     </p>
                     <p className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-blue-600" />
+                      <Users className="h-4 w-4 text-yellow-300" />
                       {capacityLabel}
                     </p>
                   </div>
-                  <p className="mt-4 text-xs font-bold text-slate-400">
+                  <p className="mt-4 text-xs font-bold text-blue-200">
                     Organiza {creatorName(raffle.profiles)}
                   </p>
                   <Link
-                    className="mt-5 inline-flex w-full items-center justify-center rounded-lg bg-blue-700 px-4 py-3 font-black text-white transition hover:bg-blue-800"
+                    className="mt-5 inline-flex w-full items-center justify-center rounded-lg bg-yellow-400 px-4 py-3 font-black text-blue-950 transition hover:bg-yellow-300"
                     href={`/raffles/${raffle.id}`}
                   >
                     Ver sorteo

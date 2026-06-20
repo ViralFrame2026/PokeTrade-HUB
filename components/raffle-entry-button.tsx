@@ -60,9 +60,9 @@ export function RaffleEntryButton({
         ) : (
           <Gift className="h-5 w-5" />
         )}
-        {isEntered ? "Ya estas participando" : "Participar gratis"}
+        {isEntered ? "Ya estás participando" : "Participar gratis"}
       </button>
-      {error ? <p className="mt-3 text-sm font-semibold text-red-600">{error}</p> : null}
+      {error ? <p className="mt-3 text-sm font-semibold text-red-300">{error}</p> : null}
     </>
   );
 }

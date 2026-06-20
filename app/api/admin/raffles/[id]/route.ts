@@ -64,7 +64,7 @@ export async function PATCH(
   }
   if (parsed.data.action === "approve" && new Date(raffle.closes_at).getTime() <= Date.now()) {
     return NextResponse.json(
-      { error: "No puedes aprobar un sorteo que ya finalizo." },
+      { error: "No puedes aprobar un sorteo que ya finalizó." },
       { status: 400 }
     );
   }

@@ -50,7 +50,7 @@ export default async function RaffleDetailPage({
   const entryCount = raffle.raffle_entries[0]?.count ?? 0;
 
   return (
-    <main className="min-h-screen bg-[#eaf2ff] text-slate-900">
+    <main className="min-h-screen bg-[#071535] text-slate-900">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
           <Link className="flex items-center gap-3" href="/raffles">
@@ -64,7 +64,8 @@ export default async function RaffleDetailPage({
       </header>
 
       <section className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[1fr_0.8fr]">
-        <div className="relative min-h-[420px] overflow-hidden rounded-lg bg-[linear-gradient(145deg,#1d4ed8,#10245e)]">
+        <div className="relative min-h-[420px] overflow-hidden rounded-lg border border-white/15 bg-[radial-gradient(circle_at_20%_10%,rgba(250,204,21,.20),transparent_28%),linear-gradient(145deg,#123cba,#071535)] shadow-[0_24px_70px_rgba(0,0,0,.32)]">
+          <div className="absolute inset-0 opacity-15 [background-image:linear-gradient(120deg,rgba(255,255,255,.16)_1px,transparent_1px)] [background-size:36px_36px]" />
           {raffle.image_path ? (
             <Image
               alt={raffle.prize}
@@ -80,12 +81,12 @@ export default async function RaffleDetailPage({
           )}
         </div>
 
-        <aside className="rounded-lg border border-blue-100 bg-white p-6 shadow-[0_18px_48px_rgba(30,64,175,0.12)] sm:p-8">
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-red-500">
+        <aside className="rounded-lg border border-white/10 bg-white/[0.06] p-6 text-white shadow-[0_18px_48px_rgba(0,0,0,0.22)] sm:p-8">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-yellow-300">
             Premio de la comunidad
           </p>
-          <h1 className="mt-3 text-3xl font-black text-blue-950">{raffle.title}</h1>
-          <p className="mt-3 text-lg font-bold text-blue-700">{raffle.prize}</p>
+          <h1 className="mt-3 text-3xl font-black text-white">{raffle.title}</h1>
+          <p className="mt-3 text-lg font-bold text-yellow-300">{raffle.prize}</p>
 
           <div className="mt-6 grid gap-3">
             <Meta
@@ -106,16 +107,16 @@ export default async function RaffleDetailPage({
             <Meta icon={ShieldCheck} text="Revisado por moderación" />
           </div>
 
-          <div className="mt-6 border-y border-blue-100 py-5">
-            <h2 className="text-sm font-black uppercase tracking-[0.14em] text-blue-800">
+          <div className="mt-6 border-y border-white/10 py-5">
+            <h2 className="text-sm font-black uppercase tracking-[0.14em] text-yellow-300">
               Requisitos
             </h2>
-            <p className="mt-3 whitespace-pre-wrap leading-7 text-slate-600">
+            <p className="mt-3 whitespace-pre-wrap leading-7 text-blue-100">
               {raffle.requirements}
             </p>
           </div>
 
-          <p className="mt-5 text-sm font-semibold text-slate-500">
+          <p className="mt-5 text-sm font-semibold text-blue-100">
             Organiza {creator?.display_name ?? "Entrenador TCG"}
           </p>
           <div className="mt-6">
@@ -128,11 +129,11 @@ export default async function RaffleDetailPage({
                 <p className="mt-1 text-xl font-black">{winner.display_name}</p>
               </div>
             ) : isClosed ? (
-              <div className="rounded-lg bg-slate-100 p-4 text-center font-black text-slate-600">
-                El sorteo finalizo. El resultado está pendiente.
+              <div className="rounded-lg border border-white/10 bg-white/10 p-4 text-center font-black text-blue-100">
+                El sorteo finalizó. El resultado está pendiente.
               </div>
             ) : isCreator ? (
-              <div className="rounded-lg bg-blue-50 p-4 text-center font-black text-blue-800">
+              <div className="rounded-lg border border-yellow-300/30 bg-yellow-300/10 p-4 text-center font-black text-yellow-200">
                 Eres el organizador de este sorteo
               </div>
             ) : (
@@ -151,8 +152,8 @@ export default async function RaffleDetailPage({
 
 function Meta({ icon: Icon, text }: { icon: typeof Gift; text: string }) {
   return (
-    <p className="flex items-center gap-3 text-sm font-semibold text-slate-600">
-      <Icon className="h-5 w-5 shrink-0 text-blue-600" />
+    <p className="flex items-center gap-3 text-sm font-semibold text-blue-100">
+      <Icon className="h-5 w-5 shrink-0 text-yellow-300" />
       {text}
     </p>
   );

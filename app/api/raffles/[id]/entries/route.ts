@@ -45,7 +45,7 @@ export async function POST(
     .maybeSingle();
 
   if (existing) {
-    return NextResponse.json({ error: "Ya estas participando." }, { status: 409 });
+    return NextResponse.json({ error: "Ya estás participando." }, { status: 409 });
   }
 
   const { error } = await supabase.from("raffle_entries").insert({

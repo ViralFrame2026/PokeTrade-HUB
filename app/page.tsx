@@ -205,7 +205,7 @@ export default async function HomePage() {
         cardMeta: `${card.set_name} | ${card.rarity ?? "Rareza no informada"} | #${card.number ?? "N/D"}`,
         description:
           row.description ??
-          (row.type === "trade" ? `Busca: ${row.trade_wants ?? "propuestas"}` : ""),
+          (row.type === "trade" ? `Busca: ${row.trade_wants ?? "propuestás"}` : ""),
         id: row.id,
         image: card.image_large,
         location: [row.location_city, row.location_country].filter(Boolean).join(", "),

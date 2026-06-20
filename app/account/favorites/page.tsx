@@ -86,7 +86,7 @@ export default async function FavoritesPage() {
       cardMeta: `${card.set_name} | ${card.rarity ?? "Rareza no informada"} | #${card.number ?? "N/D"}`,
       description:
         listing.description ??
-        (listing.type === "trade" ? `Busca: ${listing.trade_wants ?? "propuestas"}` : ""),
+        (listing.type === "trade" ? `Busca: ${listing.trade_wants ?? "propuestás"}` : ""),
       id: listing.id,
       image: card.image_large,
       location:
