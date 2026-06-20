@@ -22,7 +22,7 @@ export function MarketplaceFilters({
   return (
     <form
       action="/marketplace"
-      className="mt-6 grid gap-3 rounded-lg border border-white/10 bg-slate-950/82 p-4 shadow-[0_18px_50px_rgba(15,23,42,0.2)] backdrop-blur md:grid-cols-2 xl:grid-cols-[1.4fr_0.75fr_0.8fr_0.9fr_0.9fr_auto]"
+      className="mt-6 grid gap-3 rounded-lg border border-white/10 bg-slate-950/82 p-3 shadow-[0_18px_50px_rgba(15,23,42,0.2)] backdrop-blur sm:p-4 md:grid-cols-2 xl:grid-cols-[1.4fr_0.75fr_0.8fr_0.9fr_0.9fr_auto]"
     >
       <label>
         <span className="mb-2 block text-xs font-black uppercase tracking-[0.12em] text-yellow-300">
@@ -88,9 +88,9 @@ export function MarketplaceFilters({
         </select>
       </label>
 
-      <div className="flex items-end gap-2">
+      <div className="flex items-end gap-2 md:col-span-2 xl:col-span-1">
         <button
-          className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-yellow-400 px-5 text-sm font-black text-blue-950 transition hover:bg-yellow-300 xl:flex-none"
+          className="inline-flex h-12 min-w-0 flex-1 items-center justify-center gap-2 rounded-lg bg-yellow-400 px-5 text-sm font-black text-blue-950 transition hover:bg-yellow-300 xl:flex-none"
           type="submit"
         >
           <Search className="h-4 w-4" />

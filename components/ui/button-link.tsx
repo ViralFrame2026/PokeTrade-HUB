@@ -21,7 +21,7 @@ export function ButtonLink({
   return (
     <Link
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-lg border font-bold transition focus:outline-none focus:ring-2 focus:ring-pokemonYellow/70",
+        "inline-flex min-w-0 items-center justify-center gap-2 rounded-lg border text-center font-bold leading-tight transition focus:outline-none focus:ring-2 focus:ring-pokemonYellow/70",
         size === "sm" ? "px-4 py-2 text-sm" : "px-5 py-3 text-sm sm:text-base",
         variant === "primary" &&
           "border-pokemonYellow bg-pokemonYellow text-slate-950 hover:bg-yellow-300",
