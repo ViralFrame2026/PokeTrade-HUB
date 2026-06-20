@@ -34,7 +34,7 @@ export async function POST(request: Request) {
 
   const { data: listing } = await supabase
     .from("listings")
-    .select("id, seller_id, moderation_status")
+    .select("id, seller_id, moderation_status, status")
     .eq("id", payload.listingId)
     .maybeSingle();
 
@@ -49,17 +49,25 @@ export async function POST(request: Request) {
     );
   }
 
-  if (listing.seller_id === user.id) {
-    const { data: existingMessage } = await supabase
-      .from("messages")
-      .select("id")
-      .eq("listing_id", payload.listingId)
-      .eq("sender_id", payload.recipientId)
-      .eq("recipient_id", user.id)
-      .limit(1)
-      .maybeSingle();
+  const { data: existingConversation } = await supabase
+    .from("messages")
+    .select("id")
+    .eq("listing_id", payload.listingId)
+    .or(
+      `and(sender_id.eq.${user.id},recipient_id.eq.${payload.recipientId}),and(sender_id.eq.${payload.recipientId},recipient_id.eq.${user.id})`
+    )
+    .limit(1)
+    .maybeSingle();
 
-    if (!existingMessage) {
+  if (listing.status !== "active" && !existingConversation) {
+    return NextResponse.json(
+      { error: "Esta publicacion ya no acepta nuevas conversaciones." },
+      { status: 403 }
+    );
+  }
+
+  if (listing.seller_id === user.id) {
+    if (!existingConversation) {
       return NextResponse.json(
         { error: "Solo puedes responder conversaciones existentes." },
         { status: 403 }

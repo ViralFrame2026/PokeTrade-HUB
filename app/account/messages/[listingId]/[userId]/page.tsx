@@ -119,7 +119,13 @@ export default async function ConversationPage({
     )
     .order("created_at", { ascending: true });
 
-  if (listing.seller_id === user.id && !data?.length) {
+  const hasExistingConversation = Boolean(data?.length);
+
+  if (listing.seller_id === user.id && !hasExistingConversation) {
+    notFound();
+  }
+
+  if (listing.status !== "active" && !hasExistingConversation) {
     notFound();
   }
 
