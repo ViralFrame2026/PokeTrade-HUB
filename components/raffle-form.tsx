@@ -72,7 +72,7 @@ export function RaffleForm() {
   return (
     <form className="glass rounded-lg p-5 sm:p-6" onSubmit={submitRaffle}>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field icon={Gift} label="Titulo">
+        <Field icon={Gift} label="Título">
           <input
             className="field-input"
             maxLength={TITLE_MAX_LENGTH}
@@ -106,10 +106,10 @@ export function RaffleForm() {
             value={closesAt}
           />
           <span className="mt-1 block text-xs text-slate-500">
-            Debe cerrar al menos una hora despues de crearlo.
+            Debe cerrar al menos una hora después de crearlo.
           </span>
         </Field>
-        <Field icon={Users} label="Limite de participantes">
+        <Field icon={Users} label="Límite de participantes">
           <input
             className="field-input"
             min="2"
@@ -126,7 +126,7 @@ export function RaffleForm() {
         <input
           className="field-input mt-2"
           onChange={(event) => setImageUrl(event.target.value)}
-          placeholder="URL publica de la imagen (opcional)"
+          placeholder="URL pública de la imagen (opcional)"
           type="url"
           value={imageUrl}
         />
@@ -152,7 +152,7 @@ export function RaffleForm() {
       </label>
 
       <div className="mt-5 rounded-lg border border-yellow-300/30 bg-yellow-300/10 p-4 text-sm leading-6 text-yellow-100">
-        Está primera modalidad es gratuita. No se permiten pagos, compras obligatorias
+        Esta primera modalidad es gratuita. No se permiten pagos, compras obligatorias
         ni cobros por participar.
       </div>
       {error ? (

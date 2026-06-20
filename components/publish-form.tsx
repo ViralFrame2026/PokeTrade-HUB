@@ -112,7 +112,7 @@ export function PublishForm() {
       setCards(payload.data);
 
       if (payload.data.length === 0) {
-        setError("No encontramos cartas oficiales con esa busqueda.");
+        setError("No encontramos cartas oficiales con esa búsqueda.");
       }
     } catch (searchError) {
       setCards([]);
@@ -128,7 +128,7 @@ export function PublishForm() {
 
   async function handleSubmit() {
     if (!selectedCard) {
-      setError("Selecciona una carta oficial antes de publicar.");
+      setError("Selecciona una carta oficial antes de públicar.");
       return;
     }
 
@@ -156,13 +156,13 @@ export function PublishForm() {
       const payload = (await response.json()) as CreateListingResponse;
 
       if (!response.ok || payload.error) {
-        throw new Error(payload.error ?? "No pudimos crear la publicación.");
+        throw new Error(payload.error ?? "No pudimos crear la públicación.");
       }
 
       const listingId = payload.data?.id;
 
       if (!listingId) {
-        throw new Error("No recibimos el identificador de la publicación.");
+        throw new Error("No recibimos el identificador de la públicación.");
       }
 
       const uploadedPaths: string[] = [];
@@ -241,7 +241,7 @@ export function PublishForm() {
       setError(
         submitError instanceof Error
           ? submitError.message
-          : "No pudimos crear la publicación."
+          : "No pudimos crear la públicación."
       );
     } finally {
       setIsSubmitting(false);
@@ -306,7 +306,7 @@ export function PublishForm() {
           </div>
         ) : (
           <span>
-            Busca una carta oficial. La publicación no puede continuar con cartas inventadas.
+            Busca una carta oficial. La públicación no puede continuar con cartas inventadas.
           </span>
         )}
       </div>
@@ -498,7 +498,7 @@ export function PublishForm() {
         </label>
       </div>
       <label className="mt-4 block text-sm font-bold text-slate-200">
-        Descripcion
+        Descripción
         <textarea
           className="mt-2 min-h-32 w-full rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3 text-white outline-none focus:border-pokemonYellow/60"
           maxLength={DESCRIPTION_MAX_LENGTH}

@@ -119,7 +119,7 @@ async function request<T>(path: string, schema: z.Schema<T>, options: RequestOpt
   } catch (error) {
     console.error("Pokemon TCG API error", error);
     throw new PokemonTcgApiError(
-      "No pudimos consultar el catalogo oficial en este momento. Intentá nuevamente."
+      "No pudimos consultar el catálogo oficial en este momento. Intentá nuevamente."
     );
   }
 }

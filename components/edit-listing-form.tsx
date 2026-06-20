@@ -167,7 +167,7 @@ export function EditListingForm({ initial, listingId }: EditListingFormProps) {
       </div>
 
       <label className="mt-4 block text-sm font-bold text-slate-200">
-        Descripcion
+        Descripción
         <textarea
           className={`${inputClass} min-h-36`}
           maxLength={DESCRIPTION_MAX_LENGTH}

@@ -32,7 +32,7 @@ export async function POST(request: Request) {
   const closesAt = new Date(parsed.data.closesAt);
   if (Number.isNaN(closesAt.getTime()) || closesAt.getTime() < Date.now() + 60 * 60 * 1000) {
     return NextResponse.json(
-      { error: "El sorteo debe cerrar al menos una hora despues de crearlo." },
+      { error: "El sorteo debe cerrar al menos una hora después de crearlo." },
       { status: 400 }
     );
   }

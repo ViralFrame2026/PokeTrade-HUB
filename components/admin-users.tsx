@@ -90,7 +90,7 @@ export function AdminUsers({
           />
           {query ? (
             <button
-              aria-label="Limpiar busqueda"
+              aria-label="Limpiar búsqueda"
               className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-md text-slate-400 transition hover:bg-white/10 hover:text-white"
               onClick={() => setQuery("")}
               type="button"
@@ -191,7 +191,7 @@ export function AdminUsers({
             <UserCheck className="h-10 w-10 text-slate-500" />
             <p className="mt-3 font-black text-white">No encontramos usuarios</p>
             <p className="mt-1 max-w-md text-sm text-slate-400">
-              Cambia el texto de busqueda o limpia el filtro de rol para volver a ver la lista.
+              Cambia el texto de búsqueda o limpia el filtro de rol para volver a ver la lista.
             </p>
           </div>
         ) : null}
