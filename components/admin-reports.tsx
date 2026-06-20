@@ -21,12 +21,45 @@ const reasonLabels: Record<string, string> = {
   suspicious_behavior: "Comportamiento sospechoso"
 };
 
+const highRiskReasons = new Set(["scam", "fake_listing", "suspicious_behavior"]);
+
+function reportPriority(reason: string) {
+  if (highRiskReasons.has(reason)) {
+    return {
+      className: "border-red-300/40 bg-red-500/15 text-red-100",
+      label: "Alta prioridad"
+    };
+  }
+
+  return {
+    className: "border-yellow-300/30 bg-yellow-400/10 text-yellow-100",
+    label: "Revisión normal"
+  };
+}
+
+function reportAgeLabel(createdAt: string) {
+  const hours = Math.max(
+    0,
+    Math.floor((Date.now() - new Date(createdAt).getTime()) / (1000 * 60 * 60))
+  );
+
+  if (hours < 1) return "Hace menos de 1 hora";
+  if (hours < 24) return `Hace ${hours} h`;
+
+  const days = Math.floor(hours / 24);
+  return `Hace ${days} día${days === 1 ? "" : "s"}`;
+}
+
 export function AdminReports({ reports: initialReports }: { reports: AdminReport[] }) {
   const [reports, setReports] = useState(initialReports);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function resolveReport(reportId: string) {
+    if (!window.confirm("¿Marcar este reporte como resuelto?")) {
+      return;
+    }
+
     setBusyId(reportId);
     setError(null);
 
@@ -69,16 +102,27 @@ export function AdminReports({ reports: initialReports }: { reports: AdminReport
         </div>
       ) : null}
       <div className="grid gap-4 lg:grid-cols-2">
-        {reports.map((report) => (
+        {reports.map((report) => {
+          const priority = reportPriority(report.reason);
+
+          return (
           <article className="rounded-lg border border-white/10 bg-white/[0.04] p-5" key={report.id}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <p className="text-xs font-black uppercase text-red-300">
-                  {reasonLabels[report.reason] ?? report.reason}
-                </p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span
+                    className={`rounded-full border px-3 py-1 text-xs font-black uppercase ${priority.className}`}
+                  >
+                    {priority.label}
+                  </span>
+                  <span className="text-xs font-black uppercase text-red-300">
+                    {reasonLabels[report.reason] ?? report.reason}
+                  </span>
+                </div>
                 <h3 className="mt-2 font-black text-white">{report.listingTitle}</h3>
               </div>
-              <span className="text-xs text-slate-500">
+              <span className="text-right text-xs font-semibold text-slate-500">
+                <span className="block text-slate-300">{reportAgeLabel(report.createdAt)}</span>
                 {new Intl.DateTimeFormat("es-AR", { dateStyle: "medium" }).format(
                   new Date(report.createdAt)
                 )}
@@ -118,7 +162,8 @@ export function AdminReports({ reports: initialReports }: { reports: AdminReport
               </button>
             </div>
           </article>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
