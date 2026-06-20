@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, ExternalLink, Loader2 } from "lucide-react";
+import { AlertTriangle, CheckCircle2, ExternalLink, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -51,7 +51,14 @@ export function AdminReports({ reports: initialReports }: { reports: AdminReport
   }
 
   if (reports.length === 0) {
-    return <div className="p-8 text-center text-sm font-semibold text-slate-400">No hay reportes abiertos.</div>;
+    return (
+      <div className="grid min-h-44 place-items-center p-8 text-center">
+        <div>
+          <CheckCircle2 className="mx-auto h-10 w-10 text-emerald-300" />
+          <p className="mt-3 text-sm font-semibold text-slate-400">No hay reportes abiertos.</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -76,6 +83,15 @@ export function AdminReports({ reports: initialReports }: { reports: AdminReport
                   new Date(report.createdAt)
                 )}
               </span>
+            </div>
+            <div className="mt-4 rounded-lg border border-red-300/20 bg-red-500/10 p-3 text-xs leading-5 text-red-100">
+              <div className="flex items-start gap-2">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                <p>
+                  Abrí la publicación, revisá el motivo y resolvé solo cuando hayas tomado
+                  acción o confirmado que no hay riesgo.
+                </p>
+              </div>
             </div>
             <p className="mt-4 text-sm leading-6 text-slate-300">{report.details}</p>
             <div className="mt-5 flex flex-wrap gap-2">

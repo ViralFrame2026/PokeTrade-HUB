@@ -451,6 +451,47 @@ export default async function AdminPage() {
           </article>
         ))}
       </section>
+      {totalPending > 0 ? (
+        <section className="mt-8 grid gap-4 lg:grid-cols-3">
+          <article className="rounded-lg border border-red-300/30 bg-red-500/10 p-5">
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-red-200">
+              Prioridad alta
+            </p>
+            <h2 className="mt-2 text-xl font-black text-white">Reportes abiertos</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-300">
+              Revisalos primero si hay sospecha de estafa, producto falso o comportamiento riesgoso.
+            </p>
+          </article>
+          <article className="rounded-lg border border-yellow-300/30 bg-yellow-400/10 p-5">
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-yellow-200">
+              Prioridad media
+            </p>
+            <h2 className="mt-2 text-xl font-black text-white">Publicaciones pendientes</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-300">
+              Validá carta oficial, estado, precio, descripción y que no haya señales engañosas.
+            </p>
+          </article>
+          <article className="rounded-lg border border-blue-300/30 bg-blue-500/10 p-5">
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-blue-200">
+              Prioridad normal
+            </p>
+            <h2 className="mt-2 text-xl font-black text-white">Sorteos pendientes</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-300">
+              Confirmá premio, fecha de cierre y condiciones claras antes de aprobar.
+            </p>
+          </article>
+        </section>
+      ) : (
+        <section className="mt-8 rounded-lg border border-emerald-300/30 bg-emerald-500/10 p-5">
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-emerald-200">
+            Todo al día
+          </p>
+          <h2 className="mt-2 text-xl font-black text-white">No hay acciones pendientes</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-300">
+            Las nuevas publicaciones, sorteos o reportes aparecerán en estas colas.
+          </p>
+        </section>
+      )}
       {currentProfile?.is_super_admin ? (
         <section className="glass mt-8 rounded-lg p-5">
           <div className="flex flex-col justify-between gap-3 border-b border-white/10 pb-5 sm:flex-row sm:items-end">

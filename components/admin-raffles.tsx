@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Loader2, X } from "lucide-react";
+import { Check, CheckCircle2, Loader2, X } from "lucide-react";
 import { useState } from "react";
 
 export type AdminRaffle = {
@@ -58,8 +58,13 @@ export function AdminRaffles({ raffles: initialRaffles }: { raffles: AdminRaffle
 
   if (!raffles.length) {
     return (
-      <div className="p-8 text-center text-sm font-semibold text-slate-400">
-        No hay sorteos pendientes de moderación.
+      <div className="grid min-h-44 place-items-center p-8 text-center">
+        <div>
+          <CheckCircle2 className="mx-auto h-10 w-10 text-emerald-300" />
+          <p className="mt-3 text-sm font-semibold text-slate-400">
+            No hay sorteos pendientes de moderación.
+          </p>
+        </div>
       </div>
     );
   }
@@ -94,6 +99,16 @@ export function AdminRaffles({ raffles: initialRaffles }: { raffles: AdminRaffle
               </p>
             </div>
             <div className="space-y-2">
+              <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3 text-xs leading-5 text-slate-300">
+                <p className="font-black uppercase tracking-[0.12em] text-yellow-300">
+                  Checklist
+                </p>
+                <ul className="mt-2 space-y-1">
+                  <li>Premio y condiciones claras.</li>
+                  <li>Fecha de cierre razonable.</li>
+                  <li>No exige acciones fuera de reglas.</li>
+                </ul>
+              </div>
               <input
                 className="w-full rounded-md border border-white/10 bg-slate-950/70 px-3 py-2 text-sm text-white outline-none focus:border-red-300/60"
                 onChange={(event) =>

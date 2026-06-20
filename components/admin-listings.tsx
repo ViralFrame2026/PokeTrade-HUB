@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Check, Loader2, MapPin, Store, X } from "lucide-react";
+import { Check, CheckCircle2, Loader2, MapPin, Store, X } from "lucide-react";
 
 export type AdminListing = {
   cardImage: string | null;
@@ -106,8 +106,13 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
 
   if (listings.length === 0) {
     return (
-      <div className="p-8 text-center text-sm font-semibold text-slate-400">
-        No hay publicaciones pendientes de moderación.
+      <div className="grid min-h-44 place-items-center p-8 text-center">
+        <div>
+          <CheckCircle2 className="mx-auto h-10 w-10 text-emerald-300" />
+          <p className="mt-3 text-sm font-semibold text-slate-400">
+            No hay publicaciones pendientes de moderación.
+          </p>
+        </div>
       </div>
     );
   }
@@ -180,6 +185,16 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
               <p className="mt-3 text-sm font-black text-yellow-300">{valueLabel(listing)}</p>
             </div>
             <div className="flex min-w-0 flex-col gap-2">
+              <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3 text-xs leading-5 text-slate-300">
+                <p className="font-black uppercase tracking-[0.12em] text-yellow-300">
+                  Checklist
+                </p>
+                <ul className="mt-2 space-y-1">
+                  <li>Datos de carta oficial coinciden.</li>
+                  <li>Precio, estado y descripción son claros.</li>
+                  <li>No promete productos fuera de reglas.</li>
+                </ul>
+              </div>
               <input
                 className="rounded-md border border-white/10 bg-slate-950/70 px-3 py-2 text-white outline-none focus:border-red-300/60"
                 onChange={(event) =>
