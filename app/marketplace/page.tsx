@@ -15,8 +15,12 @@ type MarketplacePageProps = {
   searchParams: Promise<{
     condition?: string;
     location?: string;
+    maxPrice?: string;
+    minPrice?: string;
     q?: string;
+    rarity?: string;
     sort?: string;
+    set?: string;
     type?: string;
   }>;
 };
@@ -77,6 +81,12 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
   const type = ["sale", "trade", "free"].includes(params.type ?? "") ? params.type! : "";
   const condition = params.condition?.trim() ?? "";
   const location = params.location?.trim() ?? "";
+  const set = params.set?.trim() ?? "";
+  const rarity = params.rarity?.trim() ?? "";
+  const minPrice = Number(params.minPrice ?? "");
+  const maxPrice = Number(params.maxPrice ?? "");
+  const hasMinPrice = Number.isFinite(minPrice) && minPrice > 0;
+  const hasMaxPrice = Number.isFinite(maxPrice) && maxPrice > 0;
   const sort = ["recent", "price_asc", "price_desc", "seller_rating"].includes(
     params.sort ?? ""
   )
@@ -102,6 +112,10 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
     if (query) request = request.ilike("products.cards.official_name", `%${query}%`);
     if (type) request = request.eq("type", type);
     if (condition) request = request.eq("products.condition", condition);
+    if (set) request = request.ilike("products.cards.set_name", `%${set}%`);
+    if (rarity) request = request.eq("products.cards.rarity", rarity);
+    if (hasMinPrice) request = request.gte("price", minPrice);
+    if (hasMaxPrice) request = request.lte("price", maxPrice);
     if (location) {
       request = request.or(
         `location_city.ilike.%${location}%,location_country.ilike.%${location}%`
@@ -167,7 +181,9 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
     }];
   });
 
-  const hasFilters = Boolean(query || type || condition || location);
+  const hasFilters = Boolean(
+    query || type || condition || location || set || rarity || hasMinPrice || hasMaxPrice
+  );
   const displayListings = listings.length > 0 ? listings : demoListings;
 
   return (
@@ -221,8 +237,12 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
           <MarketplaceFilters
             condition={condition}
             location={location}
+            maxPrice={hasMaxPrice ? String(maxPrice) : ""}
+            minPrice={hasMinPrice ? String(minPrice) : ""}
             query={query}
+            rarity={rarity}
             sort={sort}
+            set={set}
             type={type}
           />
         </div>

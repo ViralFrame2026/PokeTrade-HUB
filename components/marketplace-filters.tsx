@@ -4,8 +4,12 @@ import Link from "next/link";
 type MarketplaceFiltersProps = {
   condition: string;
   location: string;
+  maxPrice: string;
+  minPrice: string;
   query: string;
+  rarity: string;
   sort: string;
+  set: string;
   type: string;
 };
 
@@ -15,16 +19,20 @@ const fieldClass =
 export function MarketplaceFilters({
   condition,
   location,
+  maxPrice,
+  minPrice,
   query,
+  rarity,
+  set,
   sort,
   type
 }: MarketplaceFiltersProps) {
   return (
     <form
       action="/marketplace"
-      className="mt-6 grid gap-3 rounded-lg border border-white/10 bg-slate-950/82 p-3 shadow-[0_18px_50px_rgba(15,23,42,0.2)] backdrop-blur sm:p-4 md:grid-cols-2 xl:grid-cols-[1.4fr_0.75fr_0.8fr_0.9fr_0.9fr_auto]"
+      className="mt-6 grid gap-3 rounded-lg border border-white/10 bg-slate-950/82 p-3 shadow-[0_18px_50px_rgba(15,23,42,0.2)] backdrop-blur sm:p-4 md:grid-cols-2 xl:grid-cols-6"
     >
-      <label>
+      <label className="xl:col-span-2">
         <span className="mb-2 block text-xs font-black uppercase tracking-[0.12em] text-yellow-300">
           Carta
         </span>
@@ -65,6 +73,37 @@ export function MarketplaceFilters({
 
       <label>
         <span className="mb-2 block text-xs font-black uppercase tracking-[0.12em] text-yellow-300">
+          Set
+        </span>
+        <input
+          className={fieldClass}
+          defaultValue={set}
+          name="set"
+          placeholder="Ej: Scarlet & Violet"
+          type="search"
+        />
+      </label>
+
+      <label>
+        <span className="mb-2 block text-xs font-black uppercase tracking-[0.12em] text-yellow-300">
+          Rareza
+        </span>
+        <select className={fieldClass} defaultValue={rarity} name="rarity">
+          <option value="">Todas</option>
+          <option value="Common">Common</option>
+          <option value="Uncommon">Uncommon</option>
+          <option value="Rare">Rare</option>
+          <option value="Rare Holo">Rare Holo</option>
+          <option value="Double Rare">Double Rare</option>
+          <option value="Ultra Rare">Ultra Rare</option>
+          <option value="Illustration Rare">Illustration Rare</option>
+          <option value="Special Illustration Rare">Special Illustration Rare</option>
+          <option value="Hyper Rare">Hyper Rare</option>
+        </select>
+      </label>
+
+      <label>
+        <span className="mb-2 block text-xs font-black uppercase tracking-[0.12em] text-yellow-300">
           Ubicación
         </span>
         <input
@@ -75,6 +114,35 @@ export function MarketplaceFilters({
           type="search"
         />
       </label>
+
+      <div className="grid grid-cols-2 gap-2">
+        <label>
+          <span className="mb-2 block text-xs font-black uppercase tracking-[0.12em] text-yellow-300">
+            Mín.
+          </span>
+          <input
+            className={fieldClass}
+            defaultValue={minPrice}
+            min="0"
+            name="minPrice"
+            placeholder="$"
+            type="number"
+          />
+        </label>
+        <label>
+          <span className="mb-2 block text-xs font-black uppercase tracking-[0.12em] text-yellow-300">
+            Máx.
+          </span>
+          <input
+            className={fieldClass}
+            defaultValue={maxPrice}
+            min="0"
+            name="maxPrice"
+            placeholder="$"
+            type="number"
+          />
+        </label>
+      </div>
 
       <label>
         <span className="mb-2 block text-xs font-black uppercase tracking-[0.12em] text-yellow-300">
