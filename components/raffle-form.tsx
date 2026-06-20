@@ -155,6 +155,10 @@ export function RaffleForm() {
         Esta primera modalidad es gratuita. No se permiten pagos, compras obligatorias
         ni cobros por participar.
       </div>
+      <div className="mt-4 rounded-lg border border-blue-300/20 bg-blue-500/10 p-4 text-xs leading-5 text-blue-100">
+        Al aprobarse, el sorteo aparecerá público. Cuando cierre, el organizador podrá
+        seleccionar un ganador desde su cuenta y el resultado quedará visible.
+      </div>
       {error ? (
         <div className="mt-4 rounded-lg border border-red-400/30 bg-red-500/10 p-4 text-sm font-semibold text-red-100">
           {error}

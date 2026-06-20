@@ -3,7 +3,7 @@ import { RaffleForm } from "@/components/raffle-form";
 import { ButtonLink } from "@/components/ui/button-link";
 
 export const metadata = {
-  title: "Crear Sorteo"
+  title: "Crear sorteo"
 };
 
 export default function NewRafflePage() {
@@ -23,7 +23,7 @@ export default function NewRafflePage() {
             Crear sorteo gratuito
           </h1>
           <p className="mt-4 max-w-2xl text-lg leading-8 text-blue-100">
-            Publica un premio para la comunidad. Todos los sorteos pasan por moderación antes de recibir participantes.
+            Publicá un premio para la comunidad. Todos los sorteos pasan por moderación antes de recibir participantes.
           </p>
         </div>
       </section>
@@ -34,6 +34,17 @@ export default function NewRafflePage() {
             <Info icon={Gift} text="Describe claramente el premio" />
             <Info icon={Users} text="Define fecha y límite de participantes" />
             <Info icon={ShieldCheck} text="El equipo revisa el sorteo antes de publicarlo" />
+          </div>
+          <div className="mt-5 rounded-lg border border-yellow-300/30 bg-yellow-400/10 p-5">
+            <p className="text-sm font-black uppercase tracking-[0.14em] text-yellow-300">
+              Reglas rápidas
+            </p>
+            <ul className="mt-4 space-y-2 text-sm leading-6 text-blue-100">
+              <li>No puede exigir pagos ni compras para participar.</li>
+              <li>El premio y la entrega deben estar explicados.</li>
+              <li>La fecha de cierre debe ser clara.</li>
+              <li>El ganador se muestra públicamente al finalizar.</li>
+            </ul>
           </div>
         </section>
         <RaffleForm />

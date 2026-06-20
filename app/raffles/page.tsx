@@ -1,4 +1,4 @@
-import { CalendarClock, Gift, Plus, Users } from "lucide-react";
+import { CalendarClock, Gift, Plus, ShieldCheck, Trophy, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { ButtonLink } from "@/components/ui/button-link";
@@ -66,6 +66,18 @@ export default async function RafflesPage() {
           <p className="mt-4 max-w-2xl text-lg leading-8 text-blue-100">
             Participá en eventos moderados por la comunidad o creá el primero para activar nuevos coleccionistas.
           </p>
+          <div className="mt-8 grid gap-3 sm:grid-cols-3">
+            {[
+              [ShieldCheck, "Revisión previa"],
+              [Gift, "Participación gratis"],
+              [Trophy, "Ganador visible"]
+            ].map(([Icon, label]) => (
+              <div className="rounded-lg border border-white/10 bg-white/[0.08] p-4" key={label as string}>
+                <Icon className="h-5 w-5 text-yellow-300" />
+                <p className="mt-3 text-sm font-black">{label as string}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -100,7 +112,7 @@ export default async function RafflesPage() {
                 </div>
                 <div className="p-5">
                   <p className="text-xs font-black uppercase tracking-[0.15em] text-yellow-300">
-                    Sorteo gratuito
+                    Sorteo gratuito y revisado
                   </p>
                   <h2 className="mt-2 text-xl font-black text-white">{raffle.title}</h2>
                   <p className="mt-2 text-sm font-semibold text-blue-100">{raffle.prize}</p>
@@ -120,6 +132,9 @@ export default async function RafflesPage() {
                   </div>
                   <p className="mt-4 text-xs font-bold text-blue-200">
                     Organiza {creatorName(raffle.profiles)}
+                  </p>
+                  <p className="mt-2 text-xs leading-5 text-blue-200">
+                    Sin pagos para participar. El ganador se muestra al finalizar.
                   </p>
                   <Link
                     className="mt-5 inline-flex w-full items-center justify-center rounded-lg bg-yellow-400 px-4 py-3 font-black text-blue-950 transition hover:bg-yellow-300"

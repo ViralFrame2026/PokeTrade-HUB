@@ -2,6 +2,7 @@ import {
   ArrowLeft,
   CalendarClock,
   Gift,
+  Info,
   ShieldCheck,
   Trophy,
   Users
@@ -105,6 +106,7 @@ export default async function RaffleDetailPage({
               }
             />
             <Meta icon={ShieldCheck} text="Revisado por moderación" />
+            <Meta icon={Info} text="Participación gratuita, sin compra obligatoria" />
           </div>
 
           <div className="mt-6 border-y border-white/10 py-5">
@@ -114,6 +116,18 @@ export default async function RaffleDetailPage({
             <p className="mt-3 whitespace-pre-wrap leading-7 text-blue-100">
               {raffle.requirements}
             </p>
+          </div>
+
+          <div className="mt-5 rounded-lg border border-blue-300/20 bg-blue-500/10 p-4">
+            <p className="flex items-center gap-2 text-sm font-black text-white">
+              <ShieldCheck className="h-5 w-5 text-yellow-300" />
+              Transparencia del sorteo
+            </p>
+            <ul className="mt-3 space-y-2 text-xs leading-5 text-blue-100">
+              <li>El sorteo fue aprobado antes de recibir participantes.</li>
+              <li>No se permiten pagos ni compras obligatorias para participar.</li>
+              <li>Cuando se seleccione ganador, quedará visible en esta página.</li>
+            </ul>
           </div>
 
           <p className="mt-5 text-sm font-semibold text-blue-100">
