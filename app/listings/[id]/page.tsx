@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
+  AlertTriangle,
   ArrowLeft,
   BadgeCheck,
   CalendarDays,
+  CheckCircle2,
   Instagram,
   MapPin,
   MessageCircle,
@@ -262,6 +264,7 @@ export default async function ListingDetailPage({
       type: "official" as const
     }
   ];
+  const hasRealPhotos = realPhotos.length > 0;
 
   return (
     <main className="min-h-screen bg-[#071535] text-slate-900">
@@ -330,6 +333,32 @@ export default async function ListingDetailPage({
               <Detail icon={ShieldCheck} label="Moderación" value="Aprobada" />
             </dl>
 
+            <div className="mt-6 grid gap-3 rounded-lg border border-blue-100 bg-blue-50 p-4 text-sm text-blue-950">
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                <div>
+                  <p className="font-black">Publicación revisada</p>
+                  <p className="mt-1 leading-6 text-blue-800">
+                    La carta está vinculada al catálogo oficial de Pokémon TCG y fue
+                    aprobada por moderación.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-blue-700" />
+                <div>
+                  <p className="font-black">
+                    {hasRealPhotos ? "Incluye fotos reales" : "Solo imagen oficial"}
+                  </p>
+                  <p className="mt-1 leading-6 text-blue-800">
+                    {hasRealPhotos
+                      ? "Revisá las fotos subidas por el vendedor además de la imagen oficial."
+                      : "Pedí fotos reales al vendedor antes de cerrar una operación importante."}
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="mt-6">
               <h2 className="text-sm font-black uppercase tracking-[0.16em] text-blue-800">
                 Descripción
@@ -393,9 +422,24 @@ export default async function ListingDetailPage({
               isAuthenticated={Boolean(user)}
               listingId={listing.id}
             />
-            <p className="mt-3 text-center text-xs leading-5 text-slate-500">
-              Confirma identidad, estado y condiciones antes de realizar cualquier operación.
-            </p>
+            <div className="mt-5 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+                <div>
+                  <p className="text-sm font-black text-amber-900">Antes de cerrar</p>
+                  <p className="mt-1 text-xs leading-5 text-amber-800">
+                    Confirmá identidad, estado, entrega, precio y comprobantes. Si algo
+                    parece sospechoso, reportá la publicación.
+                  </p>
+                  <Link
+                    className="mt-2 inline-flex text-xs font-black text-blue-800 hover:text-blue-600"
+                    href="/safety"
+                  >
+                    Ver guía de seguridad
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="mt-5 rounded-lg border border-blue-200 bg-blue-950 p-6 text-white">
