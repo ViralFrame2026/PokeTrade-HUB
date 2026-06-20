@@ -5,6 +5,12 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
 const MAX_MESSAGE_LENGTH = 1500;
+const QUICK_MESSAGES = [
+  "Hola, ¿sigue disponible?",
+  "¿Podés compartir más fotos reales?",
+  "¿Aceptás intercambio?",
+  "¿En qué zona entregás?"
+];
 
 export function MessageComposer({
   listingId,
@@ -55,6 +61,19 @@ export function MessageComposer({
       <label className="sr-only" htmlFor="message-body">
         Escribe un mensaje
       </label>
+      <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
+        {QUICK_MESSAGES.map((message) => (
+          <button
+            className="shrink-0 rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs font-black text-blue-100 transition hover:border-yellow-300 hover:text-yellow-300 disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={isSending}
+            key={message}
+            onClick={() => setBody((current) => (current ? `${current}\n${message}` : message))}
+            type="button"
+          >
+            {message}
+          </button>
+        ))}
+      </div>
       <div className="flex items-end gap-2">
         <textarea
           className="min-h-12 flex-1 resize-none rounded-lg border border-white/10 bg-white/10 px-4 py-3 text-sm text-white outline-none transition placeholder:text-blue-200 focus:border-yellow-300 focus:ring-2 focus:ring-yellow-300/20"

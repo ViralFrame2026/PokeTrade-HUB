@@ -1,4 +1,4 @@
-import { ArrowLeft, ExternalLink, Store } from "lucide-react";
+import { ArrowLeft, ExternalLink, ShieldCheck, Store } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -202,6 +202,15 @@ export default async function ConversationPage({
               <ExternalLink className="h-4 w-4" />
               Ver publicación
             </Link>
+          </div>
+          <div className="border-b border-white/10 bg-yellow-400/10 px-4 py-3 text-sm font-semibold text-yellow-100 sm:px-6">
+            <p className="flex items-start gap-2">
+              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-yellow-300" />
+              <span>
+                Mantené los acuerdos dentro del chat, revisá fotos reales y evitá pagos
+                fuera de una operación clara.
+              </span>
+            </p>
           </div>
           <div className="min-h-[55vh] space-y-3 bg-[#0b1d46] p-4 sm:p-6">
             {messages.length ? (
