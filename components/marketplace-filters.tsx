@@ -16,6 +16,17 @@ type MarketplaceFiltersProps = {
 const fieldClass =
   "h-12 w-full rounded-lg border border-white/10 bg-slate-950/80 px-3 text-sm font-semibold text-white outline-none transition placeholder:text-slate-500 focus:border-yellow-300/70 focus:ring-2 focus:ring-yellow-300/10";
 
+function filterHref(removeKey: string, filters: Record<string, string>) {
+  const params = new URLSearchParams();
+
+  Object.entries(filters).forEach(([key, value]) => {
+    if (key !== removeKey && value) params.set(key, value);
+  });
+
+  const query = params.toString();
+  return query ? `/marketplace?${query}` : "/marketplace";
+}
+
 export function MarketplaceFilters({
   condition,
   location,
@@ -27,11 +38,32 @@ export function MarketplaceFilters({
   sort,
   type
 }: MarketplaceFiltersProps) {
+  const filterValues = {
+    condition,
+    location,
+    maxPrice,
+    minPrice,
+    q: query,
+    rarity,
+    set,
+    sort: sort === "recent" ? "" : sort,
+    type
+  };
+  const activeFilters = [
+    query ? ["q", `Carta: ${query}`] : null,
+    type ? ["type", `Operación: ${type === "sale" ? "Venta" : type === "trade" ? "Intercambio" : "Gratis"}`] : null,
+    condition ? ["condition", `Estado: ${condition}`] : null,
+    set ? ["set", `Set: ${set}`] : null,
+    rarity ? ["rarity", `Rareza: ${rarity}`] : null,
+    location ? ["location", `Ubicación: ${location}`] : null,
+    minPrice ? ["minPrice", `Desde $${minPrice}`] : null,
+    maxPrice ? ["maxPrice", `Hasta $${maxPrice}`] : null,
+    sort !== "recent" ? ["sort", "Orden personalizado"] : null
+  ].filter(Boolean) as Array<[string, string]>;
+
   return (
-    <form
-      action="/marketplace"
-      className="mt-6 grid gap-3 rounded-lg border border-white/10 bg-slate-950/82 p-3 shadow-[0_18px_50px_rgba(15,23,42,0.2)] backdrop-blur sm:p-4 md:grid-cols-2 xl:grid-cols-6"
-    >
+    <form action="/marketplace" className="mt-6 rounded-lg border border-white/10 bg-slate-950/82 p-3 shadow-[0_18px_50px_rgba(15,23,42,0.2)] backdrop-blur sm:p-4">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
       <label className="xl:col-span-2">
         <span className="mb-2 block text-xs font-black uppercase tracking-[0.12em] text-yellow-300">
           Carta
@@ -173,6 +205,24 @@ export function MarketplaceFilters({
           <RotateCcw className="h-4 w-4" />
         </Link>
       </div>
+      </div>
+      {activeFilters.length ? (
+        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-white/10 pt-4">
+          <span className="text-xs font-black uppercase tracking-[0.12em] text-blue-200">
+            Filtros activos
+          </span>
+          {activeFilters.map(([key, label]) => (
+            <Link
+              className="rounded-full border border-yellow-300/30 bg-yellow-300/10 px-3 py-1.5 text-xs font-black text-yellow-100 transition hover:border-yellow-300 hover:bg-yellow-300/20"
+              href={filterHref(key, filterValues)}
+              key={key}
+              title={`Quitar ${label}`}
+            >
+              {label} ×
+            </Link>
+          ))}
+        </div>
+      ) : null}
     </form>
   );
 }
