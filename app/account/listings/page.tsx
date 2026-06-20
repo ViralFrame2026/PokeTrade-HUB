@@ -335,6 +335,7 @@ export default async function MyListingsPage({
                         counterparties={counterpartiesByListing.get(listing.id) ?? []}
                         currentStatus={listing.status}
                         listingId={listing.id}
+                        listingPrice={listing.price}
                         listingType={listing.type}
                       />
                     ) : null}

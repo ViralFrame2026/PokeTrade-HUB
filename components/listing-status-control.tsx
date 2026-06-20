@@ -11,13 +11,17 @@ type ListingStatusControlProps = {
   }>;
   currentStatus: string;
   listingId: string;
+  listingPrice: number | null;
   listingType: string;
 };
+
+const PLATFORM_COMMISSION_RATE = 0.05;
 
 export function ListingStatusControl({
   counterparties,
   currentStatus,
   listingId,
+  listingPrice,
   listingType
 }: ListingStatusControlProps) {
   const router = useRouter();
@@ -28,11 +32,14 @@ export function ListingStatusControl({
 
   const completedValue =
     listingType === "trade" ? "traded" : listingType === "free" ? "finished" : "sold";
+  const closing = ["sold", "traded", "finished"].includes(status);
+  const estimatedCommission =
+    listingType === "sale" && listingPrice ? listingPrice * PLATFORM_COMMISSION_RATE : 0;
+  const sellerNet = listingType === "sale" && listingPrice ? listingPrice - estimatedCommission : 0;
 
   async function saveStatus() {
     if (status === currentStatus) return;
 
-    const closing = ["sold", "traded", "finished"].includes(status);
     if (closing && !counterpartyId) {
       setError("Selecciona con quien concretaste la operacion.");
       return;
@@ -122,6 +129,18 @@ export function ListingStatusControl({
           ) : null}
         </label>
       ) : null}
+      {closing && status !== currentStatus && listingType === "sale" && listingPrice ? (
+        <div className="mt-3 rounded-md border border-yellow-200 bg-yellow-50 p-3 text-xs text-yellow-900">
+          <p className="font-black">Comision estimada PokeTrade: 5%</p>
+          <p className="mt-1 font-semibold">
+            Comision: {moneyLabel(estimatedCommission)} | Neto vendedor:{" "}
+            {moneyLabel(sellerNet)}
+          </p>
+          <p className="mt-1 text-yellow-800">
+            Esta vista es informativa; todavia no hay cobro automatico conectado.
+          </p>
+        </div>
+      ) : null}
       <button
         className="mt-2 inline-flex h-9 w-full items-center justify-center gap-2 rounded-md bg-blue-700 px-3 text-xs font-black text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
         disabled={isSaving || status === currentStatus}
@@ -134,4 +153,12 @@ export function ListingStatusControl({
       {error ? <p className="mt-2 text-xs font-semibold text-red-600">{error}</p> : null}
     </div>
   );
+}
+
+function moneyLabel(value: number) {
+  return new Intl.NumberFormat("es-AR", {
+    currency: "ARS",
+    maximumFractionDigits: 0,
+    style: "currency"
+  }).format(value);
 }
