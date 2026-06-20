@@ -3,8 +3,10 @@ import { redirect } from "next/navigation";
 import {
   ArrowLeft,
   Bell,
+  CheckCircle2,
   Heart,
   Handshake,
+  Info,
   ListChecks,
   LockKeyhole,
   MessageCircle,
@@ -37,6 +39,67 @@ type DashboardStat = {
   tone?: "blue" | "green" | "red" | "yellow";
   value: number | string;
 };
+
+function accountNextStep({
+  hasListings,
+  isVerified,
+  pendingAttention,
+  unreadMessages,
+  unreadNotifications
+}: {
+  hasListings: boolean;
+  isVerified: boolean;
+  pendingAttention: number;
+  unreadMessages: number;
+  unreadNotifications: number;
+}) {
+  if (pendingAttention > 0) {
+    return {
+      href: "/account/listings",
+      icon: ShieldCheck,
+      label: "Revisar publicaciones",
+      text: "Tenés publicaciones que requieren atención de moderación. Resolverlas ayuda a que vuelvan al marketplace."
+    };
+  }
+  if (unreadMessages > 0) {
+    return {
+      href: "/account/messages",
+      icon: MessageCircle,
+      label: "Responder mensajes",
+      text: "Hay conversaciones sin leer. Responder rápido aumenta la confianza y mejora tus chances de cerrar operaciones."
+    };
+  }
+  if (unreadNotifications > 0) {
+    return {
+      href: "/account/notifications",
+      icon: Bell,
+      label: "Ver notificaciones",
+      text: "Tenés actividad nueva en tu cuenta. Revisala para no perder aprobaciones, mensajes o avisos importantes."
+    };
+  }
+  if (!isVerified) {
+    return {
+      href: "/account/profile",
+      icon: UserRound,
+      label: "Mejorar perfil",
+      text: "Completá tu perfil y mantené operaciones claras para construir una reputación más confiable."
+    };
+  }
+  if (!hasListings) {
+    return {
+      href: "/publish",
+      icon: Store,
+      label: "Publicar primera carta",
+      text: "Todavía no tenés publicaciones. Elegí una carta oficial, agregá precio o intercambio y enviala a revisión."
+    };
+  }
+  return {
+    href: "/marketplace",
+    icon: CheckCircle2,
+    label: "Cuenta al día",
+    text: "Tu cuenta no tiene tareas urgentes. Podés explorar cartas, crear un sorteo o publicar una nueva carta."
+  };
+}
 
 export default async function AccountPage() {
   const supabase = await createSupabaseServerClient();
@@ -101,6 +164,18 @@ export default async function AccountPage() {
 
   if (!profile) redirect("/");
 
+  const pendingAttentionCount = pendingListingsResult.count ?? 0;
+  const unreadMessagesCount = unreadMessagesResult.count ?? 0;
+  const unreadNotificationsCount = unreadNotificationsResult.count ?? 0;
+  const nextStep = accountNextStep({
+    hasListings: (listingsResult.count ?? 0) > 0,
+    isVerified: profile.is_verified,
+    pendingAttention: pendingAttentionCount,
+    unreadMessages: unreadMessagesCount,
+    unreadNotifications: unreadNotificationsCount
+  });
+  const NextStepIcon = nextStep.icon;
+
   const stats: DashboardStat[] = [
     {
       href: "/account/listings",
@@ -113,21 +188,21 @@ export default async function AccountPage() {
       icon: ShieldCheck,
       label: "Requieren atención",
       tone: "yellow",
-      value: pendingListingsResult.count ?? 0
+      value: pendingAttentionCount
     },
     {
       href: "/account/messages",
       icon: MessageCircle,
       label: "Mensajes sin leer",
       tone: "red",
-      value: unreadMessagesResult.count ?? 0
+      value: unreadMessagesCount
     },
     {
       href: "/account/notifications",
       icon: Bell,
       label: "Notificaciones",
       tone: "red",
-      value: unreadNotificationsResult.count ?? 0
+      value: unreadNotificationsCount
     },
     {
       href: "/account/operations",
@@ -229,6 +304,25 @@ export default async function AccountPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+        <div className="mb-8 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+          <div className="rounded-lg border border-yellow-300/30 bg-yellow-400/10 p-5 shadow-[0_18px_45px_rgba(0,0,0,.16)]">
+            <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-yellow-300">
+              <Info className="h-4 w-4" />
+              Próximo paso recomendado
+            </p>
+            <h2 className="mt-3 flex items-center gap-2 text-xl font-black text-white">
+              <NextStepIcon className="h-5 w-5 text-yellow-300" />
+              {nextStep.label}
+            </h2>
+            <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-blue-100">
+              {nextStep.text}
+            </p>
+          </div>
+          <ButtonLink href={nextStep.href} icon={NextStepIcon}>
+            Continuar
+          </ButtonLink>
+        </div>
+
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat) => (
             <AccountCard key={stat.label} stat={stat} />
