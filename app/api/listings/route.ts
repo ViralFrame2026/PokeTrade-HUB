@@ -47,7 +47,7 @@ export async function POST(request: Request) {
 
   if (!user) {
     return NextResponse.json(
-      { data: null, error: "Debes iniciar sesion para publicar." },
+      { data: null, error: "Debes iniciar sesión para publicar." },
       { status: 401 }
     );
   }
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         data: null,
-        error: parsed.error.issues[0]?.message ?? "Datos de publicacion invalidos."
+        error: parsed.error.issues[0]?.message ?? "Datos de publicación inválidos."
       },
       { status: 400 }
     );
@@ -161,7 +161,7 @@ export async function POST(request: Request) {
         error:
           error instanceof Error
             ? error.message
-            : "No pudimos crear la publicacion. Intenta nuevamente."
+            : "No pudimos crear la publicación. Intentá nuevamente."
       },
       { status: 500 }
     );

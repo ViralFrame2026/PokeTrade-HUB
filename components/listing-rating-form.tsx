@@ -48,7 +48,7 @@ export function ListingRatingForm({ listingId }: { listingId: string }) {
       onSubmit={submitRating}
     >
       <p className="text-xs font-black uppercase tracking-[0.15em] text-amber-700">
-        Operacion finalizada
+        Operación finalizada
       </p>
       <h3 className="mt-2 text-lg font-black text-blue-950">Valora al vendedor</h3>
       <div className="mt-4 flex gap-1" role="radiogroup" aria-label="Estrellas">

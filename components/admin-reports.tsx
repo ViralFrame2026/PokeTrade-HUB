@@ -14,8 +14,8 @@ export type AdminReport = {
 };
 
 const reasonLabels: Record<string, string> = {
-  fake_listing: "Publicacion falsa",
-  misleading_information: "Informacion engañosa",
+  fake_listing: "Publicación falsa",
+  misleading_information: "Información engañosa",
   missing_product: "Producto no disponible",
   scam: "Posible estafa",
   suspicious_behavior: "Comportamiento sospechoso"
@@ -85,7 +85,7 @@ export function AdminReports({ reports: initialReports }: { reports: AdminReport
                 target="_blank"
               >
                 <ExternalLink className="h-4 w-4" />
-                Abrir publicacion
+                Abrir publicación
               </Link>
               <button
                 className="inline-flex items-center gap-2 rounded-md bg-emerald-400 px-3 py-2 text-sm font-black text-emerald-950 disabled:opacity-60"

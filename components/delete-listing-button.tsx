@@ -20,7 +20,7 @@ export function DeleteListingButton({
 
   async function handleDelete() {
     const confirmed = window.confirm(
-      `¿Eliminar definitivamente la publicacion de "${title}"? Esta accion no se puede deshacer.`
+      `¿Eliminar definitivamente la publicación de "${title}"? Está acción no se puede deshacer.`
     );
 
     if (!confirmed) return;
@@ -35,7 +35,7 @@ export function DeleteListingButton({
       const payload = (await response.json()) as { error: string | null };
 
       if (!response.ok || payload.error) {
-        throw new Error(payload.error ?? "No pudimos eliminar la publicacion.");
+        throw new Error(payload.error ?? "No pudimos eliminar la publicación.");
       }
 
       setIsDeleted(true);
@@ -44,7 +44,7 @@ export function DeleteListingButton({
       setError(
         deleteError instanceof Error
           ? deleteError.message
-          : "No pudimos eliminar la publicacion."
+          : "No pudimos eliminar la publicación."
       );
     } finally {
       setIsDeleting(false);

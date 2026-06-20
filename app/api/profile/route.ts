@@ -15,7 +15,7 @@ const profileSchema = z
     if (value.whatsapp && value.whatsapp.replace(/\D/g, "").length < 8) {
       context.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Revisa el numero de WhatsApp.",
+        message: "Revisa el número de WhatsApp.",
         path: ["whatsapp"]
       });
     }
@@ -28,7 +28,7 @@ export async function PATCH(request: Request) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json({ error: "Debes iniciar sesion." }, { status: 401 });
+    return NextResponse.json({ error: "Debes iniciar sesión." }, { status: 401 });
   }
 
   const parsed = profileSchema.safeParse(await request.json());

@@ -18,7 +18,7 @@ export async function POST(request: Request) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json({ error: "Debes iniciar sesion." }, { status: 401 });
+    return NextResponse.json({ error: "Debes iniciar sesión." }, { status: 401 });
   }
 
   const parsed = raffleSchema.safeParse(await request.json());

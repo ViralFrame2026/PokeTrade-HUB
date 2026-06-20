@@ -4,6 +4,7 @@ import { ListingCard } from "@/components/listing-card";
 import { MarketplaceFilters } from "@/components/marketplace-filters";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { latestListings as demoListings } from "@/lib/demo-data";
 import type { Listing } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -167,9 +168,10 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
   });
 
   const hasFilters = Boolean(query || type || condition || location);
+  const displayListings = listings.length > 0 ? listings : demoListings;
 
   return (
-    <main className="min-h-screen bg-[#eaf2ff] text-slate-900">
+    <main className="min-h-screen bg-[#070a12] text-white">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <Link className="flex items-center gap-3" href="/">
@@ -195,10 +197,10 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
         </nav>
       </header>
 
-      <section className="bg-white">
+      <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_80%_0%,rgba(37,99,235,0.32),transparent_32rem),linear-gradient(180deg,#172554,#0f172a)]">
         <div className="mx-auto max-w-7xl px-4 pb-6 pt-10 sm:px-6 lg:px-8">
           <Link
-            className="inline-flex items-center gap-2 text-sm font-bold text-blue-700 hover:text-blue-900"
+            className="inline-flex items-center gap-2 text-sm font-bold text-blue-100 hover:text-yellow-300"
             href="/"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -207,12 +209,12 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
           <div className="mt-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
               <p className="text-sm font-black uppercase text-red-500">Catálogo de la comunidad</p>
-              <h1 className="mt-2 text-4xl font-black text-blue-950">Explorar cartas</h1>
-              <p className="mt-2 text-slate-600">
+              <h1 className="mt-2 text-4xl font-black text-white">Explorar marketplace</h1>
+              <p className="mt-2 text-blue-100">
                 Publicaciones aprobadas de venta, intercambio y regalo.
               </p>
             </div>
-            <p className="font-black text-blue-900">
+            <p className="rounded-full border border-white/10 bg-white/10 px-4 py-2 font-black text-blue-50">
               {listings.length} {listings.length === 1 ? "resultado" : "resultados"}
             </p>
           </div>
@@ -227,9 +229,24 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        {listings.length > 0 ? (
+        {listings.length === 0 ? (
+          <div className="mb-6 rounded-lg border border-yellow-300/30 bg-yellow-300/10 p-5">
+            <p className="text-sm font-black uppercase tracking-[0.16em] text-yellow-200">
+              {hasFilters ? "Sin coincidencias reales" : "Marketplace listo"}
+            </p>
+            <h2 className="mt-2 text-2xl font-black text-white">
+              {hasFilters ? "Probá con menos filtros" : "Todavía no hay publicaciones aprobadas"}
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
+              {hasFilters
+                ? "Mientras tanto, te mostramos ejemplos visuales para que la pantalla mantenga contexto."
+                : "Cuando el equipo apruebe las primeras cartas, aparecerán acá. Estos ejemplos muestran cómo se verá el marketplace."}
+            </p>
+          </div>
+        ) : null}
+        {displayListings.length > 0 ? (
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {listings.map((listing) => (
+            {displayListings.map((listing) => (
               <ListingCard key={listing.id} listing={listing} />
             ))}
           </div>

@@ -53,7 +53,7 @@ export function RaffleForm() {
         throw new Error(payload.error ?? "No pudimos crear el sorteo.");
       }
 
-      setSuccess("Sorteo enviado a moderacion.");
+      setSuccess("Sorteo enviado a moderación.");
       setTitle("");
       setPrize("");
       setRequirements("");
@@ -152,7 +152,7 @@ export function RaffleForm() {
       </label>
 
       <div className="mt-5 rounded-lg border border-yellow-300/30 bg-yellow-300/10 p-4 text-sm leading-6 text-yellow-100">
-        Esta primera modalidad es gratuita. No se permiten pagos, compras obligatorias
+        Está primera modalidad es gratuita. No se permiten pagos, compras obligatorias
         ni cobros por participar.
       </div>
       {error ? (

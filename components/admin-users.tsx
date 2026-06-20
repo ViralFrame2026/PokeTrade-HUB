@@ -40,7 +40,7 @@ export function AdminUsers({
 
   async function setAdmin(user: AdminUser, enabled: boolean) {
     const action = enabled ? "dar permisos de administrador" : "retirar los permisos";
-    if (!window.confirm(`¿Confirmas ${action} a ${user.displayName}?`)) return;
+    if (!window.confirm(`¿Confirmás ${action} a ${user.displayName}?`)) return;
 
     setBusyId(user.id);
     setError(null);

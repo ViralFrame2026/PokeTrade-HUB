@@ -156,7 +156,7 @@ export function PublishForm() {
       const payload = (await response.json()) as CreateListingResponse;
 
       if (!response.ok || payload.error) {
-        throw new Error(payload.error ?? "No pudimos crear la publicacion.");
+        throw new Error(payload.error ?? "No pudimos crear la publicación.");
       }
 
       const listingId = payload.data?.id;
@@ -170,7 +170,7 @@ export function PublishForm() {
       try {
         if (photos.length === 0) {
           setSuccess(
-            `Publicacion ${listingId} enviada. Quedo pendiente de moderacion.`
+            `Publicación ${listingId} enviada. Quedo pendiente de moderación.`
           );
           setCards([]);
           setSelectedCard(null);
@@ -228,7 +228,7 @@ export function PublishForm() {
       }
 
       setSuccess(
-        `Publicacion ${listingId} enviada con ${photos.length} foto(s). Quedo pendiente de moderacion.`
+        `Publicación ${listingId} enviada con ${photos.length} foto(s). Quedo pendiente de moderación.`
       );
       setCards([]);
       setSelectedCard(null);
@@ -241,7 +241,7 @@ export function PublishForm() {
       setError(
         submitError instanceof Error
           ? submitError.message
-          : "No pudimos crear la publicacion."
+          : "No pudimos crear la publicación."
       );
     } finally {
       setIsSubmitting(false);
@@ -306,7 +306,7 @@ export function PublishForm() {
           </div>
         ) : (
           <span>
-            Busca una carta oficial. La publicacion no puede continuar con cartas inventadas.
+            Busca una carta oficial. La publicación no puede continuar con cartas inventadas.
           </span>
         )}
       </div>
@@ -359,7 +359,7 @@ export function PublishForm() {
                   {card.set.name}
                 </span>
                 <span className="mt-2 block text-xs leading-5 text-slate-400">
-                  ID oficial: {card.id} | Numero: {card.number ?? "N/D"} | Rareza:{" "}
+                  ID oficial: {card.id} | Número: {card.number ?? "N/D"} | Rareza:{" "}
                   {card.rarity ?? "N/D"}
                 </span>
               </span>
@@ -371,7 +371,7 @@ export function PublishForm() {
       {selectedCard ? (
         <section className="mt-6 rounded-lg border border-white/10 bg-slate-950/45 p-4">
           <p className="text-xs font-black uppercase tracking-[0.2em] text-pokemonYellow">
-            Datos bloqueados desde Pokemon TCG API
+            Datos bloqueados desde Pokémon TCG API
           </p>
           <div className="mt-4 grid gap-5 sm:grid-cols-[150px_1fr] sm:items-start">
             <div className="relative mx-auto aspect-[0.72] w-[150px] overflow-hidden rounded-md bg-slate-950 shadow-foil sm:mx-0">
@@ -397,7 +397,7 @@ export function PublishForm() {
                 <dd className="mt-1 font-bold text-white">{selectedCard.rarity ?? "N/D"}</dd>
               </div>
               <div>
-                <dt className="font-semibold text-slate-400">Numero</dt>
+                <dt className="font-semibold text-slate-400">Número</dt>
                 <dd className="mt-1 font-bold text-white">{selectedCard.number ?? "N/D"}</dd>
               </div>
               <div className="sm:col-span-2">
@@ -584,7 +584,7 @@ export function PublishForm() {
         </div>
         <div className="rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
           <MapPin className="mb-3 h-5 w-5 text-pokemonYellow" />
-          Ubicacion requerida
+          Ubicación requerida
         </div>
         <div className="rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
           <ShieldCheck className="mb-3 h-5 w-5 text-pokemonYellow" />

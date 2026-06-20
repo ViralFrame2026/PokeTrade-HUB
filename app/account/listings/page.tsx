@@ -249,7 +249,7 @@ export default async function MyListingsPage({
           </Link>
           <h1 className="mt-5 text-4xl font-black text-blue-950">Mis publicaciones</h1>
           <p className="mt-2 text-slate-600">
-            Sigue el estado de las cartas que enviaste a moderacion.
+            Sigue el estado de las cartas que enviaste a moderación.
           </p>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-3">
@@ -267,7 +267,7 @@ export default async function MyListingsPage({
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         {params.resubmitted === "1" ? (
           <div className="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4 font-bold text-emerald-800">
-            Los cambios se guardaron y la publicacion volvio a moderacion.
+            Los cambios se guardaron y la publicación volvio a moderación.
           </div>
         ) : null}
         {listings.length > 0 ? (
@@ -378,14 +378,14 @@ export default async function MyListingsPage({
             <div>
               <Store className="mx-auto h-10 w-10 text-blue-500" />
               <h2 className="mt-4 text-xl font-black text-blue-950">
-                Todavia no publicaste cartas
+                Todavía no publicaste cartas
               </h2>
               <p className="mt-2 text-slate-600">
                 Selecciona una carta oficial y enviala a revision.
               </p>
               <div className="mt-5">
                 <ButtonLink href="/publish" icon={Plus}>
-                  Crear publicacion
+                  Crear publicación
                 </ButtonLink>
               </div>
             </div>

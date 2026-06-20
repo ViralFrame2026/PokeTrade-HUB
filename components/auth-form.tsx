@@ -180,7 +180,7 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
           </label>
         ) : (
           <p className="mt-4 rounded-lg border border-white/10 bg-white/5 p-3 text-sm leading-6 text-slate-300">
-            Ingresa tu email y te enviaremos un enlace para crear una nueva contraseña.
+            Ingresá tu email y te enviaremos un enlace para crear una nueva contraseña.
           </p>
         )}
 

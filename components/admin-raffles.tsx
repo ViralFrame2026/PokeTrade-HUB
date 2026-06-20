@@ -59,7 +59,7 @@ export function AdminRaffles({ raffles: initialRaffles }: { raffles: AdminRaffle
   if (!raffles.length) {
     return (
       <div className="p-8 text-center text-sm font-semibold text-slate-400">
-        No hay sorteos pendientes de moderacion.
+        No hay sorteos pendientes de moderación.
       </div>
     );
   }

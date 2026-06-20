@@ -103,7 +103,7 @@ export default async function RaffleDetailPage({
                   : `${entryCount} participante${entryCount === 1 ? "" : "s"}`
               }
             />
-            <Meta icon={ShieldCheck} text="Revisado por moderacion" />
+            <Meta icon={ShieldCheck} text="Revisado por moderación" />
           </div>
 
           <div className="mt-6 border-y border-blue-100 py-5">

@@ -29,7 +29,7 @@ export function SignOutButton() {
       ) : (
         <LogOut className="h-4 w-4" />
       )}
-      <span className="hidden sm:inline">Cerrar sesion</span>
+      <span className="hidden sm:inline">Cerrar sesión</span>
     </button>
   );
 }

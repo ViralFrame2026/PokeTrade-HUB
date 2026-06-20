@@ -125,10 +125,10 @@ type RecentClosedSaleRow = {
 
 function listingTitle(listing: ReportRow["listings"]) {
   if (Array.isArray(listing)) {
-    return listing[0]?.title ?? "Publicacion no disponible";
+    return listing[0]?.title ?? "Publicación no disponible";
   }
 
-  return listing?.title ?? "Publicacion no disponible";
+  return listing?.title ?? "Publicación no disponible";
 }
 
 function sellerName(profile: ListingRow["profiles"]) {
@@ -401,7 +401,7 @@ export default async function AdminPage() {
           <p className="text-sm font-bold uppercase tracking-[0.22em] text-pokemonYellow">
             Administracion
           </p>
-          <h1 className="mt-2 text-4xl font-black text-white">Centro de moderacion</h1>
+          <h1 className="mt-2 text-4xl font-black text-white">Centro de moderación</h1>
         </div>
         <ShieldCheck className="h-12 w-12 text-pokemonYellow" />
       </div>
@@ -419,7 +419,7 @@ export default async function AdminPage() {
           <div className="flex flex-col justify-between gap-3 border-b border-white/10 pb-5 sm:flex-row sm:items-end">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.18em] text-yellow-300">
-                Solo dueño de la pagina
+                Solo dueño de la página
               </p>
               <h2 className="mt-2 text-xl font-black text-white">Ingresos estimados</h2>
               <p className="mt-2 text-sm text-slate-400">
@@ -505,7 +505,7 @@ export default async function AdminPage() {
               </div>
             ) : (
               <div className="mt-4 rounded-lg border border-white/10 bg-white/[0.04] p-4 text-sm font-semibold text-slate-400">
-                Todavia no hay ventas cerradas para calcular comisiones.
+                Todavía no hay ventas cerradas para calcular comisiones.
               </div>
             )}
           </div>
@@ -537,7 +537,7 @@ export default async function AdminPage() {
             </p>
             <h2 className="mt-2 text-xl font-black text-white">Permisos de administradores</h2>
             <p className="mt-2 text-sm text-slate-400">
-              Concede acceso al centro de moderacion únicamente a personas de confianza.
+              Concede acceso al centro de moderación únicamente a personas de confianza.
             </p>
           </div>
           <AdminUsers currentUserId={user.id} users={adminUsers} />

@@ -156,7 +156,7 @@ export default async function MessagesPage() {
                       </span>
                     </div>
                     <p className="truncate text-xs font-bold text-blue-600">
-                      {listingTitles.get(listingId) ?? "Publicacion"}
+                      {listingTitles.get(listingId) ?? "Publicación"}
                     </p>
                     <div className="mt-1 flex items-center gap-3">
                       <p
@@ -183,10 +183,10 @@ export default async function MessagesPage() {
             <div>
               <Inbox className="mx-auto h-10 w-10 text-blue-400" />
               <h2 className="mt-4 text-xl font-black text-blue-950">
-                Todavia no tienes conversaciones
+                Todavía no tienes conversaciones
               </h2>
               <p className="mt-2 text-slate-600">
-                Abre una publicacion y envia un mensaje al vendedor.
+                Abre una publicación y envia un mensaje al vendedor.
               </p>
             </div>
           </div>

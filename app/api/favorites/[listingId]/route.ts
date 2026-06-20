@@ -13,7 +13,7 @@ export async function POST(_request: Request, context: RouteContext) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json({ error: "Debes iniciar sesion." }, { status: 401 });
+    return NextResponse.json({ error: "Debes iniciar sesión." }, { status: 401 });
   }
 
   const { data: listing } = await supabase
@@ -25,7 +25,7 @@ export async function POST(_request: Request, context: RouteContext) {
     .maybeSingle();
 
   if (!listing) {
-    return NextResponse.json({ error: "Publicacion no disponible." }, { status: 404 });
+    return NextResponse.json({ error: "Publicación no disponible." }, { status: 404 });
   }
 
   const { error } = await supabase.from("favorites").insert({
@@ -48,7 +48,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json({ error: "Debes iniciar sesion." }, { status: 401 });
+    return NextResponse.json({ error: "Debes iniciar sesión." }, { status: 401 });
   }
 
   const { error } = await supabase

@@ -46,7 +46,7 @@ export async function PATCH(
   const parsed = schema.safeParse(await request.json());
   if (!parsed.success) {
     return NextResponse.json(
-      { error: parsed.error.issues[0]?.message ?? "Accion invalida." },
+      { error: parsed.error.issues[0]?.message ?? "Acción invalida." },
       { status: 400 }
     );
   }
@@ -84,7 +84,7 @@ export async function PATCH(
   await Promise.all([
     supabase.from("notifications").insert({
       body: approved
-        ? `"${raffle.title}" ya esta visible para la comunidad.`
+        ? `"${raffle.title}" ya está visible para la comunidad.`
         : parsed.data.reason,
       payload: { raffle_id: raffle.id },
       title: approved ? "Sorteo aprobado" : "Sorteo rechazado",

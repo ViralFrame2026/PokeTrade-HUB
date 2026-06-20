@@ -61,7 +61,7 @@ export function ReportListingForm({
     return (
       <div className="mt-5 flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm font-bold text-emerald-700">
         <CheckCircle2 className="h-5 w-5" />
-        {initialReported ? "Ya reportaste esta publicacion." : "Reporte enviado a moderacion."}
+        {initialReported ? "Ya reportaste esta publicación." : "Reporte enviado a moderación."}
       </div>
     );
   }
@@ -74,7 +74,7 @@ export function ReportListingForm({
         type="button"
       >
         <AlertTriangle className="h-4 w-4" />
-        Reportar publicacion
+        Reportar publicación
       </button>
 
       {isOpen ? (
@@ -89,8 +89,8 @@ export function ReportListingForm({
               onChange={(event) => setReason(event.target.value)}
               value={reason}
             >
-              <option value="misleading_information">Informacion engañosa</option>
-              <option value="fake_listing">Carta o publicacion falsa</option>
+              <option value="misleading_information">Información engañosa</option>
+              <option value="fake_listing">Carta o publicación falsa</option>
               <option value="missing_product">Producto no disponible</option>
               <option value="scam">Posible estafa</option>
               <option value="suspicious_behavior">Comportamiento sospechoso</option>

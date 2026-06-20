@@ -351,7 +351,7 @@ export default async function ListingDetailPage({
             {!isAvailable ? (
               <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4 text-center">
                 <p className="font-black text-slate-800">
-                  Esta publicacion ya no esta disponible.
+                  Esta publicación ya no está disponible.
                 </p>
                 <p className="mt-1 text-sm text-slate-500">
                   Estado actual: {statusLabel(listing.status)}.
@@ -430,7 +430,7 @@ export default async function ListingDetailPage({
           {canRate ? <ListingRatingForm listingId={listing.id} /> : null}
           {existingRating ? (
             <div className="mt-5 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-center text-sm font-black text-emerald-700">
-              Ya valoraste esta operacion.
+              Ya valoraste está operacion.
             </div>
           ) : null}
           {reviews.length > 0 ? (

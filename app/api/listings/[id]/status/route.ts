@@ -18,7 +18,7 @@ export async function PATCH(
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json({ error: "Debes iniciar sesion." }, { status: 401 });
+    return NextResponse.json({ error: "Debes iniciar sesión." }, { status: 401 });
   }
 
   const parsed = statusSchema.safeParse(await request.json());
@@ -35,7 +35,7 @@ export async function PATCH(
 
   if (error) {
     return NextResponse.json(
-      { error: "No pudimos actualizar esta publicacion." },
+      { error: "No pudimos actualizar esta publicación." },
       { status: 403 }
     );
   }

@@ -92,7 +92,7 @@ export default async function EditListingPage({
             />
           </div>
           <div>
-            <p className="text-sm font-black uppercase text-yellow-300">Corregir publicacion</p>
+            <p className="text-sm font-black uppercase text-yellow-300">Corregir publicación</p>
             <h1 className="mt-2 text-4xl font-black">{card.official_name}</h1>
             <p className="mt-2 text-slate-400">{card.set_name}</p>
             {listing.rejection_reason ? (

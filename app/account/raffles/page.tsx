@@ -108,7 +108,7 @@ export default async function MyRafflesPage() {
         </Link>
         <h1 className="mt-5 text-4xl font-black text-blue-950">Mis sorteos</h1>
         <p className="mt-2 text-slate-600">
-          Controla la moderacion, participantes y selección del ganador.
+          Controla la moderación, participantes y selección del ganador.
         </p>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -213,10 +213,10 @@ export default async function MyRafflesPage() {
             <div>
               <Gift className="mx-auto h-11 w-11 text-blue-500" />
               <h2 className="mt-4 text-xl font-black text-blue-950">
-                Todavia no creaste sorteos
+                Todavía no creaste sorteos
               </h2>
               <p className="mt-2 text-slate-600">
-                Crea uno gratuito y envialo a moderacion.
+                Crea uno gratuito y envialo a moderación.
               </p>
             </div>
           </div>

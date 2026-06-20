@@ -151,7 +151,7 @@ export default async function ConversationPage({
             </div>
           </Link>
           <Link
-            aria-label="Ver publicacion"
+            aria-label="Ver publicación"
             className="grid h-10 w-10 place-items-center rounded-lg border border-blue-300 transition hover:border-yellow-300 hover:text-yellow-300"
             href={`/listings/${listingId}`}
           >
@@ -200,7 +200,7 @@ export default async function ConversationPage({
               href={`/listings/${listingId}`}
             >
               <ExternalLink className="h-4 w-4" />
-              Ver publicacion
+              Ver publicación
             </Link>
           </div>
           <div className="min-h-[55vh] space-y-3 bg-blue-50/60 p-4 sm:p-6">

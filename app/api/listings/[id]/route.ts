@@ -48,7 +48,7 @@ export async function PATCH(
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json({ error: "Debes iniciar sesion." }, { status: 401 });
+    return NextResponse.json({ error: "Debes iniciar sesión." }, { status: 401 });
   }
 
   const parsed = updateListingSchema.safeParse(await request.json());
@@ -72,7 +72,7 @@ export async function PATCH(
     !["pending", "rejected", "changes_requested"].includes(listing.moderation_status)
   ) {
     return NextResponse.json(
-      { error: "Esta publicacion no puede editarse." },
+      { error: "Esta publicación no puede editarse." },
       { status: 403 }
     );
   }

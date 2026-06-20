@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json({ error: "Debes iniciar sesion." }, { status: 401 });
+    return NextResponse.json({ error: "Debes iniciar sesión." }, { status: 401 });
   }
 
   const payload = (await request.json()) as {
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
 
   if (!body || body.length > 1500 || !payload.listingId || !payload.recipientId) {
     return NextResponse.json(
-      { error: "Revisa el mensaje y la publicacion seleccionada." },
+      { error: "Revisa el mensaje y la publicación seleccionada." },
       { status: 400 }
     );
   }
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
     (listing.seller_id !== user.id && listing.seller_id !== payload.recipientId)
   ) {
     return NextResponse.json(
-      { error: "No puedes iniciar esta conversacion." },
+      { error: "No puedes iniciar esta conversación." },
       { status: 403 }
     );
   }
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
 
   if (listing.status !== "active" && !existingConversation) {
     return NextResponse.json(
-      { error: "Esta publicacion ya no acepta nuevas conversaciones." },
+      { error: "Esta publicación ya no acepta nuevas conversaciones." },
       { status: 403 }
     );
   }

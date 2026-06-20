@@ -115,7 +115,7 @@ export default async function PublicProfilePage({
       image: card.image_large,
       location:
         [row.location_city, row.location_country].filter(Boolean).join(", ") ||
-        "Ubicacion no informada",
+        "Ubicación no informada",
       price: priceLabel(row.type, row.price),
       seller: profile.display_name,
       sellerId: profile.id,
@@ -129,7 +129,7 @@ export default async function PublicProfilePage({
   const ratings = (ratingData ?? []) as RatingRow[];
   const location =
     [profile.city, profile.country].filter(Boolean).join(", ") ||
-    "Ubicacion no informada";
+    "Ubicación no informada";
   const joinedLabel = new Intl.DateTimeFormat("es-AR", {
     month: "long",
     year: "numeric"
@@ -273,7 +273,7 @@ export default async function PublicProfilePage({
             </div>
           ) : (
             <div className="mt-6 rounded-lg border border-blue-100 bg-white p-8 text-center text-slate-500">
-              Todavia no recibió valoraciones.
+              Todavía no recibió valoraciones.
             </div>
           )}
         </div>

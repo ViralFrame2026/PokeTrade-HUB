@@ -183,7 +183,7 @@ export default async function OperationsPage() {
               const card = firstRelated(product?.cards ?? null);
               const seller = firstRelated(operation.profiles);
               const isRated = ratedIds.has(operation.id);
-              const title = card?.official_name ?? "Carta Pokemon TCG";
+              const title = card?.official_name ?? "Carta Pokémon TCG";
 
               return (
                 <article

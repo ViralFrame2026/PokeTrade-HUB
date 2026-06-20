@@ -47,7 +47,7 @@ export async function PATCH(request: Request, context: RouteContext) {
 
   if (!parsed.success) {
     return NextResponse.json(
-      { data: null, error: parsed.error.issues[0]?.message ?? "Accion invalida." },
+      { data: null, error: parsed.error.issues[0]?.message ?? "Acción invalida." },
       { status: 400 }
     );
   }
@@ -60,12 +60,12 @@ export async function PATCH(request: Request, context: RouteContext) {
     .single();
 
   if (listingReadError || !currentListing) {
-    return NextResponse.json({ data: null, error: "Publicacion no encontrada." }, { status: 404 });
+    return NextResponse.json({ data: null, error: "Publicación no encontrada." }, { status: 404 });
   }
 
   if (currentListing.moderation_status !== "pending") {
     return NextResponse.json(
-      { data: null, error: "La publicacion ya fue moderada." },
+      { data: null, error: "La publicación ya fue moderada." },
       { status: 409 }
     );
   }
@@ -90,12 +90,12 @@ export async function PATCH(request: Request, context: RouteContext) {
   await Promise.all([
     supabase.from("notifications").insert({
       body: approved
-        ? `"${currentListing.title}" ya esta visible en el marketplace.`
+        ? `"${currentListing.title}" ya está visible en el marketplace.`
         : parsed.data.reason,
       payload: {
         listing_id: currentListing.id
       },
-      title: approved ? "Publicacion aprobada" : "Publicacion rechazada",
+      title: approved ? "Publicación aprobada" : "Publicación rechazada",
       type: approved ? "listing_approved" : "listing_rejected",
       user_id: currentListing.seller_id
     }),

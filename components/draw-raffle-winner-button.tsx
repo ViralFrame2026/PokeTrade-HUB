@@ -18,7 +18,7 @@ export function DrawRaffleWinnerButton({
   async function drawWinner() {
     if (
       !window.confirm(
-        "Supabase elegira un ganador al azar. Esta accion no se puede repetir. ¿Continuar?"
+        "Supabase elegirá un ganador al azar. Está acción no se puede repetir. ¿Continuar?"
       )
     ) {
       return;

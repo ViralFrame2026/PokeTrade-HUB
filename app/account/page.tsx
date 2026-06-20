@@ -130,7 +130,7 @@ export default async function AccountPage() {
     {
       href: "/account/operations",
       icon: Handshake,
-      label: "Operaciones cerradas",
+      label: "Operaciónes cerradas",
       tone: "green",
       value: operationsResult.count ?? 0
     },
@@ -196,7 +196,7 @@ export default async function AccountPage() {
             <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 text-blue-950">
               <p className="flex items-center gap-2 text-sm font-black">
                 <UserRound className="h-4 w-4 text-blue-700" />
-                Reputacion
+                Reputación
               </p>
               <p className="mt-2 text-3xl font-black">
                 {Number(profile.reputation_average ?? 0).toFixed(1)}

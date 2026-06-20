@@ -21,7 +21,7 @@ export async function POST(request: Request) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json({ error: "Debes iniciar sesion." }, { status: 401 });
+    return NextResponse.json({ error: "Debes iniciar sesión." }, { status: 401 });
   }
 
   const parsed = reportSchema.safeParse(await request.json());
@@ -41,12 +41,12 @@ export async function POST(request: Request) {
     .maybeSingle();
 
   if (!listing) {
-    return NextResponse.json({ error: "Publicacion no encontrada." }, { status: 404 });
+    return NextResponse.json({ error: "Publicación no encontrada." }, { status: 404 });
   }
 
   if (listing.seller_id === user.id) {
     return NextResponse.json(
-      { error: "No puedes reportar tu propia publicacion." },
+      { error: "No puedes reportar tu propia publicación." },
       { status: 400 }
     );
   }
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
 
   if (existingReport) {
     return NextResponse.json(
-      { error: "Ya enviaste un reporte abierto para esta publicacion." },
+      { error: "Ya enviaste un reporte abierto para esta publicación." },
       { status: 409 }
     );
   }

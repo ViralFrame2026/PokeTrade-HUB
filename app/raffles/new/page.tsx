@@ -20,7 +20,7 @@ export default function NewRafflePage() {
           <h1 className="mt-2 text-4xl font-black text-white">Crear sorteo gratuito</h1>
           <p className="mt-4 leading-7 text-slate-300">
             Publica un premio para la comunidad. Todos los sorteos pasan por
-            moderacion antes de recibir participantes.
+            moderación antes de recibir participantes.
           </p>
           <div className="mt-8 grid gap-3">
             <Info icon={Gift} text="Describe claramente el premio" />

@@ -84,20 +84,20 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
       };
 
       if (!response.ok || payload.error) {
-        throw new Error(payload.error ?? "No pudimos moderar la publicacion.");
+        throw new Error(payload.error ?? "No pudimos moderar la publicación.");
       }
 
       setListings((current) => current.filter((listing) => listing.id !== listingId));
       setNotice(
         action === "approve"
-          ? `Publicacion aprobada: ${moderatedListing?.cardName ?? "carta"}`
-          : `Publicacion rechazada: ${moderatedListing?.cardName ?? "carta"}`
+          ? `Publicación aprobada: ${moderatedListing?.cardName ?? "carta"}`
+          : `Publicación rechazada: ${moderatedListing?.cardName ?? "carta"}`
       );
     } catch (moderationError) {
       setError(
         moderationError instanceof Error
           ? moderationError.message
-          : "No pudimos moderar la publicacion."
+          : "No pudimos moderar la publicación."
       );
     } finally {
       setBusyId(null);
@@ -107,7 +107,7 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
   if (listings.length === 0) {
     return (
       <div className="p-8 text-center text-sm font-semibold text-slate-400">
-        No hay publicaciones pendientes de moderacion.
+        No hay publicaciones pendientes de moderación.
       </div>
     );
   }

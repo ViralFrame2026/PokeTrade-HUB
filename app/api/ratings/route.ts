@@ -15,7 +15,7 @@ export async function POST(request: Request) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json({ error: "Debes iniciar sesion." }, { status: 401 });
+    return NextResponse.json({ error: "Debes iniciar sesión." }, { status: 401 });
   }
 
   const parsed = ratingSchema.safeParse(await request.json());
@@ -36,9 +36,9 @@ export async function POST(request: Request) {
     const messages: Record<string, string> = {
       "Only the selected counterparty can rate this operation":
         "Solo la persona con quien se concreto la operacion puede valorar.",
-      "Sellers cannot rate themselves": "No puedes valorar tu propia publicacion.",
+      "Sellers cannot rate themselves": "No puedes valorar tu propia publicación.",
       "The operation is not completed": "La operacion todavia no fue finalizada.",
-      "This operation has already been rated": "Ya valoraste esta operacion."
+      "This operation has already been rated": "Ya valoraste está operacion."
     };
     return NextResponse.json(
       { error: messages[error.message] ?? error.message },

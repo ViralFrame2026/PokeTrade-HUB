@@ -24,6 +24,7 @@ import { StatCard } from "@/components/stat-card";
 import { SiteMenu } from "@/components/site-menu";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { latestListings as demoListings, topUsers as demoTopUsers } from "@/lib/demo-data";
 import type { Listing } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -233,9 +234,11 @@ export default async function HomePage() {
     name: profile.display_name,
     rating: Number(profile.reputation_average).toFixed(2)
   }));
+  const displayListings = listings.length > 0 ? listings : demoListings;
+  const displayUsers = topUsers.length > 0 ? topUsers : demoTopUsers;
 
   return (
-    <main className="home-page min-h-screen bg-[#eaf2ff] text-slate-900">
+    <main className="home-page min-h-screen bg-[#070a12] text-white">
       <header className="sticky top-0 z-20 border-b-4 border-yellow-400 bg-blue-800/95 text-white backdrop-blur-xl">
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
@@ -276,16 +279,16 @@ export default async function HomePage() {
               Cartas oficiales, comunidad real
             </div>
             <h1 className="max-w-4xl text-5xl font-black leading-[0.98] tracking-normal text-white sm:text-6xl lg:text-[68px]">
-              Tu comunidad para
-              <span className="block text-yellow-300">coleccionar y conectar</span>
+              El hub argentino para comprar, vender e intercambiar
+              <span className="block text-yellow-300">cartas Pokémon TCG</span>
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-blue-100">
-              Compra, vende e intercambia cartas oficiales de Pokemon TCG con
-              publicaciones moderadas y reputacion visible.
+              Publicaciones moderadas, reputación visible, sorteos de la comunidad y
+              operaciones más seguras.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href="/marketplace" icon={Search}>
-                Explorar cartas
+                Explorar marketplace
               </ButtonLink>
               <ButtonLink href="/publish" icon={Store} variant="light">
                 Publicar producto
@@ -309,12 +312,44 @@ export default async function HomePage() {
             label="Publicaciones aprobadas"
             value={String(listingsTotal)}
           />
-          <StatCard icon={ShieldCheck} label="Moderacion" value="100%" />
+          <StatCard icon={ShieldCheck} label="Moderación" value="100%" />
           <StatCard icon={Trophy} label="Sorteos activos" value={String(rafflesTotal)} />
         </div>
       </section>
 
-      <section id="marketplace" className="relative overflow-hidden bg-[#eaf2ff]">
+      <section className="relative bg-slate-950 py-16">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
+          <div>
+            <p className="text-sm font-black uppercase tracking-[0.22em] text-yellow-300">
+              Cómo funciona
+            </p>
+            <h2 className="mt-2 text-3xl font-black text-white sm:text-4xl">
+              Publicá, validá y conectá con coleccionistas reales
+            </h2>
+            <p className="mt-4 max-w-xl leading-7 text-slate-300">
+              PokeTrade ordena la experiencia para que cada carta tenga datos oficiales,
+              revisión previa y un vendedor con perfil visible.
+            </p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {[
+              ["1", "Publicás tu carta", "Buscás la carta oficial, cargás precio, estado y condiciones."],
+              ["2", "El equipo revisa", "La publicación pasa por moderación antes de aparecer."],
+              ["3", "Conectás seguro", "Usás mensajes, favoritos y reputación para operar con más confianza."]
+            ].map(([step, title, copy]) => (
+              <article className="rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-foil" key={step}>
+                <div className="grid h-10 w-10 place-items-center rounded-full bg-yellow-400 font-black text-blue-950">
+                  {step}
+                </div>
+                <h3 className="mt-5 text-lg font-black text-white">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{copy}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="marketplace" className="relative overflow-hidden bg-[linear-gradient(180deg,#111827,#0f172a)]">
         <div className="absolute right-0 top-0 h-2 w-1/3 bg-red-500" aria-hidden="true" />
         <div className="absolute left-0 top-0 h-2 w-2/3 bg-blue-600" aria-hidden="true" />
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -323,7 +358,7 @@ export default async function HomePage() {
             <p className="text-sm font-black uppercase tracking-[0.22em] text-red-500">
               Publicaciones reales
             </p>
-            <h2 className="mt-2 text-3xl font-black text-blue-950 sm:text-4xl">
+            <h2 className="mt-2 text-3xl font-black text-white sm:text-4xl">
               Recién aprobadas
             </h2>
           </div>
@@ -331,9 +366,9 @@ export default async function HomePage() {
             Publicar una carta
           </ButtonLink>
         </div>
-        {listings.length > 0 ? (
+        {displayListings.length > 0 ? (
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {listings.map((listing) => (
+            {displayListings.map((listing) => (
               <ListingCard key={listing.id} listing={listing} />
             ))}
           </div>
@@ -380,13 +415,13 @@ export default async function HomePage() {
               </span>
             </div>
           </div>
-          {topUsers.length > 0 ? (
+          {displayUsers.length > 0 ? (
             <div className="relative z-10 grid gap-4 sm:grid-cols-2">
-              {topUsers.map((user) => (
+              {displayUsers.map((user) => (
                 <Link
                   className="rounded-lg border border-yellow-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-                  href={`/users/${user.id}`}
-                  key={user.id}
+                  href={"id" in user ? `/users/${user.id}` : "/marketplace"}
+                  key={user.name}
                 >
                   <div className="flex items-center gap-4">
                     <div className="grid h-12 w-12 place-items-center rounded-full bg-blue-600 font-black text-white">

@@ -21,17 +21,17 @@ const heroProducts = [
 
 const looseCards = [
   {
-    alt: "Carta oficial Charizard de Pokemon TCG",
+    alt: "Carta oficial Charizard de Pokémon TCG",
     className: "-rotate-[5deg]",
     src: "/assets/hero-card-charizard.png"
   },
   {
-    alt: "Carta oficial Venusaur ex de Pokemon TCG",
+    alt: "Carta oficial Venusaur ex de Pokémon TCG",
     className: "rotate-[2deg]",
     src: "/assets/hero-card-venusaur.png"
   },
   {
-    alt: "Carta oficial Blastoise ex de Pokemon TCG",
+    alt: "Carta oficial Blastoise ex de Pokémon TCG",
     className: "rotate-[6deg]",
     src: "/assets/hero-card-blastoise.png"
   }

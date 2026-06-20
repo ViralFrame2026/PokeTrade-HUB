@@ -46,7 +46,7 @@ export function ListingStatusControl({
     }
     if (
       closing &&
-      !window.confirm("Esta publicacion dejara de aparecer en el marketplace. ¿Continuar?")
+      !window.confirm("Esta publicación dejará de aparecer en el marketplace. ¿Continuar?")
     ) {
       setStatus(currentStatus);
       return;
@@ -107,7 +107,7 @@ export function ListingStatusControl({
       {["sold", "traded", "finished"].includes(status) &&
       status !== currentStatus ? (
         <label className="mt-3 block text-xs font-black uppercase text-blue-800">
-          Operacion realizada con
+          Operación realizada con
           <select
             className="mt-2 h-10 w-full rounded-md border border-blue-200 bg-white px-3 text-sm font-bold normal-case text-blue-950 outline-none focus:border-blue-500"
             disabled={isSaving}
@@ -137,7 +137,7 @@ export function ListingStatusControl({
             {moneyLabel(sellerNet)}
           </p>
           <p className="mt-1 text-yellow-800">
-            Esta vista es informativa; todavia no hay cobro automatico conectado.
+            Está vista es informativa; todavia no hay cobro automatico conectado.
           </p>
         </div>
       ) : null}
