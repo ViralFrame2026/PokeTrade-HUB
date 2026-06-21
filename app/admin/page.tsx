@@ -36,9 +36,25 @@ type ListingRow = {
   id: string;
   location_city: string | null;
   location_country: string | null;
+  listing_images: { id: string }[] | null;
   moderation_status: string;
   price: number | null;
-  profiles: { display_name: string } | { display_name: string }[] | null;
+  profiles:
+    | {
+        display_name: string;
+        is_verified: boolean;
+        joined_at: string | null;
+        reputation_average: number | string | null;
+        reputation_count: number | null;
+      }
+    | {
+        display_name: string;
+        is_verified: boolean;
+        joined_at: string | null;
+        reputation_average: number | string | null;
+        reputation_count: number | null;
+      }[]
+    | null;
   title: string;
   trade_wants: string | null;
   type: string;
@@ -207,7 +223,7 @@ function listingTitle(listing: ReportRow["listings"]) {
   return listing?.title ?? "Publicación no disponible";
 }
 
-function sellerName(profile: ListingRow["profiles"]) {
+function sellerName(profile: { display_name: string } | { display_name: string }[] | null) {
   if (Array.isArray(profile)) {
     return profile[0]?.display_name ?? "Usuario";
   }
@@ -263,7 +279,7 @@ export default async function AdminPage() {
   ] = await Promise.all([
     supabase
       .from("listings")
-      .select("id, title, description, type, moderation_status, price, trade_wants, location_city, location_country, created_at, profiles!listings_seller_id_fkey(display_name), products!listings_product_id_fkey(condition, cards!products_card_id_fkey(official_name, image_large, set_name, rarity))")
+      .select("id, title, description, type, moderation_status, price, trade_wants, location_city, location_country, created_at, listing_images(id), profiles!listings_seller_id_fkey(display_name, is_verified, reputation_average, reputation_count, joined_at), products!listings_product_id_fkey(condition, cards!products_card_id_fkey(official_name, image_large, set_name, rarity))")
       .eq("moderation_status", "pending")
       .order("created_at", { ascending: true }),
     supabase
@@ -388,6 +404,7 @@ export default async function AdminPage() {
     (listing) => {
       const product = firstRelated(listing.products);
       const card = firstRelated(product?.cards ?? null);
+      const sellerProfile = firstRelated(listing.profiles);
 
       return {
         cardImage: card?.image_large ?? null,
@@ -395,12 +412,17 @@ export default async function AdminPage() {
         condition: product?.condition ?? "Sin condición",
         created_at: listing.created_at,
         description: listing.description,
+        hasRealPhotos: Boolean(listing.listing_images?.length),
         id: listing.id,
         location: [listing.location_city, listing.location_country].filter(Boolean).join(", "),
         moderation_status: listing.moderation_status,
         price: listing.price,
         rarity: card?.rarity ?? null,
-        seller: sellerName(listing.profiles),
+        seller: sellerProfile?.display_name ?? "Usuario",
+        sellerJoinedAt: sellerProfile?.joined_at ?? null,
+        sellerRating: Number(sellerProfile?.reputation_average ?? 0),
+        sellerReviews: Number(sellerProfile?.reputation_count ?? 0),
+        sellerVerified: Boolean(sellerProfile?.is_verified),
         setName: card?.set_name ?? "Set no disponible",
         title: listing.title,
         tradeWants: listing.trade_wants,

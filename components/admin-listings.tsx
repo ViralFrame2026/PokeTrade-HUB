@@ -2,7 +2,21 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Check, CheckCircle2, Loader2, MapPin, Store, X } from "lucide-react";
+import {
+  AlertTriangle,
+  BadgeCheck,
+  Camera,
+  Check,
+  CheckCircle2,
+  Clock3,
+  FileText,
+  Loader2,
+  MapPin,
+  ShieldCheck,
+  Star,
+  Store,
+  X
+} from "lucide-react";
 
 export type AdminListing = {
   cardImage: string | null;
@@ -11,11 +25,16 @@ export type AdminListing = {
   created_at: string;
   description: string;
   id: string;
+  hasRealPhotos: boolean;
   location: string;
   moderation_status: string;
   price: number | null;
   rarity: string | null;
   seller: string;
+  sellerJoinedAt: string | null;
+  sellerRating: number;
+  sellerReviews: number;
+  sellerVerified: boolean;
   setName: string;
   title: string;
   tradeWants: string | null;
@@ -50,6 +69,81 @@ function valueLabel(listing: AdminListing) {
     maximumFractionDigits: 0,
     style: "currency"
   }).format(listing.price ?? 0);
+}
+
+function daysSince(dateValue: string | null) {
+  if (!dateValue) return null;
+
+  const createdAt = new Date(dateValue).getTime();
+  if (Number.isNaN(createdAt)) return null;
+
+  return Math.max(0, Math.floor((Date.now() - createdAt) / 86_400_000));
+}
+
+function reviewSignals(listing: AdminListing) {
+  const accountAge = daysSince(listing.sellerJoinedAt);
+  const descriptionLength = listing.description.trim().length;
+  const signals = [
+    {
+      icon: Camera,
+      label: listing.hasRealPhotos ? "Fotos reales cargadas" : "Sin fotos reales",
+      tone: listing.hasRealPhotos ? "good" : "warn"
+    },
+    {
+      icon: MapPin,
+      label: listing.location ? "Ubicacion declarada" : "Ubicacion incompleta",
+      tone: listing.location ? "good" : "warn"
+    },
+    {
+      icon: Star,
+      label:
+        listing.sellerReviews > 0
+          ? `${listing.sellerRating.toFixed(1)} (${listing.sellerReviews} reseñas)`
+          : "Vendedor sin reseñas",
+      tone: listing.sellerReviews > 0 ? "good" : "neutral"
+    },
+    {
+      icon: BadgeCheck,
+      label: listing.sellerVerified ? "Vendedor verificado" : "Vendedor no verificado",
+      tone: listing.sellerVerified ? "good" : "neutral"
+    },
+    {
+      icon: Clock3,
+      label:
+        accountAge === null
+          ? "Antiguedad no disponible"
+          : accountAge < 14
+            ? `Cuenta nueva (${accountAge} dias)`
+            : `Cuenta con ${accountAge} dias`,
+      tone: accountAge !== null && accountAge < 14 ? "warn" : "good"
+    },
+    {
+      icon: FileText,
+      label: descriptionLength >= 40 ? "Descripcion suficiente" : "Descripcion breve",
+      tone: descriptionLength >= 40 ? "good" : "warn"
+    }
+  ];
+
+  if (listing.type === "sale" && Number(listing.price ?? 0) >= 100000) {
+    signals.push({
+      icon: AlertTriangle,
+      label: "Precio alto: revisar coherencia",
+      tone: "warn"
+    });
+  }
+
+  return signals;
+}
+
+function reviewScore(listing: AdminListing) {
+  return reviewSignals(listing).filter((signal) => signal.tone === "warn").length;
+}
+
+function signalClass(tone: string) {
+  if (tone === "good") return "border-emerald-300/30 bg-emerald-400/10 text-emerald-100";
+  if (tone === "warn") return "border-yellow-300/40 bg-yellow-400/10 text-yellow-100";
+
+  return "border-white/10 bg-white/[0.04] text-slate-300";
 }
 
 export function AdminListings({ listings: initialListings }: AdminListingsProps) {
@@ -137,9 +231,13 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
         </div>
       ) : null}
       <div className="divide-y divide-white/10">
-        {listings.map((listing) => (
+        {listings.map((listing) => {
+          const signals = reviewSignals(listing);
+          const warnings = reviewScore(listing);
+
+          return (
           <article
-            className="grid gap-5 p-5 lg:grid-cols-[112px_minmax(0,1fr)_340px] lg:items-center"
+            className="grid gap-5 p-5 lg:grid-cols-[112px_minmax(0,1fr)_360px] lg:items-center"
             key={listing.id}
           >
             <div className="relative h-36 overflow-hidden rounded-lg border border-white/10 bg-slate-950/70">
@@ -193,6 +291,44 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
             </div>
             <div className="flex min-w-0 flex-col gap-2">
               <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3 text-xs leading-5 text-slate-300">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="font-black uppercase tracking-[0.12em] text-yellow-300">
+                    Riesgo de revision
+                  </p>
+                  <span
+                    className={[
+                      "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-black",
+                      warnings === 0
+                        ? "bg-emerald-400/15 text-emerald-100"
+                        : warnings <= 2
+                          ? "bg-yellow-400/15 text-yellow-100"
+                          : "bg-red-400/15 text-red-100"
+                    ].join(" ")}
+                  >
+                    <ShieldCheck className="h-3.5 w-3.5" />
+                    {warnings === 0 ? "Bajo" : warnings <= 2 ? "Medio" : "Alto"}
+                  </span>
+                </div>
+                <div className="mt-3 grid gap-2">
+                  {signals.map((signal) => {
+                    const Icon = signal.icon;
+
+                    return (
+                      <span
+                        className={[
+                          "inline-flex items-center gap-2 rounded-md border px-2.5 py-1.5 font-bold",
+                          signalClass(signal.tone)
+                        ].join(" ")}
+                        key={`${listing.id}-${signal.label}`}
+                      >
+                        <Icon className="h-3.5 w-3.5 shrink-0" />
+                        {signal.label}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="hidden rounded-lg border border-white/10 bg-white/[0.04] p-3 text-xs leading-5 text-slate-300">
                 <p className="font-black uppercase tracking-[0.12em] text-yellow-300">
                   Checklist
                 </p>
@@ -256,7 +392,8 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
               </div>
             </div>
           </article>
-        ))}
+          );
+        })}
       </div>
     </>
   );
