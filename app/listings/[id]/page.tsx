@@ -42,10 +42,13 @@ type ListingDetailRow = {
   location_country: string | null;
   price: number | null;
   profiles: Related<{
+    city: string | null;
+    country: string | null;
     display_name: string;
     id: string;
     instagram: string | null;
     is_verified: boolean;
+    joined_at: string;
     reputation_average: number;
     reputation_count: number;
     whatsapp: string | null;
@@ -139,7 +142,7 @@ async function getListing(id: string) {
   const { data } = await supabase
     .from("listings")
     .select(
-      "id, seller_id, completed_with_id, title, description, type, status, price, trade_wants, location_city, location_country, approved_at, created_at, listing_images(storage_path, alt_text, sort_order), profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average, reputation_count, whatsapp, instagram), products!listings_product_id_fkey(condition, cards!products_card_id_fkey(pokemon_tcg_id, official_name, image_large, set_name, rarity, number))"
+      "id, seller_id, completed_with_id, title, description, type, status, price, trade_wants, location_city, location_country, approved_at, created_at, listing_images(storage_path, alt_text, sort_order), profiles!listings_seller_id_fkey(id, display_name, city, country, is_verified, joined_at, reputation_average, reputation_count, whatsapp, instagram), products!listings_product_id_fkey(condition, cards!products_card_id_fkey(pokemon_tcg_id, official_name, image_large, set_name, rarity, number))"
     )
     .eq("id", id)
     .eq("moderation_status", "approved")
@@ -234,7 +237,7 @@ export default async function ListingDetailPage({
   const ContactIcon = user && instagram && !whatsapp ? Instagram : MessageCircle;
   const isCompleted = ["sold", "traded", "finished"].includes(listing.status);
   const isAvailable = listing.status === "active";
-  const [favoriteResult, ratingResult, existingReportResult, reviewsResult] =
+  const [favoriteResult, ratingResult, existingReportResult, reviewsResult, sellerOpsResult] =
     await Promise.all([
       user
         ? supabase
@@ -268,7 +271,13 @@ export default async function ListingDetailPage({
         )
         .eq("reviewed_id", listing.seller_id)
         .order("created_at", { ascending: false })
-        .limit(5)
+        .limit(5),
+      supabase
+        .from("listings")
+        .select("id", { count: "exact", head: true })
+        .eq("seller_id", listing.seller_id)
+        .eq("moderation_status", "approved")
+        .in("status", ["sold", "traded", "finished"])
     ]);
   const favorite = favoriteResult.data;
   const existingRating = ratingResult.data;
@@ -296,6 +305,13 @@ export default async function ListingDetailPage({
     }
   ];
   const hasRealPhotos = realPhotos.length > 0;
+  const sellerOperations = sellerOpsResult.count ?? 0;
+  const sellerJoined = new Intl.DateTimeFormat("es-AR", {
+    month: "short",
+    year: "numeric"
+  }).format(new Date(seller.joined_at));
+  const sellerLocation =
+    [seller.city, seller.country].filter(Boolean).join(", ") || "Ubicación no informada";
 
   return (
     <main className="min-h-screen bg-[#071535] text-slate-900">
@@ -515,6 +531,21 @@ export default async function ListingDetailPage({
                 </p>
               </div>
             </div>
+            <div className="mt-5 grid grid-cols-2 gap-3 border-t border-white/10 pt-5">
+              <SellerTrustStat label="Operaciones" value={String(sellerOperations)} />
+              <SellerTrustStat
+                label="Valoraciones"
+                value={String(seller.reputation_count)}
+              />
+              <SellerTrustStat label="Desde" value={sellerJoined} />
+              <SellerTrustStat label="Zona" value={sellerLocation} />
+            </div>
+            <Link
+              className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-black text-white transition hover:border-yellow-300 hover:text-yellow-300"
+              href={`/users/${seller.id}`}
+            >
+              Ver perfil completo
+            </Link>
           </div>
           {canRate ? <ListingRatingForm listingId={listing.id} /> : null}
           {existingRating ? (
@@ -592,6 +623,17 @@ function Detail({
         <dt className="text-xs font-black uppercase text-slate-400">{label}</dt>
         <dd className="mt-1 text-sm font-bold text-slate-700">{value}</dd>
       </div>
+    </div>
+  );
+}
+
+function SellerTrustStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg border border-white/10 bg-white/[0.06] p-3">
+      <p className="truncate text-sm font-black text-white">{value}</p>
+      <p className="mt-1 text-[11px] font-bold uppercase tracking-[0.08em] text-blue-200">
+        {label}
+      </p>
     </div>
   );
 }
