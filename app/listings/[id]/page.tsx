@@ -126,7 +126,7 @@ function instagramUrl(value: string) {
 function listingLocation(listing: ListingDetailRow) {
   return (
     [listing.location_city, listing.location_country].filter(Boolean).join(", ") ||
-    "Ubicación no informada"
+    "Ubicacion no informada"
   );
 }
 
@@ -313,6 +313,27 @@ export default async function ListingDetailPage({
   const sellerLocation =
     [seller.city, seller.country].filter(Boolean).join(", ") || "Ubicación no informada";
 
+  const sellerAgeDays = Math.floor(
+    (Date.now() - new Date(seller.joined_at).getTime()) / (1000 * 60 * 60 * 24)
+  );
+  const riskSignals = [
+    !hasRealPhotos
+      ? "Pedile fotos reales de frente, dorso, esquinas y detalle de superficie."
+      : null,
+    seller.reputation_count === 0
+      ? "Este vendedor todavia no tiene valoraciones: avanza con mas verificacion."
+      : null,
+    sellerOperations === 0
+      ? "No registra operaciones cerradas en PokeTrade por ahora."
+      : null,
+    sellerAgeDays < 14
+      ? "La cuenta es reciente: confirma identidad y evita pagos apresurados."
+      : null,
+    listing.type === "sale" && Number(listing.price ?? 0) >= 100000
+      ? "Monto alto: usa entrega segura, comprobantes y confirmacion por mensaje."
+      : null
+  ].filter(Boolean) as string[];
+
   return (
     <main className="min-h-screen bg-[#071535] text-slate-900">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
@@ -365,6 +386,7 @@ export default async function ListingDetailPage({
             <InfoItem label="Rareza" value={card.rarity ?? "No informada"} />
             <InfoItem label="Número" value={card.number ?? "No informado"} />
           </div>
+          <RiskChecklist signals={riskSignals} />
         </section>
 
         <aside className="min-w-0">
@@ -634,6 +656,40 @@ function SellerTrustStat({ label, value }: { label: string; value: string }) {
       <p className="mt-1 text-[11px] font-bold uppercase tracking-[0.08em] text-blue-200">
         {label}
       </p>
+    </div>
+  );
+}
+
+function RiskChecklist({ signals }: { signals: string[] }) {
+  if (signals.length === 0) {
+    return (
+      <div className="mt-5 rounded-lg border border-emerald-300/30 bg-emerald-500/10 p-5 text-emerald-50">
+        <p className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.14em]">
+          <ShieldCheck className="h-4 w-4" />
+          Senales basicas en orden
+        </p>
+        <p className="mt-3 text-sm font-semibold leading-6">
+          La publicacion tiene fotos reales y el vendedor muestra actividad previa. Igual
+          confirma estado, entrega y acuerdo por mensaje antes de cerrar.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-5 rounded-lg border border-amber-300/40 bg-amber-400/10 p-5 text-amber-50">
+      <p className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.14em]">
+        <AlertTriangle className="h-4 w-4" />
+        Revisar antes de pagar
+      </p>
+      <div className="mt-4 grid gap-2">
+        {signals.map((signal) => (
+          <p className="flex items-start gap-2 text-sm font-semibold leading-6" key={signal}>
+            <AlertTriangle className="mt-1 h-4 w-4 shrink-0 text-yellow-300" />
+            {signal}
+          </p>
+        ))}
+      </div>
     </div>
   );
 }
