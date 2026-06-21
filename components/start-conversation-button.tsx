@@ -6,16 +6,25 @@ import { useRouter } from "next/navigation";
 export function StartConversationButton({
   isAuthenticated,
   listingId,
+  listingType,
   sellerId
 }: {
   isAuthenticated: boolean;
   listingId: string;
+  listingType: string;
   sellerId: string;
 }) {
   const router = useRouter();
+  const intent = listingType === "trade" ? "trade" : listingType === "free" ? "free" : "sale";
+  const label =
+    listingType === "trade"
+      ? "Proponer intercambio"
+      : listingType === "free"
+        ? "Consultar producto"
+        : "Me interesa comprar";
 
   function openConversation() {
-    const conversationPath = `/account/messages/${listingId}/${sellerId}`;
+    const conversationPath = `/account/messages/${listingId}/${sellerId}?intent=${intent}`;
 
     if (!isAuthenticated) {
       router.push(`/login?next=${encodeURIComponent(conversationPath)}`);
@@ -32,7 +41,7 @@ export function StartConversationButton({
       type="button"
     >
       <MessageCircle className="h-5 w-5" />
-      Enviar mensaje
+      {label}
     </button>
   );
 }

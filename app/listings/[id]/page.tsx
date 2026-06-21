@@ -437,6 +437,7 @@ export default async function ListingDetailPage({
                 <StartConversationButton
                   isAuthenticated={Boolean(user)}
                   listingId={listing.id}
+                  listingType={listing.type}
                   sellerId={listing.seller_id}
                 />
                 {!user || directContactUrl ? (

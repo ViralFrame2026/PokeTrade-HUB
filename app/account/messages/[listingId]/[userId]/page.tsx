@@ -73,11 +73,14 @@ function statusLabel(status: string) {
 }
 
 export default async function ConversationPage({
-  params
+  params,
+  searchParams
 }: {
   params: Promise<{ listingId: string; userId: string }>;
+  searchParams: Promise<{ intent?: string }>;
 }) {
   const { listingId, userId: otherId } = await params;
+  const { intent = "sale" } = await searchParams;
   const supabase = await createSupabaseServerClient();
   const {
     data: { user }
@@ -255,7 +258,12 @@ export default async function ConversationPage({
               </div>
             )}
           </div>
-          <MessageComposer listingId={listingId} recipientId={otherId} />
+          <MessageComposer
+            intent={intent}
+            listingId={listingId}
+            listingType={listingContext.type}
+            recipientId={otherId}
+          />
         </div>
       </section>
     </main>

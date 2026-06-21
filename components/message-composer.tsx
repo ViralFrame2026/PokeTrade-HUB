@@ -5,18 +5,43 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
 const MAX_MESSAGE_LENGTH = 1500;
-const QUICK_MESSAGES = [
-  "Hola, ¿sigue disponible?",
-  "¿Podés compartir más fotos reales?",
-  "¿Aceptás intercambio?",
-  "¿En qué zona entregás?"
-];
+
+function quickMessages(intent: string, listingType: string) {
+  if (intent === "trade" || listingType === "trade") {
+    return [
+      "Hola, sigue disponible para intercambio?",
+      "Tengo cartas para ofrecer, que estas buscando?",
+      "Podes compartir mas fotos reales?",
+      "En que zona podriamos coordinar?"
+    ];
+  }
+
+  if (intent === "free" || listingType === "free") {
+    return [
+      "Hola, sigue disponible?",
+      "Como podemos coordinar la entrega?",
+      "Podes compartir mas fotos reales?",
+      "En que zona entregas?"
+    ];
+  }
+
+  return [
+    "Hola, sigue disponible?",
+    "Me interesa comprarla, el precio sigue siendo el publicado?",
+    "Podes compartir mas fotos reales?",
+    "En que zona entregas?"
+  ];
+}
 
 export function MessageComposer({
+  intent = "sale",
   listingId,
+  listingType,
   recipientId
 }: {
+  intent?: string;
   listingId: string;
+  listingType: string;
   recipientId: string;
 }) {
   const router = useRouter();
@@ -24,6 +49,7 @@ export function MessageComposer({
   const [error, setError] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
   const remainingCharacters = MAX_MESSAGE_LENGTH - body.length;
+  const messages = quickMessages(intent, listingType);
 
   async function sendMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -62,7 +88,7 @@ export function MessageComposer({
         Escribe un mensaje
       </label>
       <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
-        {QUICK_MESSAGES.map((message) => (
+        {messages.map((message) => (
           <button
             className="shrink-0 rounded-full border border-white/10 bg-white/10 px-3 py-2 text-xs font-black text-blue-100 transition hover:border-yellow-300 hover:text-yellow-300 disabled:cursor-not-allowed disabled:opacity-50"
             disabled={isSending}
