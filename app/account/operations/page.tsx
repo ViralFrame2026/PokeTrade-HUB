@@ -126,6 +126,7 @@ export default async function OperationsPage() {
       .filter(Boolean)
   );
   const pendingRatings = operations.filter((operation) => !ratedIds.has(operation.id)).length;
+  const nextOperation = operations.find((operation) => !ratedIds.has(operation.id));
 
   return (
     <main className="min-h-screen bg-[#071535] text-white">
@@ -177,6 +178,36 @@ export default async function OperationsPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+        {operations.length > 0 ? (
+          <div className="mb-8 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div className="rounded-lg border border-yellow-300/30 bg-yellow-400/10 p-5 shadow-[0_18px_45px_rgba(0,0,0,.16)]">
+              <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-yellow-300">
+                <Star className="h-4 w-4" />
+                Próximo paso de reputación
+              </p>
+              <h2 className="mt-3 text-xl font-black text-white">
+                {pendingRatings > 0
+                  ? `Tenés ${pendingRatings} operación${pendingRatings === 1 ? "" : "es"} pendiente${pendingRatings === 1 ? "" : "s"} de valorar`
+                  : "Todas tus operaciones están valoradas"}
+              </h2>
+              <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-blue-100">
+                {pendingRatings > 0
+                  ? "Tu valoración ayuda a otros coleccionistas a elegir vendedores confiables y mejora la reputación real del marketplace."
+                  : "Buenísimo: ya ayudaste a dejar registro de tus experiencias. Las próximas operaciones aparecerán acá."}
+              </p>
+            </div>
+            {nextOperation ? (
+              <ButtonLink href={`/listings/${nextOperation.id}`} icon={Star}>
+                Valorar ahora
+              </ButtonLink>
+            ) : (
+              <ButtonLink href="/marketplace" icon={Store}>
+                Explorar
+              </ButtonLink>
+            )}
+          </div>
+        ) : null}
+
         {operations.length > 0 ? (
           <div className="space-y-4">
             {operations.map((operation) => {

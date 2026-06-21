@@ -4,6 +4,8 @@ import { Loader2, Star } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
+const MAX_COMMENT_LENGTH = 500;
+
 export function ListingRatingForm({ listingId }: { listingId: string }) {
   const router = useRouter();
   const [stars, setStars] = useState(5);
@@ -51,6 +53,9 @@ export function ListingRatingForm({ listingId }: { listingId: string }) {
         Operación finalizada
       </p>
       <h3 className="mt-2 text-lg font-black text-blue-950">Valora al vendedor</h3>
+      <p className="mt-2 text-sm leading-6 text-amber-900">
+        Tu valoración queda visible en el perfil público y ayuda a construir confianza.
+      </p>
       <div className="mt-4 flex gap-1" role="radiogroup" aria-label="Estrellas">
         {[1, 2, 3, 4, 5].map((value) => (
           <button
@@ -75,11 +80,14 @@ export function ListingRatingForm({ listingId }: { listingId: string }) {
         Comentario <span className="font-normal text-slate-400">(opcional)</span>
         <textarea
           className="mt-2 min-h-24 w-full resize-none rounded-lg border border-yellow-200 bg-white px-3 py-3 text-slate-800 outline-none focus:border-blue-500"
-          maxLength={500}
+          maxLength={MAX_COMMENT_LENGTH}
           onChange={(event) => setComment(event.target.value)}
           placeholder="Cuenta brevemente cómo fue la operación"
           value={comment}
         />
+        <span className="mt-1 block text-right text-xs font-semibold text-slate-500">
+          {MAX_COMMENT_LENGTH - comment.length} caracteres restantes
+        </span>
       </label>
       <button
         className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue-700 px-4 py-3 font-black text-white transition hover:bg-blue-800 disabled:opacity-60"
