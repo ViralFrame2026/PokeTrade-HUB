@@ -19,6 +19,7 @@ import { ListingGallery } from "@/components/listing-gallery";
 import { ListingRatingForm } from "@/components/listing-rating-form";
 import { FavoriteButton } from "@/components/favorite-button";
 import { ReportListingForm } from "@/components/report-listing-form";
+import { ShareListingButton } from "@/components/share-listing-button";
 import { StartConversationButton } from "@/components/start-conversation-button";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -500,6 +501,7 @@ export default async function ListingDetailPage({
               isAuthenticated={Boolean(user)}
               listingId={listing.id}
             />
+            <ShareListingButton title={`${card.official_name} en PokeTrade HUB`} />
             <ReportListingForm
               initialReported={Boolean(existingReport)}
               isAuthenticated={Boolean(user)}
