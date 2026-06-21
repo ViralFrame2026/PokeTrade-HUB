@@ -1,4 +1,4 @@
-import { AlertCircle, ArrowLeft, Bell, CheckCircle2, Info } from "lucide-react";
+import { AlertCircle, ArrowLeft, Bell, CheckCircle2, Gift, Info, Star } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
@@ -55,6 +55,13 @@ function notificationMeta(type: string) {
   };
 }
 
+function notificationCategory(type: string) {
+  if (type.startsWith("listing_")) return "moderation";
+  if (type.startsWith("raffle_")) return "raffles";
+  if (type === "rating_received") return "reputation";
+  return "activity";
+}
+
 export default async function NotificationsPage() {
   const supabase = await createSupabaseServerClient();
   const {
@@ -72,6 +79,15 @@ export default async function NotificationsPage() {
 
   const notifications = (data ?? []) as NotificationRow[];
   const unreadCount = notifications.filter((notification) => !notification.read_at).length;
+  const moderationCount = notifications.filter(
+    (notification) => notificationCategory(notification.type) === "moderation"
+  ).length;
+  const raffleCount = notifications.filter(
+    (notification) => notificationCategory(notification.type) === "raffles"
+  ).length;
+  const reputationCount = notifications.filter(
+    (notification) => notificationCategory(notification.type) === "reputation"
+  ).length;
 
   return (
     <main className="min-h-screen bg-[#071535] text-white">
@@ -109,6 +125,12 @@ export default async function NotificationsPage() {
             </p>
           </div>
           <MarkAllNotificationsReadButton disabled={unreadCount === 0} />
+        </div>
+        <div className="mt-8 grid gap-3 sm:grid-cols-4">
+          <SummaryCard icon={Bell} label="Sin leer" value={unreadCount} />
+          <SummaryCard icon={CheckCircle2} label="Moderación" value={moderationCount} />
+          <SummaryCard icon={Gift} label="Sorteos" value={raffleCount} />
+          <SummaryCard icon={Star} label="Reputación" value={reputationCount} />
         </div>
         </div>
       </section>
@@ -206,5 +228,25 @@ export default async function NotificationsPage() {
         )}
       </section>
     </main>
+  );
+}
+
+function SummaryCard({
+  icon: Icon,
+  label,
+  value
+}: {
+  icon: typeof Bell;
+  label: string;
+  value: number;
+}) {
+  return (
+    <div className="rounded-lg border border-white/10 bg-white/[0.08] p-4 shadow-[0_18px_45px_rgba(0,0,0,.16)]">
+      <Icon className="h-5 w-5 text-yellow-300" />
+      <p className="mt-3 text-2xl font-black text-white">{value}</p>
+      <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-blue-100">
+        {label}
+      </p>
+    </div>
   );
 }

@@ -27,7 +27,7 @@ export function MarkAllNotificationsReadButton({ disabled }: { disabled: boolean
       type="button"
     >
       {isBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCheck className="h-4 w-4" />}
-      Marcar todas como leidas
+      Marcar todas como leídas
     </button>
   );
 }
