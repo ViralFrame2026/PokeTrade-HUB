@@ -17,6 +17,7 @@ import {
   Users,
   Zap
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { CardSpotlight } from "@/components/card-spotlight";
 import { ListingCard } from "@/components/listing-card";
@@ -130,7 +131,7 @@ export default async function HomePage() {
           .eq("moderation_status", "approved")
           .eq("status", "active")
           .order("approved_at", { ascending: false })
-          .limit(6),
+          .limit(12),
         supabase.from("profiles").select("id", { count: "exact", head: true }),
         supabase
           .from("listings")
@@ -236,6 +237,27 @@ export default async function HomePage() {
   }));
   const displayListings = listings.length > 0 ? listings : demoListings;
   const displayUsers = topUsers.length > 0 ? topUsers : demoTopUsers;
+  const saleHighlights = displayListings.filter((listing) => listing.type === "Venta").slice(0, 3);
+  const tradeHighlights = displayListings
+    .filter((listing) => listing.type === "Intercambio")
+    .slice(0, 3);
+  const trustHighlights = [
+    {
+      icon: ShieldCheck,
+      label: "Cartas revisadas",
+      text: "Cada publicacion aprobada queda vinculada a datos oficiales de Pokemon TCG."
+    },
+    {
+      icon: Star,
+      label: "Vendedores visibles",
+      text: "Perfil, reputacion y operaciones ayudan a elegir mejor antes de escribir."
+    },
+    {
+      icon: MessageCircle,
+      label: "Acuerdos trazables",
+      text: "Mensajes internos y valoraciones sostienen la confianza de la comunidad."
+    }
+  ];
 
   return (
     <main className="home-page min-h-screen bg-[#070a12] text-white">
@@ -386,6 +408,52 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <section className="bg-[#071535] py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
+              <p className="text-sm font-black uppercase tracking-[0.22em] text-yellow-300">
+                Atajos del marketplace
+              </p>
+              <h2 className="mt-2 text-3xl font-black text-white sm:text-4xl">
+                Encontrá más rápido lo que querés hacer
+              </h2>
+            </div>
+            <ButtonLink href="/marketplace" icon={Search} variant="light">
+              Ver todo
+            </ButtonLink>
+          </div>
+
+          <div className="grid gap-5 lg:grid-cols-2">
+            <MarketLane
+              emptyText="Cuando haya cartas en venta aprobadas, aparecerán acá."
+              href="/marketplace?type=sale"
+              listings={saleHighlights}
+              title="Comprar cartas"
+            />
+            <MarketLane
+              emptyText="Cuando haya intercambios aprobados, aparecerán acá."
+              href="/marketplace?type=trade"
+              listings={tradeHighlights}
+              title="Intercambios activos"
+            />
+          </div>
+
+          <div className="mt-5 grid gap-4 md:grid-cols-3">
+            {trustHighlights.map((item) => (
+              <article
+                className="rounded-lg border border-white/10 bg-white/[0.06] p-5"
+                key={item.label}
+              >
+                <item.icon className="h-5 w-5 text-yellow-300" />
+                <h3 className="mt-4 font-black text-white">{item.label}</h3>
+                <p className="mt-2 text-sm leading-6 text-blue-100">{item.text}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section id="comunidad" className="relative overflow-hidden border-y-8 border-yellow-400 bg-blue-800 py-16 text-white">
         <div className="pokemon-speed-lines absolute inset-0 opacity-50" aria-hidden="true" />
         <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
@@ -523,5 +591,65 @@ export default async function HomePage() {
         </div>
       </footer>
     </main>
+  );
+}
+
+function MarketLane({
+  emptyText,
+  href,
+  listings,
+  title
+}: {
+  emptyText: string;
+  href: string;
+  listings: Listing[];
+  title: string;
+}) {
+  return (
+    <section className="rounded-lg border border-white/10 bg-white/[0.06] p-5">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <h3 className="text-xl font-black text-white">{title}</h3>
+        <Link
+          className="rounded-full border border-yellow-300/40 px-3 py-1 text-xs font-black text-yellow-200 transition hover:bg-yellow-300 hover:text-blue-950"
+          href={href}
+        >
+          Ver más
+        </Link>
+      </div>
+      {listings.length > 0 ? (
+        <div className="grid gap-3">
+          {listings.map((listing) => (
+            <Link
+              className="grid grid-cols-[64px_minmax(0,1fr)] gap-3 rounded-lg border border-white/10 bg-slate-950/45 p-3 transition hover:border-yellow-300/60"
+              href={`/listings/${listing.id}`}
+              key={listing.id}
+            >
+              <div className="relative h-20 w-16 overflow-hidden rounded-md bg-blue-950">
+                <Image
+                  alt={listing.title}
+                  className="object-contain"
+                  fill
+                  sizes="64px"
+                  src={listing.image}
+                  unoptimized
+                />
+              </div>
+              <div className="min-w-0">
+                <p className="truncate font-black text-white">{listing.title}</p>
+                <p className="mt-1 truncate text-xs font-semibold text-blue-100">
+                  {listing.cardMeta}
+                </p>
+                <p className="mt-2 text-sm font-black text-yellow-300">{listing.price}</p>
+                <p className="mt-1 truncate text-xs text-slate-400">{listing.seller}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-lg border border-dashed border-white/15 bg-slate-950/35 p-5 text-sm font-semibold leading-6 text-blue-100">
+          {emptyText}
+        </div>
+      )}
+    </section>
   );
 }
