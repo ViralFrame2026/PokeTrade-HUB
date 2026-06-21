@@ -13,6 +13,21 @@ export type AdminReport = {
   reason: string;
 };
 
+const resolutionOptions = [
+  {
+    label: "Sin riesgo confirmado",
+    value: "reviewed_no_issue"
+  },
+  {
+    label: "Vendedor advertido",
+    value: "seller_warned"
+  },
+  {
+    label: "Medidas tomadas",
+    value: "listing_action_taken"
+  }
+] as const;
+
 const reasonLabels: Record<string, string> = {
   fake_listing: "Publicación falsa",
   misleading_information: "Información engañosa",
@@ -54,6 +69,10 @@ export function AdminReports({ reports: initialReports }: { reports: AdminReport
   const [reports, setReports] = useState(initialReports);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [notes, setNotes] = useState<Record<string, string>>({});
+  const [outcomes, setOutcomes] = useState<
+    Record<string, (typeof resolutionOptions)[number]["value"]>
+  >({});
 
   async function resolveReport(reportId: string) {
     if (!window.confirm("¿Marcar este reporte como resuelto?")) {
@@ -64,7 +83,16 @@ export function AdminReports({ reports: initialReports }: { reports: AdminReport
     setError(null);
 
     try {
-      const response = await fetch(`/api/admin/reports/${reportId}`, { method: "PATCH" });
+      const response = await fetch(`/api/admin/reports/${reportId}`, {
+        body: JSON.stringify({
+          note: notes[reportId]?.trim() || undefined,
+          outcome: outcomes[reportId] ?? "reviewed_no_issue"
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        },
+        method: "PATCH"
+      });
       const payload = (await response.json()) as { error: string | null };
 
       if (!response.ok || payload.error) {
@@ -138,6 +166,39 @@ export function AdminReports({ reports: initialReports }: { reports: AdminReport
               </div>
             </div>
             <p className="mt-4 text-sm leading-6 text-slate-300">{report.details}</p>
+            <div className="mt-4 rounded-lg border border-white/10 bg-slate-950/30 p-3">
+              <label className="text-xs font-black uppercase tracking-[0.14em] text-yellow-300">
+                Resultado interno
+              </label>
+              <select
+                className="mt-2 w-full rounded-md border border-white/10 bg-slate-950 px-3 py-2 text-sm font-bold text-white outline-none focus:border-yellow-300"
+                onChange={(event) =>
+                  setOutcomes((current) => ({
+                    ...current,
+                    [report.id]: event.target.value as (typeof resolutionOptions)[number]["value"]
+                  }))
+                }
+                value={outcomes[report.id] ?? "reviewed_no_issue"}
+              >
+                {resolutionOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <textarea
+                className="mt-3 min-h-20 w-full resize-y rounded-md border border-white/10 bg-slate-950 px-3 py-2 text-sm text-white outline-none placeholder:text-slate-500 focus:border-yellow-300"
+                maxLength={500}
+                onChange={(event) =>
+                  setNotes((current) => ({
+                    ...current,
+                    [report.id]: event.target.value
+                  }))
+                }
+                placeholder="Nota opcional para auditoria y notificacion"
+                value={notes[report.id] ?? ""}
+              />
+            </div>
             <div className="mt-5 flex flex-wrap gap-2">
               <Link
                 className="inline-flex items-center gap-2 rounded-md border border-white/15 px-3 py-2 text-sm font-bold text-white hover:border-yellow-300"

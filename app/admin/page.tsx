@@ -150,6 +150,8 @@ type AuditLogRow = {
   entity_type: string;
   id: string;
   metadata: {
+    note?: string | null;
+    outcome?: string | null;
     reason?: string | null;
   } | null;
   profiles: { display_name: string } | { display_name: string }[] | null;
@@ -259,6 +261,7 @@ function auditActionLabel(action: string) {
   return {
     "listing.approved": "Publicacion aprobada",
     "listing.rejected": "Publicacion rechazada",
+    "report.resolved": "Reporte resuelto",
     "raffle.approved": "Sorteo aprobado",
     "raffle.rejected": "Sorteo rechazado"
   }[action] ?? action;
@@ -405,7 +408,7 @@ export default async function AdminPage() {
     createdAt: log.created_at,
     entityType: log.entity_type,
     id: log.id,
-    reason: log.metadata?.reason ?? null
+    reason: log.metadata?.note ?? log.metadata?.reason ?? null
   }));
   const closedSaleRows: AdminCommission[] = hasCommissionLedger ? saleCommissions.map((sale) => {
     const listing = firstRelated(sale.listings);
