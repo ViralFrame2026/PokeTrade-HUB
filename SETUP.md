@@ -27,6 +27,12 @@ supabase/migrations/0002_allow_privileged_profile_updates.sql
 supabase/migrations/0003_listing_images_storage.sql
 ```
 
+Para que los correos de autenticacion usen marca propia, copia las plantillas de:
+
+```text
+supabase/email-templates.md
+```
+
 ## 3. Configuracion Pokemon TCG API
 
 La API base usada es:
