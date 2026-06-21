@@ -235,7 +235,7 @@ export default async function HomePage() {
     name: profile.display_name,
     rating: Number(profile.reputation_average).toFixed(2)
   }));
-  const displayListings = listings.length > 0 ? listings : demoListings;
+  const displayListings = listings.length > 0 ? listings : hasSupabaseConfig ? [] : demoListings;
   const displayUsers = topUsers.length > 0 ? topUsers : demoTopUsers;
   const saleHighlights = displayListings.filter((listing) => listing.type === "Venta").slice(0, 3);
   const tradeHighlights = displayListings

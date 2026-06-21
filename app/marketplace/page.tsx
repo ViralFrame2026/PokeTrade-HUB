@@ -4,7 +4,6 @@ import { ListingCard } from "@/components/listing-card";
 import { MarketplaceFilters } from "@/components/marketplace-filters";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { latestListings as demoListings } from "@/lib/demo-data";
 import type { Listing } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -184,7 +183,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
   const hasFilters = Boolean(
     query || type || condition || location || set || rarity || hasMinPrice || hasMaxPrice
   );
-  const displayListings = listings.length > 0 ? listings : demoListings;
+  const displayListings = listings;
 
   return (
     <main className="min-h-screen bg-[#070a12] text-white">
@@ -259,8 +258,8 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
             </h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
               {hasFilters
-                ? "Mientras tanto, te mostramos ejemplos visuales para que la pantalla mantenga contexto."
-                : "Cuando el equipo apruebe las primeras cartas, aparecerán acá. Estos ejemplos muestran cómo se verá el marketplace."}
+                ? "No hay publicaciones reales que coincidan con esos filtros. Proba limpiar alguno para ampliar la busqueda."
+                : "Cuando el equipo apruebe las primeras cartas reales de la comunidad, apareceran aca."}
             </p>
           </div>
         ) : null}
