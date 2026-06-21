@@ -2,6 +2,7 @@ import {
   AlertTriangle,
   ArrowLeft,
   CheckCircle2,
+  Clock3,
   DollarSign,
   FileWarning,
   Gift,
@@ -13,6 +14,7 @@ import {
   Store,
   Users
 } from "lucide-react";
+import { AdminCommissions, type AdminCommission } from "@/components/admin-commissions";
 import { AdminListings, type AdminListing } from "@/components/admin-listings";
 import { AdminRaffles, type AdminRaffle } from "@/components/admin-raffles";
 import { AdminReports, type AdminReport } from "@/components/admin-reports";
@@ -323,7 +325,6 @@ export default async function AdminPage() {
           .from("sale_commissions")
           .select("id, listing_id, gross_amount, commission_amount, seller_net_amount, status, created_at, listings!sale_commissions_listing_id_fkey(title, profiles!listings_seller_id_fkey(display_name), products!listings_product_id_fkey(cards!products_card_id_fkey(official_name, set_name)))")
           .order("created_at", { ascending: false })
-          .limit(25)
       : Promise.resolve({ data: [], error: null })
   ]);
   const closedSales = (closedSalesResult.data ?? []) as ClosedSaleRow[];
@@ -332,14 +333,23 @@ export default async function AdminPage() {
     !saleCommissionsResult.error && saleCommissionsResult.data
       ? ((saleCommissionsResult.data ?? []) as SaleCommissionRow[])
       : [];
-  const hasCommissionLedger = saleCommissions.length > 0;
+  const hasCommissionLedger = !saleCommissionsResult.error;
   const grossSales = hasCommissionLedger
     ? saleCommissions.reduce((total, sale) => total + Number(sale.gross_amount ?? 0), 0)
     : closedSales.reduce((total, sale) => total + Number(sale.price ?? 0), 0);
   const estimatedCommission = hasCommissionLedger
     ? saleCommissions.reduce((total, sale) => total + Number(sale.commission_amount ?? 0), 0)
     : grossSales * PLATFORM_COMMISSION_RATE;
-  const closedSaleRows = hasCommissionLedger ? saleCommissions.map((sale) => {
+  const pendingCommissionTotal = saleCommissions
+    .filter((sale) => sale.status === "pending" || sale.status === "invoiced")
+    .reduce((total, sale) => total + Number(sale.commission_amount ?? 0), 0);
+  const paidCommissionTotal = saleCommissions
+    .filter((sale) => sale.status === "paid")
+    .reduce((total, sale) => total + Number(sale.commission_amount ?? 0), 0);
+  const waivedCommissionTotal = saleCommissions
+    .filter((sale) => sale.status === "waived")
+    .reduce((total, sale) => total + Number(sale.commission_amount ?? 0), 0);
+  const closedSaleRows: AdminCommission[] = hasCommissionLedger ? saleCommissions.map((sale) => {
     const listing = firstRelated(sale.listings);
     const product = firstRelated(listing?.products ?? null);
     const card = firstRelated(product?.cards ?? null);
@@ -351,6 +361,7 @@ export default async function AdminPage() {
       id: sale.id,
       price: Number(sale.gross_amount ?? 0),
       seller: sellerName(listing?.profiles ?? null),
+      sellerNet: Number(sale.seller_net_amount ?? 0),
       setName: card?.set_name ?? "Set no disponible",
       status: sale.status
     };
@@ -367,6 +378,7 @@ export default async function AdminPage() {
       id: sale.id,
       price,
       seller: sellerName(sale.profiles),
+      sellerNet: price - commission,
       setName: card?.set_name ?? "Set no disponible",
       status: "estimada"
     };
@@ -473,6 +485,23 @@ export default async function AdminPage() {
       icon: Percent,
       label: "Comisión estimada 5%",
       value: moneyLabel(estimatedCommission)
+    }
+  ];
+  const commissionMetrics = [
+    {
+      icon: Clock3,
+      label: "Pendiente / facturada",
+      value: moneyLabel(pendingCommissionTotal)
+    },
+    {
+      icon: CheckCircle2,
+      label: "Pagada",
+      value: moneyLabel(paidCommissionTotal)
+    },
+    {
+      icon: AlertTriangle,
+      label: "Perdonada",
+      value: moneyLabel(waivedCommissionTotal)
     }
   ];
   const sponsorMetrics = [
@@ -622,6 +651,17 @@ export default async function AdminPage() {
               </article>
             ))}
           </div>
+          {hasCommissionLedger ? (
+            <div className="mt-4 grid gap-4 md:grid-cols-3">
+              {commissionMetrics.map((metric) => (
+                <article className="rounded-lg border border-white/10 bg-slate-950/30 p-4" key={metric.label}>
+                  <metric.icon className="h-5 w-5 text-pokemonYellow" />
+                  <p className="mt-3 break-words text-2xl font-black text-white">{metric.value}</p>
+                  <p className="mt-1 text-xs font-semibold text-slate-400">{metric.label}</p>
+                </article>
+              ))}
+            </div>
+          ) : null}
           <div className="mt-5 border-t border-white/10 pt-5">
             <h3 className="text-sm font-black uppercase tracking-[0.16em] text-slate-300">
               Valor para sponsors
@@ -650,7 +690,12 @@ export default async function AdminPage() {
                 5% por venta
               </span>
             </div>
-            {closedSaleRows.length > 0 ? (
+            {hasCommissionLedger ? (
+              <AdminCommissions
+                commissions={closedSaleRows}
+                ledgerEnabled={hasCommissionLedger}
+              />
+            ) : closedSaleRows.length > 0 ? (
               <div className="mt-4 overflow-x-auto rounded-lg border border-white/10">
                 <table className="w-full min-w-[760px] text-left text-sm">
                   <thead className="bg-white/[0.04] text-slate-400">
