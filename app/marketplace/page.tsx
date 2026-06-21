@@ -282,13 +282,28 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
                   : "Las cartas aprobadas aparecerán aquí."}
               </p>
               {hasFilters ? (
+                <div className="mt-5 flex flex-wrap justify-center gap-2">
+                  <Link
+                    className="inline-flex rounded-lg bg-blue-700 px-5 py-3 text-sm font-black text-white"
+                    href="/marketplace"
+                  >
+                    Limpiar filtros
+                  </Link>
+                  <Link
+                    className="inline-flex rounded-lg border border-blue-200 px-5 py-3 text-sm font-black text-blue-800"
+                    href="/publish"
+                  >
+                    Publicar carta
+                  </Link>
+                </div>
+              ) : (
                 <Link
-                  className="mt-5 inline-flex rounded-lg bg-blue-700 px-5 py-3 text-sm font-black text-white"
-                  href="/marketplace"
+                  className="mt-5 inline-flex rounded-lg bg-yellow-400 px-5 py-3 text-sm font-black text-blue-950"
+                  href="/publish"
                 >
-                  Limpiar filtros
+                  Publicar primera carta
                 </Link>
-              ) : null}
+              )}
             </div>
           </div>
         )}
