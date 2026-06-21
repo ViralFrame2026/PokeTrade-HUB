@@ -6,6 +6,13 @@ const commissionSchema = z.object({
   status: z.enum(["pending", "invoiced", "paid", "waived"])
 });
 
+const statusLabels = {
+  invoiced: "facturada",
+  paid: "pagada",
+  pending: "pendiente",
+  waived: "perdonada"
+};
+
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -35,7 +42,17 @@ export async function PATCH(
 
   const parsed = commissionSchema.safeParse(await request.json());
   if (!parsed.success) {
-    return NextResponse.json({ error: "Estado de comisión inválido." }, { status: 400 });
+    return NextResponse.json({ error: "Estado de comision invalido." }, { status: 400 });
+  }
+
+  const { data: commission } = await supabase
+    .from("sale_commissions")
+    .select("id, seller_id, listing_id, status, listings!sale_commissions_listing_id_fkey(title)")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (!commission) {
+    return NextResponse.json({ error: "Comision no encontrada." }, { status: 404 });
   }
 
   const { error } = await supabase
@@ -45,6 +62,22 @@ export async function PATCH(
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  if (commission.status !== parsed.data.status) {
+    const listing = Array.isArray(commission.listings)
+      ? commission.listings[0]
+      : commission.listings;
+
+    await supabase.from("notifications").insert({
+      body: `La comision de "${listing?.title ?? "tu venta"}" ahora figura como ${
+        statusLabels[parsed.data.status]
+      }.`,
+      payload: { commission_id: commission.id, listing_id: commission.listing_id },
+      title: "Estado de comision actualizado",
+      type: "commission_status_updated",
+      user_id: commission.seller_id
+    });
   }
 
   return NextResponse.json({ error: null });

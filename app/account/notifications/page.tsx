@@ -1,4 +1,13 @@
-import { AlertCircle, ArrowLeft, Bell, CheckCircle2, Gift, Info, Star } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowLeft,
+  Bell,
+  CheckCircle2,
+  DollarSign,
+  Gift,
+  Handshake,
+  Info
+} from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
@@ -15,8 +24,10 @@ type NotificationRow = {
   created_at: string;
   id: string;
   payload: {
+    commission_id?: string;
     listing_id?: string;
     raffle_id?: string;
+    report_id?: string;
   } | null;
   read_at: string | null;
   title: string;
@@ -38,11 +49,28 @@ function notificationMeta(type: string) {
     };
   }
 
-  if (
-    type === "raffle_won" ||
-    type === "raffle_drawn" ||
-    type === "rating_received"
-  ) {
+  if (type.startsWith("commission_")) {
+    return {
+      className: "bg-emerald-100 text-emerald-700",
+      icon: DollarSign
+    };
+  }
+
+  if (type === "operation_completed") {
+    return {
+      className: "bg-blue-100 text-blue-700",
+      icon: Handshake
+    };
+  }
+
+  if (type === "report_resolved") {
+    return {
+      className: "bg-emerald-100 text-emerald-700",
+      icon: CheckCircle2
+    };
+  }
+
+  if (type === "raffle_won" || type === "raffle_drawn" || type === "rating_received") {
     return {
       className: "bg-yellow-100 text-amber-700",
       icon: CheckCircle2
@@ -59,6 +87,9 @@ function notificationCategory(type: string) {
   if (type.startsWith("listing_")) return "moderation";
   if (type.startsWith("raffle_")) return "raffles";
   if (type === "rating_received") return "reputation";
+  if (type === "operation_completed") return "operations";
+  if (type.startsWith("commission_")) return "finance";
+  if (type === "report_resolved") return "activity";
   return "activity";
 }
 
@@ -85,8 +116,10 @@ export default async function NotificationsPage() {
   const raffleCount = notifications.filter(
     (notification) => notificationCategory(notification.type) === "raffles"
   ).length;
-  const reputationCount = notifications.filter(
-    (notification) => notificationCategory(notification.type) === "reputation"
+  const operationsCount = notifications.filter(
+    (notification) =>
+      notificationCategory(notification.type) === "operations" ||
+      notificationCategory(notification.type) === "finance"
   ).length;
 
   return (
@@ -130,7 +163,7 @@ export default async function NotificationsPage() {
           <SummaryCard icon={Bell} label="Sin leer" value={unreadCount} />
           <SummaryCard icon={CheckCircle2} label="Moderación" value={moderationCount} />
           <SummaryCard icon={Gift} label="Sorteos" value={raffleCount} />
-          <SummaryCard icon={Star} label="Reputación" value={reputationCount} />
+          <SummaryCard icon={Handshake} label="Operaciones" value={operationsCount} />
         </div>
         </div>
       </section>
@@ -146,6 +179,12 @@ export default async function NotificationsPage() {
               const href =
                 notification.type === "rating_received" && listingId
                   ? `/listings/${listingId}`
+                  : notification.type === "operation_completed" && listingId
+                    ? `/listings/${listingId}`
+                  : notification.type.startsWith("commission_")
+                    ? "/account/listings"
+                  : notification.type === "report_resolved" && listingId
+                    ? `/listings/${listingId}`
                   : ["raffle_approved", "raffle_won", "raffle_drawn"].includes(
                   notification.type
                 ) && raffleId
