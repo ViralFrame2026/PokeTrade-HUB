@@ -125,6 +125,78 @@ type RecentClosedSaleRow = {
     | null;
 };
 
+type SaleCommissionRow = {
+  commission_amount: number | null;
+  created_at: string;
+  gross_amount: number | null;
+  id: string;
+  listing_id: string;
+  seller_net_amount: number | null;
+  status: string;
+  listings:
+    | {
+        title: string;
+        profiles: { display_name: string } | { display_name: string }[] | null;
+        products:
+          | {
+              cards:
+                | {
+                    official_name: string;
+                    set_name: string;
+                  }
+                | {
+                    official_name: string;
+                    set_name: string;
+                  }[]
+                | null;
+            }
+          | {
+              cards:
+                | {
+                    official_name: string;
+                    set_name: string;
+                  }
+                | {
+                    official_name: string;
+                    set_name: string;
+                  }[]
+                | null;
+            }[]
+          | null;
+      }
+    | {
+        title: string;
+        profiles: { display_name: string } | { display_name: string }[] | null;
+        products:
+          | {
+              cards:
+                | {
+                    official_name: string;
+                    set_name: string;
+                  }
+                | {
+                    official_name: string;
+                    set_name: string;
+                  }[]
+                | null;
+            }
+          | {
+              cards:
+                | {
+                    official_name: string;
+                    set_name: string;
+                  }
+                | {
+                    official_name: string;
+                    set_name: string;
+                  }[]
+                | null;
+            }[]
+          | null;
+      }[]
+    | null;
+};
+
 function listingTitle(listing: ReportRow["listings"]) {
   if (Array.isArray(listing)) {
     return listing[0]?.title ?? "Publicación no disponible";
@@ -184,7 +256,8 @@ export default async function AdminPage() {
     messagesResult,
     favoritesResult,
     activeRafflesResult,
-    userRolesResult
+    userRolesResult,
+    saleCommissionsResult
   ] = await Promise.all([
     supabase
       .from("listings")
@@ -244,13 +317,44 @@ export default async function AdminPage() {
           .order("is_super_admin", { ascending: false })
           .order("is_admin", { ascending: false })
           .order("joined_at", { ascending: true })
-      : Promise.resolve({ data: [] })
+      : Promise.resolve({ data: [] }),
+    currentProfile?.is_super_admin
+      ? supabase
+          .from("sale_commissions")
+          .select("id, listing_id, gross_amount, commission_amount, seller_net_amount, status, created_at, listings!sale_commissions_listing_id_fkey(title, profiles!listings_seller_id_fkey(display_name), products!listings_product_id_fkey(cards!products_card_id_fkey(official_name, set_name)))")
+          .order("created_at", { ascending: false })
+          .limit(25)
+      : Promise.resolve({ data: [], error: null })
   ]);
   const closedSales = (closedSalesResult.data ?? []) as ClosedSaleRow[];
   const recentClosedSales = (recentClosedSalesResult.data ?? []) as RecentClosedSaleRow[];
-  const grossSales = closedSales.reduce((total, sale) => total + Number(sale.price ?? 0), 0);
-  const estimatedCommission = grossSales * PLATFORM_COMMISSION_RATE;
-  const closedSaleRows = recentClosedSales.map((sale) => {
+  const saleCommissions =
+    !saleCommissionsResult.error && saleCommissionsResult.data
+      ? ((saleCommissionsResult.data ?? []) as SaleCommissionRow[])
+      : [];
+  const hasCommissionLedger = saleCommissions.length > 0;
+  const grossSales = hasCommissionLedger
+    ? saleCommissions.reduce((total, sale) => total + Number(sale.gross_amount ?? 0), 0)
+    : closedSales.reduce((total, sale) => total + Number(sale.price ?? 0), 0);
+  const estimatedCommission = hasCommissionLedger
+    ? saleCommissions.reduce((total, sale) => total + Number(sale.commission_amount ?? 0), 0)
+    : grossSales * PLATFORM_COMMISSION_RATE;
+  const closedSaleRows = hasCommissionLedger ? saleCommissions.map((sale) => {
+    const listing = firstRelated(sale.listings);
+    const product = firstRelated(listing?.products ?? null);
+    const card = firstRelated(product?.cards ?? null);
+
+    return {
+      cardName: card?.official_name ?? listing?.title ?? "Venta registrada",
+      commission: Number(sale.commission_amount ?? 0),
+      createdAt: sale.created_at,
+      id: sale.id,
+      price: Number(sale.gross_amount ?? 0),
+      seller: sellerName(listing?.profiles ?? null),
+      setName: card?.set_name ?? "Set no disponible",
+      status: sale.status
+    };
+  }) : recentClosedSales.map((sale) => {
     const product = firstRelated(sale.products);
     const card = firstRelated(product?.cards ?? null);
     const price = Number(sale.price ?? 0);
@@ -263,7 +367,8 @@ export default async function AdminPage() {
       id: sale.id,
       price,
       seller: sellerName(sale.profiles),
-      setName: card?.set_name ?? "Set no disponible"
+      setName: card?.set_name ?? "Set no disponible",
+      status: "estimada"
     };
   });
 
@@ -505,7 +610,7 @@ export default async function AdminPage() {
               </p>
             </div>
             <span className="rounded-full bg-yellow-400 px-3 py-1 text-xs font-black text-slate-950">
-              Sin pagos reales conectados
+              {hasCommissionLedger ? "Registro interno activo" : "Sin pagos reales conectados"}
             </span>
           </div>
           <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
@@ -552,6 +657,7 @@ export default async function AdminPage() {
                     <tr>
                       <th className="px-4 py-3">Carta</th>
                       <th className="px-4 py-3">Vendedor</th>
+                      <th className="px-4 py-3">Estado</th>
                       <th className="px-4 py-3">Fecha</th>
                       <th className="px-4 py-3 text-right">Venta</th>
                       <th className="px-4 py-3 text-right">Comisión</th>
@@ -565,6 +671,11 @@ export default async function AdminPage() {
                           <p className="mt-1 text-xs font-semibold text-slate-500">{sale.setName}</p>
                         </td>
                         <td className="px-4 py-3 font-semibold text-slate-300">{sale.seller}</td>
+                        <td className="px-4 py-3">
+                          <span className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-xs font-black uppercase text-slate-300">
+                            {sale.status}
+                          </span>
+                        </td>
                         <td className="px-4 py-3 text-slate-400">
                           {new Intl.DateTimeFormat("es-AR", { dateStyle: "medium" }).format(
                             new Date(sale.createdAt)
