@@ -155,6 +155,18 @@ export function ProfileForm({ initial }: ProfileFormProps) {
         publicaciones. Son opcionales porque PokeTrade también tiene mensajes internos.
       </p>
 
+      <div className="mt-4 rounded-lg border border-yellow-300/30 bg-yellow-400/10 p-4">
+        <p className="text-xs font-black uppercase tracking-[0.14em] text-yellow-300">
+          Perfil que genera confianza
+        </p>
+        <ul className="mt-3 grid gap-2 text-xs font-semibold leading-5 text-blue-100 sm:grid-cols-2">
+          <li>Usá un nombre reconocible para la comunidad.</li>
+          <li>Indicá ciudad y país para coordinar entregas.</li>
+          <li>Contá qué coleccionás o qué buscás intercambiar.</li>
+          <li>Mantené el acuerdo principal dentro de mensajes.</li>
+        </ul>
+      </div>
+
       {error ? (
         <div className="mt-5 rounded-lg border border-red-300/30 bg-red-500/10 p-4 text-sm font-semibold text-red-200">
           {error}

@@ -22,6 +22,15 @@ export default async function ProfilePage() {
 
   if (!profile) redirect("/");
 
+  const completedFields = [
+    profile.display_name,
+    profile.city,
+    profile.country,
+    profile.bio,
+    profile.whatsapp || profile.instagram
+  ].filter(Boolean).length;
+  const profileCompletion = Math.round((completedFields / 5) * 100);
+
   return (
     <main className="min-h-screen bg-[#071535] text-white">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
@@ -91,6 +100,22 @@ export default async function ProfilePage() {
                 Perfil verificado
               </p>
             ) : null}
+            <div className="mt-5 rounded-lg border border-white/10 bg-white/[0.06] p-4">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-black text-white">Perfil completo</p>
+                <p className="text-sm font-black text-yellow-300">{profileCompletion}%</p>
+              </div>
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-blue-950">
+                <div
+                  className="h-full rounded-full bg-yellow-400"
+                  style={{ width: `${profileCompletion}%` }}
+                />
+              </div>
+              <p className="mt-3 text-xs font-semibold leading-5 text-blue-100">
+                Nombre, ubicación, presentación y contacto ayudan a que otros usuarios
+                confíen antes de escribirte.
+              </p>
+            </div>
           </section>
 
           <ProfileForm
