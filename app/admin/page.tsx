@@ -143,6 +143,18 @@ type RecentClosedSaleRow = {
     | null;
 };
 
+type AuditLogRow = {
+  action: string;
+  created_at: string;
+  entity_id: string | null;
+  entity_type: string;
+  id: string;
+  metadata: {
+    reason?: string | null;
+  } | null;
+  profiles: { display_name: string } | { display_name: string }[] | null;
+};
+
 type SaleCommissionRow = {
   commission_amount: number | null;
   created_at: string;
@@ -243,6 +255,22 @@ function moneyLabel(value: number) {
   }).format(value);
 }
 
+function auditActionLabel(action: string) {
+  return {
+    "listing.approved": "Publicacion aprobada",
+    "listing.rejected": "Publicacion rechazada",
+    "raffle.approved": "Sorteo aprobado",
+    "raffle.rejected": "Sorteo rechazado"
+  }[action] ?? action;
+}
+
+function auditTone(action: string) {
+  if (action.endsWith(".approved")) return "border-emerald-300/30 bg-emerald-400/10 text-emerald-100";
+  if (action.endsWith(".rejected")) return "border-red-300/30 bg-red-400/10 text-red-100";
+
+  return "border-white/10 bg-white/[0.04] text-slate-300";
+}
+
 export default async function AdminPage() {
   const supabase = await createSupabaseServerClient();
   const {
@@ -275,7 +303,8 @@ export default async function AdminPage() {
     favoritesResult,
     activeRafflesResult,
     userRolesResult,
-    saleCommissionsResult
+    saleCommissionsResult,
+    auditLogsResult
   ] = await Promise.all([
     supabase
       .from("listings")
@@ -341,7 +370,12 @@ export default async function AdminPage() {
           .from("sale_commissions")
           .select("id, listing_id, gross_amount, commission_amount, seller_net_amount, status, created_at, listings!sale_commissions_listing_id_fkey(title, profiles!listings_seller_id_fkey(display_name), products!listings_product_id_fkey(cards!products_card_id_fkey(official_name, set_name)))")
           .order("created_at", { ascending: false })
-      : Promise.resolve({ data: [], error: null })
+      : Promise.resolve({ data: [], error: null }),
+    supabase
+      .from("audit_logs")
+      .select("id, action, entity_type, entity_id, metadata, created_at, profiles!audit_logs_actor_id_fkey(display_name)")
+      .order("created_at", { ascending: false })
+      .limit(8)
   ]);
   const closedSales = (closedSalesResult.data ?? []) as ClosedSaleRow[];
   const recentClosedSales = (recentClosedSalesResult.data ?? []) as RecentClosedSaleRow[];
@@ -365,6 +399,14 @@ export default async function AdminPage() {
   const waivedCommissionTotal = saleCommissions
     .filter((sale) => sale.status === "waived")
     .reduce((total, sale) => total + Number(sale.commission_amount ?? 0), 0);
+  const auditLogs = ((auditLogsResult.data ?? []) as AuditLogRow[]).map((log) => ({
+    action: log.action,
+    actor: sellerName(log.profiles),
+    createdAt: log.created_at,
+    entityType: log.entity_type,
+    id: log.id,
+    reason: log.metadata?.reason ?? null
+  }));
   const closedSaleRows: AdminCommission[] = hasCommissionLedger ? saleCommissions.map((sale) => {
     const listing = firstRelated(sale.listings);
     const product = firstRelated(listing?.products ?? null);
@@ -778,6 +820,63 @@ export default async function AdminPage() {
           <h2 className="text-xl font-black text-white">Cola de publicaciones</h2>
         </div>
         <AdminListings listings={listings} />
+      </section>
+      <section className="glass mt-8 overflow-hidden rounded-lg">
+        <div className="flex flex-col justify-between gap-3 border-b border-white/10 p-5 sm:flex-row sm:items-end">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-yellow-300">
+              Auditoria interna
+            </p>
+            <h2 className="mt-2 text-xl font-black text-white">Actividad reciente</h2>
+            <p className="mt-2 text-sm text-slate-400">
+              Ultimas aprobaciones y rechazos registrados por administradores.
+            </p>
+          </div>
+          <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-black text-slate-300">
+            {auditLogs.length} movimientos
+          </span>
+        </div>
+        {auditLogs.length > 0 ? (
+          <div className="divide-y divide-white/10">
+            {auditLogs.map((log) => (
+              <article className="grid gap-3 p-5 md:grid-cols-[1fr_auto] md:items-center" key={log.id}>
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span
+                      className={[
+                        "rounded-full border px-3 py-1 text-xs font-black",
+                        auditTone(log.action)
+                      ].join(" ")}
+                    >
+                      {auditActionLabel(log.action)}
+                    </span>
+                    <span className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+                      {log.entityType}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-sm font-semibold text-slate-300">
+                    Moderado por <span className="text-white">{log.actor}</span>
+                  </p>
+                  {log.reason ? (
+                    <p className="mt-2 rounded-md border border-red-300/20 bg-red-400/10 px-3 py-2 text-sm font-semibold text-red-100">
+                      {log.reason}
+                    </p>
+                  ) : null}
+                </div>
+                <time className="text-sm font-semibold text-slate-400">
+                  {new Intl.DateTimeFormat("es-AR", {
+                    dateStyle: "medium",
+                    timeStyle: "short"
+                  }).format(new Date(log.createdAt))}
+                </time>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="p-5 text-sm font-semibold text-slate-400">
+            Todavia no hay movimientos de moderacion registrados.
+          </div>
+        )}
       </section>
       <section className="glass mt-8 overflow-hidden rounded-lg">
         <div className="border-b border-white/10 p-5">
