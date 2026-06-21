@@ -1,8 +1,8 @@
 "use client";
 
-import { Check, Loader2 } from "lucide-react";
+import { AlertTriangle, Check, CheckCircle2, Loader2, UserCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 type ListingStatusControlProps = {
   counterparties: Array<{
@@ -33,23 +33,51 @@ export function ListingStatusControl({
   const completedValue =
     listingType === "trade" ? "traded" : listingType === "free" ? "finished" : "sold";
   const closing = ["sold", "traded", "finished"].includes(status);
+  const changing = status !== currentStatus;
+  const selectedCounterparty = counterparties.find((item) => item.id === counterpartyId);
   const estimatedCommission =
     listingType === "sale" && listingPrice ? listingPrice * PLATFORM_COMMISSION_RATE : 0;
   const sellerNet = listingType === "sale" && listingPrice ? listingPrice - estimatedCommission : 0;
+  const closeLabel =
+    listingType === "trade"
+      ? "Confirmar intercambio"
+      : listingType === "free"
+        ? "Confirmar entrega"
+        : "Confirmar venta";
+  const closingEffects = useMemo(() => {
+    if (!closing || !changing) return [];
+
+    const effects = [
+      "La publicacion deja de aparecer activa en el marketplace.",
+      "La otra persona recibe una notificacion para valorar la operacion."
+    ];
+
+    if (listingType === "sale") {
+      effects.push("Se registra la comision interna de PokeTrade.");
+    }
+
+    return effects;
+  }, [changing, closing, listingType]);
 
   async function saveStatus() {
-    if (status === currentStatus) return;
+    if (!changing) return;
 
     if (closing && !counterpartyId) {
-      setError("Selecciona con quién concretaste la operación.");
+      setError("Selecciona con quien concretaste la operacion.");
       return;
     }
-    if (
-      closing &&
-      !window.confirm("Esta publicación dejará de aparecer en el marketplace. ¿Continuar?")
-    ) {
-      setStatus(currentStatus);
-      return;
+
+    if (closing) {
+      const confirmed = window.confirm(
+        `${closeLabel}: esta accion cierra la publicacion y avisa a ${
+          selectedCounterparty?.name ?? "la otra persona"
+        }. Continuar?`
+      );
+
+      if (!confirmed) {
+        setStatus(currentStatus);
+        return;
+      }
     }
 
     setIsSaving(true);
@@ -90,7 +118,10 @@ export function ListingStatusControl({
         <select
           className="mt-2 h-10 w-full rounded-md border border-blue-200 bg-white px-3 text-sm font-bold text-blue-950 outline-none focus:border-blue-500"
           disabled={isSaving}
-          onChange={(event) => setStatus(event.target.value)}
+          onChange={(event) => {
+            setStatus(event.target.value);
+            setError(null);
+          }}
           value={status}
         >
           <option value="active">Disponible</option>
@@ -104,51 +135,76 @@ export function ListingStatusControl({
           </option>
         </select>
       </label>
-      {["sold", "traded", "finished"].includes(status) &&
-      status !== currentStatus ? (
-        <label className="mt-3 block text-xs font-black uppercase text-blue-800">
-          Operación realizada con
-          <select
-            className="mt-2 h-10 w-full rounded-md border border-blue-200 bg-white px-3 text-sm font-bold normal-case text-blue-950 outline-none focus:border-blue-500"
-            disabled={isSaving}
-            onChange={(event) => setCounterpartyId(event.target.value)}
-            required
-            value={counterpartyId}
-          >
-            <option value="">Seleccionar usuario</option>
-            {counterparties.map((counterparty) => (
-              <option key={counterparty.id} value={counterparty.id}>
-                {counterparty.name}
-              </option>
-            ))}
-          </select>
+
+      {closing && changing ? (
+        <div className="mt-3 rounded-lg border border-blue-200 bg-white p-3">
+          <label className="block text-xs font-black uppercase text-blue-800">
+            Operacion realizada con
+            <select
+              className="mt-2 h-10 w-full rounded-md border border-blue-200 bg-white px-3 text-sm font-bold normal-case text-blue-950 outline-none focus:border-blue-500"
+              disabled={isSaving}
+              onChange={(event) => {
+                setCounterpartyId(event.target.value);
+                setError(null);
+              }}
+              required
+              value={counterpartyId}
+            >
+              <option value="">Seleccionar usuario</option>
+              {counterparties.map((counterparty) => (
+                <option key={counterparty.id} value={counterparty.id}>
+                  {counterparty.name}
+                </option>
+              ))}
+            </select>
+          </label>
+
           {counterparties.length === 0 ? (
-            <span className="mt-2 block normal-case text-slate-500">
-              Primero debes recibir un mensaje de la persona interesada.
-            </span>
-          ) : null}
-        </label>
+            <div className="mt-3 flex items-start gap-2 rounded-md border border-yellow-200 bg-yellow-50 p-3 text-xs font-semibold leading-5 text-yellow-900">
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+              Primero debes recibir un mensaje de la persona interesada para poder cerrar
+              la operacion con ella.
+            </div>
+          ) : (
+            <div className="mt-3 space-y-2 text-xs font-semibold leading-5 text-slate-600">
+              {closingEffects.map((effect) => (
+                <p className="flex items-start gap-2" key={effect}>
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                  {effect}
+                </p>
+              ))}
+            </div>
+          )}
+        </div>
       ) : null}
-      {closing && status !== currentStatus && listingType === "sale" && listingPrice ? (
+
+      {closing && changing && listingType === "sale" && listingPrice ? (
         <div className="mt-3 rounded-md border border-yellow-200 bg-yellow-50 p-3 text-xs text-yellow-900">
-          <p className="font-black">Comisión estimada PokeTrade: 5%</p>
+          <p className="font-black">Comision estimada PokeTrade: 5%</p>
           <p className="mt-1 font-semibold">
-            Comisión: {moneyLabel(estimatedCommission)} | Neto vendedor:{" "}
+            Comision: {moneyLabel(estimatedCommission)} | Neto vendedor:{" "}
             {moneyLabel(sellerNet)}
           </p>
           <p className="mt-1 text-yellow-800">
-            Está vista es informativa; todavía no hay cobro automatico conectado.
+            Es un registro interno; todavia no hay cobro automatico conectado.
           </p>
         </div>
       ) : null}
+
       <button
-        className="mt-2 inline-flex h-9 w-full items-center justify-center gap-2 rounded-md bg-blue-700 px-3 text-xs font-black text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
-        disabled={isSaving || status === currentStatus}
+        className="mt-2 inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-blue-700 px-3 text-xs font-black text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
+        disabled={isSaving || !changing || (closing && !counterpartyId)}
         onClick={saveStatus}
         type="button"
       >
-        {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
-        Actualizar estado
+        {isSaving ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : closing ? (
+          <UserCheck className="h-4 w-4" />
+        ) : (
+          <Check className="h-4 w-4" />
+        )}
+        {closing && changing ? closeLabel : "Actualizar estado"}
       </button>
       {error ? <p className="mt-2 text-xs font-semibold text-red-600">{error}</p> : null}
     </div>
