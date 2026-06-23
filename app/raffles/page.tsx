@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { raffles as demoRaffles } from "@/lib/demo-data";
 
 export const dynamic = "force-dynamic";
 
@@ -148,7 +147,6 @@ export default async function RafflesPage() {
             })}
           </div>
         ) : (
-          <>
           <div className="rounded-lg border border-yellow-300/30 bg-yellow-300/10 p-6 text-center">
             <div>
               <Gift className="mx-auto h-11 w-11 text-yellow-300" />
@@ -156,33 +154,14 @@ export default async function RafflesPage() {
                 Todavía no hay sorteos activos
               </h2>
               <p className="mx-auto mt-2 max-w-xl text-slate-300">
-                Podés crear el primero para la comunidad. Mientras tanto, estos ejemplos muestran cómo se verán los eventos.
+                Podes crear el primero para la comunidad. Cuando el equipo lo apruebe,
+                aparecera aca para recibir participantes reales.
               </p>
               <ButtonLink href="/raffles/new" icon={Plus}>
-                Crear sorteo
+                Crear primer sorteo
               </ButtonLink>
             </div>
           </div>
-          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {demoRaffles.map((raffle) => (
-              <article
-                className="rounded-lg border border-white/10 bg-slate-950/88 p-5 shadow-[0_18px_55px_rgba(15,23,42,0.22)]"
-                key={raffle.title}
-              >
-                <span className="rounded-full bg-yellow-400 px-3 py-1 text-xs font-black text-blue-950">
-                  Ejemplo visual
-                </span>
-                <h2 className="mt-4 text-xl font-black text-white">{raffle.title}</h2>
-                <p className="mt-2 text-sm font-semibold text-yellow-200">{raffle.type}</p>
-                <p className="mt-4 text-sm leading-6 text-slate-300">{raffle.requirements}</p>
-                <div className="mt-5 flex items-center justify-between gap-3 text-sm font-bold text-blue-100">
-                  <span>{raffle.endsIn}</span>
-                  <span>{raffle.entries} participantes</span>
-                </div>
-              </article>
-            ))}
-          </div>
-          </>
         )}
       </section>
     </main>
