@@ -131,6 +131,10 @@ function listingLocation(listing: ListingDetailRow) {
   );
 }
 
+function siteUrl(path: string) {
+  return `https://poketrade-hub.vercel.app${path}`;
+}
+
 async function getListing(id: string) {
   if (
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
@@ -334,9 +338,46 @@ export default async function ListingDetailPage({
       ? "Monto alto: usa entrega segura, comprobantes y confirmacion por mensaje."
       : null
   ].filter(Boolean) as string[];
+  const listingUrl = siteUrl(`/listings/${listing.id}`);
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    brand: {
+      "@type": "Brand",
+      name: "Pokemon TCG"
+    },
+    category: "Trading Card",
+    description:
+      listing.description ||
+      `${card.official_name} de ${card.set_name}, ${card.rarity ?? "rareza no informada"}.`,
+    image: galleryImages.map((image) => image.src),
+    name: card.official_name,
+    offers:
+      listing.type === "sale"
+        ? {
+            "@type": "Offer",
+            availability: isAvailable
+              ? "https://schema.org/InStock"
+              : "https://schema.org/OutOfStock",
+            price: Number(listing.price ?? 0),
+            priceCurrency: "ARS",
+            seller: {
+              "@type": "Person",
+              name: seller.display_name
+            },
+            url: listingUrl
+          }
+        : undefined,
+    sku: card.pokemon_tcg_id,
+    url: listingUrl
+  };
 
   return (
     <main className="min-h-screen bg-[#071535] text-slate-900">
+      <script
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        type="application/ld+json"
+      />
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <Link className="flex items-center gap-3" href="/">
