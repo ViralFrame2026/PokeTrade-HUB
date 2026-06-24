@@ -137,7 +137,7 @@ export async function DELETE(
 
   const { data: listing } = await supabase
     .from("listings")
-    .select("product_id, seller_id, listing_images(storage_path)")
+    .select("product_id, seller_id, title, listing_images(storage_path)")
     .eq("id", id)
     .maybeSingle();
 
@@ -165,13 +165,27 @@ export async function DELETE(
     );
   }
 
+  const deletedByAdmin = listing.seller_id !== user.id && Boolean(profile?.is_admin);
+
+  if (deletedByAdmin) {
+    await supabase.from("notifications").insert({
+      body: "Un administrador elimino tu publicacion por motivos de moderacion o seguridad.",
+      payload: {
+        listing_id: id
+      },
+      title: `Publicacion eliminada: ${listing.title}`,
+      type: "listing_deleted",
+      user_id: listing.seller_id
+    });
+  }
+
   await supabase.from("audit_logs").insert({
     action: "listing.deleted",
     actor_id: user.id,
     entity_id: id,
     entity_type: "listing",
     metadata: {
-      deleted_by_admin: listing.seller_id !== user.id && Boolean(profile?.is_admin),
+      deleted_by_admin: deletedByAdmin,
       seller_id: listing.seller_id
     }
   });

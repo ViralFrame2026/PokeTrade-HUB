@@ -42,7 +42,7 @@ function notificationMeta(type: string) {
     };
   }
 
-  if (type === "listing_rejected") {
+  if (type === "listing_rejected" || type === "listing_deleted" || type === "raffle_deleted") {
     return {
       className: "bg-red-100 text-red-700",
       icon: AlertCircle
@@ -85,6 +85,7 @@ function notificationMeta(type: string) {
 
 function notificationCategory(type: string) {
   if (type.startsWith("listing_")) return "moderation";
+  if (type === "raffle_deleted") return "moderation";
   if (type.startsWith("raffle_")) return "raffles";
   if (type === "rating_received") return "reputation";
   if (type === "operation_completed") return "operations";

@@ -23,7 +23,7 @@ export async function DELETE(
 
   const { data: raffle } = await supabase
     .from("raffles")
-    .select("creator_id")
+    .select("creator_id, title")
     .eq("id", id)
     .maybeSingle();
 
@@ -40,6 +40,20 @@ export async function DELETE(
     return NextResponse.json({ error: "No pudimos eliminar el sorteo." }, { status: 500 });
   }
 
+  const deletedByAdmin = raffle.creator_id !== user.id && Boolean(profile?.is_admin);
+
+  if (deletedByAdmin) {
+    await supabase.from("notifications").insert({
+      body: "Un administrador elimino tu sorteo por motivos de moderacion o seguridad.",
+      payload: {
+        raffle_id: id
+      },
+      title: `Sorteo eliminado: ${raffle.title}`,
+      type: "raffle_deleted",
+      user_id: raffle.creator_id
+    });
+  }
+
   await supabase.from("audit_logs").insert({
     action: "raffle.deleted",
     actor_id: user.id,
@@ -47,7 +61,7 @@ export async function DELETE(
     entity_type: "raffle",
     metadata: {
       creator_id: raffle.creator_id,
-      deleted_by_admin: raffle.creator_id !== user.id && Boolean(profile?.is_admin)
+      deleted_by_admin: deletedByAdmin
     }
   });
 
