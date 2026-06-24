@@ -6,11 +6,15 @@ import { useState } from "react";
 
 type DeleteListingButtonProps = {
   listingId: string;
+  onDeleted?: () => void;
+  redirectTo?: string;
   title: string;
 };
 
 export function DeleteListingButton({
   listingId,
+  onDeleted,
+  redirectTo,
   title
 }: DeleteListingButtonProps) {
   const router = useRouter();
@@ -39,7 +43,12 @@ export function DeleteListingButton({
       }
 
       setIsDeleted(true);
-      router.refresh();
+      onDeleted?.();
+      if (redirectTo) {
+        router.push(redirectTo);
+      } else {
+        router.refresh();
+      }
     } catch (deleteError) {
       setError(
         deleteError instanceof Error

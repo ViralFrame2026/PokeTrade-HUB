@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { ListingGallery } from "@/components/listing-gallery";
 import { ListingRatingForm } from "@/components/listing-rating-form";
+import { DeleteListingButton } from "@/components/delete-listing-button";
 import { FavoriteButton } from "@/components/favorite-button";
 import { ReportListingForm } from "@/components/report-listing-form";
 import { ShareListingButton } from "@/components/share-listing-button";
@@ -231,6 +232,9 @@ export default async function ListingDetailPage({
   const {
     data: { user }
   } = await supabase.auth.getUser();
+  const { data: currentProfile } = user
+    ? await supabase.from("profiles").select("is_admin").eq("id", user.id).maybeSingle()
+    : { data: null };
   const directContactUrl = user ? whatsapp ?? instagram : null;
   const loginContactUrl = `/login?next=${encodeURIComponent(`/listings/${listing.id}`)}`;
   const contactUrl = directContactUrl ?? loginContactUrl;
@@ -242,6 +246,7 @@ export default async function ListingDetailPage({
   const ContactIcon = user && instagram && !whatsapp ? Instagram : MessageCircle;
   const isCompleted = ["sold", "traded", "finished"].includes(listing.status);
   const isAvailable = listing.status === "active";
+  const canDeleteListing = Boolean(user?.id === listing.seller_id || currentProfile?.is_admin);
   const [favoriteResult, ratingResult, existingReportResult, reviewsResult, sellerOpsResult] =
     await Promise.all([
       user
@@ -543,6 +548,15 @@ export default async function ListingDetailPage({
               listingId={listing.id}
             />
             <ShareListingButton title={`${card.official_name} en PokeTrade HUB`} />
+            {canDeleteListing ? (
+              <div className="mt-3">
+                <DeleteListingButton
+                  listingId={listing.id}
+                  redirectTo="/marketplace"
+                  title={card.official_name}
+                />
+              </div>
+            ) : null}
             <ReportListingForm
               initialReported={Boolean(existingReport)}
               isAuthenticated={Boolean(user)}

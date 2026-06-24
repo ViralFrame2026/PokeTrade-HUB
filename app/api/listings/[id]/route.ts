@@ -48,14 +48,14 @@ export async function PATCH(
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json({ error: "Debes iniciar sesión." }, { status: 401 });
+    return NextResponse.json({ error: "Debes iniciar sesion." }, { status: 401 });
   }
 
   const parsed = updateListingSchema.safeParse(await request.json());
 
   if (!parsed.success) {
     return NextResponse.json(
-      { error: parsed.error.issues[0]?.message ?? "Datos inválidos." },
+      { error: parsed.error.issues[0]?.message ?? "Datos invalidos." },
       { status: 400 }
     );
   }
@@ -72,7 +72,7 @@ export async function PATCH(
     !["pending", "rejected", "changes_requested"].includes(listing.moderation_status)
   ) {
     return NextResponse.json(
-      { error: "Esta publicación no puede editarse." },
+      { error: "Esta publicacion no puede editarse." },
       { status: 403 }
     );
   }
@@ -126,18 +126,24 @@ export async function DELETE(
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json({ error: "Debes iniciar sesión." }, { status: 401 });
+    return NextResponse.json({ error: "Debes iniciar sesion." }, { status: 401 });
   }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", user.id)
+    .maybeSingle();
 
   const { data: listing } = await supabase
     .from("listings")
-    .select("product_id, moderation_status, seller_id, listing_images(storage_path)")
+    .select("product_id, seller_id, listing_images(storage_path)")
     .eq("id", id)
     .maybeSingle();
 
-  if (!listing || listing.seller_id !== user.id) {
+  if (!listing || (listing.seller_id !== user.id && !profile?.is_admin)) {
     return NextResponse.json(
-      { error: "La publicación no puede eliminarse." },
+      { error: "La publicacion no puede eliminarse." },
       { status: 403 }
     );
   }
@@ -154,10 +160,21 @@ export async function DELETE(
 
   if (error) {
     return NextResponse.json(
-      { error: "No pudimos limpiar la publicación incompleta." },
+      { error: "No pudimos eliminar la publicacion." },
       { status: 500 }
     );
   }
+
+  await supabase.from("audit_logs").insert({
+    action: "listing.deleted",
+    actor_id: user.id,
+    entity_id: id,
+    entity_type: "listing",
+    metadata: {
+      deleted_by_admin: listing.seller_id !== user.id && Boolean(profile?.is_admin),
+      seller_id: listing.seller_id
+    }
+  });
 
   return NextResponse.json({ error: null });
 }

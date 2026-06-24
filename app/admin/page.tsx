@@ -260,6 +260,7 @@ function moneyLabel(value: number) {
 function auditActionLabel(action: string) {
   return {
     "listing.approved": "Publicacion aprobada",
+    "listing.deleted": "Publicacion eliminada",
     "listing.rejected": "Publicacion rechazada",
     "report.resolved": "Reporte resuelto",
     "raffle.approved": "Sorteo aprobado",

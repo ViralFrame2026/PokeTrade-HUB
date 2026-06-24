@@ -17,6 +17,7 @@ import {
   Store,
   X
 } from "lucide-react";
+import { DeleteListingButton } from "@/components/delete-listing-button";
 
 export type AdminListing = {
   cardImage: string | null;
@@ -390,6 +391,13 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
                   Rechazar
                 </button>
               </div>
+              <DeleteListingButton
+                listingId={listing.id}
+                onDeleted={() =>
+                  setListings((current) => current.filter((item) => item.id !== listing.id))
+                }
+                title={listing.cardName}
+              />
             </div>
           </article>
           );
