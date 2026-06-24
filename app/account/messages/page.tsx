@@ -1,6 +1,7 @@
 import { ArrowLeft, Inbox, MessageCircle, MessagesSquare, Store } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { SiteMenu } from "@/components/site-menu";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -104,14 +105,23 @@ export default async function MessagesPage() {
   return (
     <main className="min-h-screen bg-[#071535] text-white">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
-        <nav className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
-          <Link className="flex items-center gap-3" href="/">
-            <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
-            <div>
-              <p className="text-sm font-black tracking-[0.2em] text-yellow-300">POKETRADE</p>
-              <p className="text-xs font-bold text-blue-100">MENSAJES</p>
-            </div>
-          </Link>
+        <nav className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
+          <div className="flex min-w-0 items-center gap-3">
+            <SiteMenu
+              badges={{
+                messages: conversations.reduce((total, item) => total + item.unreadCount, 0)
+              }}
+            />
+            <Link className="flex min-w-0 items-center gap-3" href="/">
+              <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
+              <div className="min-w-0">
+                <p className="truncate text-sm font-black tracking-[0.2em] text-yellow-300">
+                  POKETRADE
+                </p>
+                <p className="truncate text-xs font-bold text-blue-100">MENSAJES</p>
+              </div>
+            </Link>
+          </div>
           <MessageCircle className="h-6 w-6 text-yellow-300" />
         </nav>
       </header>

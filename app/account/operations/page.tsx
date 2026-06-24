@@ -11,6 +11,7 @@ import {
   UserRound
 } from "lucide-react";
 import { redirect } from "next/navigation";
+import { SiteMenu } from "@/components/site-menu";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -26,6 +27,7 @@ type OperationRow = {
   location_city: string | null;
   location_country: string | null;
   price: number | null;
+  seller_id: string;
   status: string;
   trade_wants: string | null;
   type: string;
@@ -92,6 +94,10 @@ function dateLabel(date: string | null) {
   }).format(new Date(date));
 }
 
+function roleLabel(operation: OperationRow, userId: string) {
+  return operation.seller_id === userId ? "Como vendedor" : "Como comprador";
+}
+
 export default async function OperationsPage() {
   const supabase = await createSupabaseServerClient();
   const {
@@ -103,11 +109,11 @@ export default async function OperationsPage() {
   const { data } = await supabase
     .from("listings")
     .select(
-      "id, type, status, price, trade_wants, completed_with_id, approved_at, created_at, location_city, location_country, profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!listings_product_id_fkey(condition, cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number))"
+      "id, seller_id, type, status, price, trade_wants, completed_with_id, approved_at, created_at, location_city, location_country, profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!listings_product_id_fkey(condition, cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number))"
     )
-    .eq("completed_with_id", user.id)
     .eq("moderation_status", "approved")
     .in("status", ["sold", "traded", "finished"])
+    .or(`completed_with_id.eq.${user.id},seller_id.eq.${user.id}`)
     .order("updated_at", { ascending: false });
 
   const operations = (data ?? []) as OperationRow[];
@@ -125,20 +131,29 @@ export default async function OperationsPage() {
       .map((rating) => rating.listing_id)
       .filter(Boolean)
   );
-  const pendingRatings = operations.filter((operation) => !ratedIds.has(operation.id)).length;
-  const nextOperation = operations.find((operation) => !ratedIds.has(operation.id));
+  const counterpartyOperations = operations.filter((operation) => operation.seller_id !== user.id);
+  const sellerOperations = operations.filter((operation) => operation.seller_id === user.id);
+  const pendingRatings = counterpartyOperations.filter(
+    (operation) => !ratedIds.has(operation.id)
+  ).length;
+  const nextOperation = counterpartyOperations.find((operation) => !ratedIds.has(operation.id));
 
   return (
     <main className="min-h-screen bg-[#071535] text-white">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
-        <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
-          <Link className="flex items-center gap-3" href="/">
-            <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
-            <div>
-              <p className="text-sm font-black tracking-[0.2em] text-yellow-300">POKETRADE</p>
-              <p className="text-xs font-bold text-blue-100">MIS OPERACIONES</p>
-            </div>
-          </Link>
+        <nav className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
+          <div className="flex min-w-0 items-center gap-3">
+            <SiteMenu />
+            <Link className="flex min-w-0 items-center gap-3" href="/">
+              <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
+              <div className="min-w-0">
+                <p className="truncate text-sm font-black tracking-[0.2em] text-yellow-300">
+                  POKETRADE
+                </p>
+                <p className="truncate text-xs font-bold text-blue-100">MIS OPERACIONES</p>
+              </div>
+            </Link>
+          </div>
           <ButtonLink href="/account/messages" icon={MessageSquareText} size="sm">
             Mensajes
           </ButtonLink>
@@ -171,7 +186,7 @@ export default async function OperationsPage() {
             <div className="grid gap-3 sm:grid-cols-3">
               <SummaryCard label="Cerradas" value={operations.length} />
               <SummaryCard label="Por valorar" value={pendingRatings} variant="yellow" />
-              <SummaryCard label="Valoradas" value={operations.length - pendingRatings} variant="green" />
+              <SummaryCard label="Como vendedor" value={sellerOperations.length} variant="green" />
             </div>
           </div>
         </div>
@@ -214,7 +229,8 @@ export default async function OperationsPage() {
               const product = firstRelated(operation.products);
               const card = firstRelated(product?.cards ?? null);
               const seller = firstRelated(operation.profiles);
-              const isRated = ratedIds.has(operation.id);
+              const isSellerSide = operation.seller_id === user.id;
+              const isRated = isSellerSide || ratedIds.has(operation.id);
               const title = card?.official_name ?? "Carta Pokémon TCG";
 
               return (
@@ -245,10 +261,13 @@ export default async function OperationsPage() {
                       <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
                         {typeLabel(operation.type)}
                       </span>
+                      <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-black text-blue-700">
+                        {roleLabel(operation, user.id)}
+                      </span>
                       {isRated ? (
                         <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-700">
                           <CheckCircle2 className="h-3.5 w-3.5" />
-                          Valorada
+                          {isSellerSide ? "Cerrada" : "Valorada"}
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 rounded-full bg-yellow-100 px-3 py-1 text-xs font-black text-yellow-800">
