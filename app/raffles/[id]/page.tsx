@@ -10,6 +10,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { DeleteRaffleButton } from "@/components/delete-raffle-button";
 import { RaffleEntryButton } from "@/components/raffle-entry-button";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -25,6 +26,9 @@ export default async function RaffleDetailPage({
   const {
     data: { user }
   } = await supabase.auth.getUser();
+  const { data: currentProfile } = user
+    ? await supabase.from("profiles").select("is_admin").eq("id", user.id).maybeSingle()
+    : { data: null };
   const { data: raffle } = await supabase
     .from("raffles")
     .select(
@@ -48,6 +52,7 @@ export default async function RaffleDetailPage({
     : { data: null };
   const isClosed = new Date(raffle.closes_at).getTime() <= Date.now();
   const isCreator = user?.id === raffle.creator_id;
+  const canDeleteRaffle = Boolean(isCreator || currentProfile?.is_admin);
   const entryCount = raffle.raffle_entries[0]?.count ?? 0;
 
   return (
@@ -158,6 +163,15 @@ export default async function RaffleDetailPage({
               />
             )}
           </div>
+          {canDeleteRaffle ? (
+            <div className="mt-3">
+              <DeleteRaffleButton
+                raffleId={raffle.id}
+                redirectTo="/raffles"
+                title={raffle.title}
+              />
+            </div>
+          ) : null}
         </aside>
       </section>
     </main>

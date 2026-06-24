@@ -264,6 +264,7 @@ function auditActionLabel(action: string) {
     "listing.rejected": "Publicacion rechazada",
     "report.resolved": "Reporte resuelto",
     "raffle.approved": "Sorteo aprobado",
+    "raffle.deleted": "Sorteo eliminado",
     "raffle.rejected": "Sorteo rechazado"
   }[action] ?? action;
 }

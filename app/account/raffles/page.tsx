@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { DeleteRaffleButton } from "@/components/delete-raffle-button";
 import { DrawRaffleWinnerButton } from "@/components/draw-raffle-winner-button";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -256,6 +257,7 @@ export default async function MyRafflesPage() {
                         No hay participantes para sortear.
                       </p>
                     ) : null}
+                    <DeleteRaffleButton raffleId={raffle.id} title={raffle.title} />
                   </div>
                 </article>
               );

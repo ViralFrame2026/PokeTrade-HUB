@@ -2,6 +2,7 @@
 
 import { Check, CheckCircle2, Loader2, X } from "lucide-react";
 import { useState } from "react";
+import { DeleteRaffleButton } from "@/components/delete-raffle-button";
 
 export type AdminRaffle = {
   closesAt: string;
@@ -168,6 +169,13 @@ export function AdminRaffles({ raffles: initialRaffles }: { raffles: AdminRaffle
                   Rechazar
                 </button>
               </div>
+              <DeleteRaffleButton
+                onDeleted={() =>
+                  setRaffles((current) => current.filter((item) => item.id !== raffle.id))
+                }
+                raffleId={raffle.id}
+                title={raffle.title}
+              />
             </div>
           </article>
         ))}
