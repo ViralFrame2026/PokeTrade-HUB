@@ -14,11 +14,13 @@ import {
   Store,
   Users
 } from "lucide-react";
+import Link from "next/link";
 import { AdminCommissions, type AdminCommission } from "@/components/admin-commissions";
 import { AdminListings, type AdminListing } from "@/components/admin-listings";
 import { AdminRaffles, type AdminRaffle } from "@/components/admin-raffles";
 import { AdminReports, type AdminReport } from "@/components/admin-reports";
 import { AdminUsers, type AdminUser } from "@/components/admin-users";
+import { SiteMenu } from "@/components/site-menu";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -600,6 +602,31 @@ export default async function AdminPage() {
 
   return (
     <main className="min-h-screen bg-[#071535] text-white">
+      <header className="sticky top-0 z-30 border-b-4 border-yellow-400 bg-blue-800/95 text-white backdrop-blur-xl">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
+          <div className="flex min-w-0 items-center gap-3">
+            <SiteMenu
+              badges={{
+                listings: listings.length,
+                notifications: reports.length
+              }}
+              showAdmin
+            />
+            <Link className="flex min-w-0 items-center gap-3" href="/">
+              <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
+              <div className="min-w-0">
+                <p className="truncate text-sm font-black tracking-[0.2em] text-yellow-300">
+                  POKETRADE
+                </p>
+                <p className="truncate text-xs font-bold text-blue-100">ADMIN</p>
+              </div>
+            </Link>
+          </div>
+          <ButtonLink href="/account" icon={ArrowLeft} size="sm" variant="secondary">
+            Mi cuenta
+          </ButtonLink>
+        </nav>
+      </header>
       <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_80%_0%,rgba(250,204,21,0.18),transparent_32%),linear-gradient(135deg,#123cba_0%,#071535_72%)]">
         <div className="absolute inset-0 opacity-15 [background-image:linear-gradient(120deg,rgba(255,255,255,.16)_1px,transparent_1px)] [background-size:34px_34px]" />
         <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -653,6 +680,34 @@ export default async function AdminPage() {
             <p className="mt-1 text-sm font-semibold text-blue-100">{item.label}</p>
           </article>
         ))}
+      </section>
+      <section className="mt-6 rounded-lg border border-white/10 bg-white/[0.05] p-3">
+        <nav
+          aria-label="Accesos rapidos del panel administrador"
+          className="flex gap-2 overflow-x-auto pb-1"
+        >
+          {[
+            ["#reportes", "Reportes"],
+            ["#sorteos", "Sorteos"],
+            ["#publicaciones", "Publicaciones"],
+            ["#actividad", "Actividad"],
+            currentProfile?.is_super_admin ? ["#permisos", "Permisos"] : null
+          ]
+            .filter(Boolean)
+            .map((item) => {
+              const [href, label] = item as [string, string];
+
+              return (
+                <Link
+                  className="shrink-0 rounded-md border border-white/10 bg-slate-950/35 px-4 py-2 text-sm font-black text-blue-100 transition hover:border-yellow-300 hover:text-yellow-300"
+                  href={href}
+                  key={href}
+                >
+                  {label}
+                </Link>
+              );
+            })}
+        </nav>
       </section>
       {totalPending > 0 ? (
         <section className="mt-8 grid gap-4 lg:grid-cols-3">
@@ -814,19 +869,19 @@ export default async function AdminPage() {
           </div>
         </section>
       ) : null}
-      <section className="glass mt-8 overflow-hidden rounded-lg">
+      <section className="glass mt-8 scroll-mt-24 overflow-hidden rounded-lg" id="sorteos">
         <div className="border-b border-white/10 p-5">
           <h2 className="text-xl font-black text-white">Cola de sorteos</h2>
         </div>
         <AdminRaffles raffles={raffles} />
       </section>
-      <section className="glass mt-8 overflow-hidden rounded-lg">
+      <section className="glass mt-8 scroll-mt-24 overflow-hidden rounded-lg" id="publicaciones">
         <div className="border-b border-white/10 p-5">
           <h2 className="text-xl font-black text-white">Cola de publicaciones</h2>
         </div>
         <AdminListings listings={listings} />
       </section>
-      <section className="glass mt-8 overflow-hidden rounded-lg">
+      <section className="glass mt-8 scroll-mt-24 overflow-hidden rounded-lg" id="actividad">
         <div className="flex flex-col justify-between gap-3 border-b border-white/10 p-5 sm:flex-row sm:items-end">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.18em] text-yellow-300">
@@ -883,14 +938,14 @@ export default async function AdminPage() {
           </div>
         )}
       </section>
-      <section className="glass mt-8 overflow-hidden rounded-lg">
+      <section className="glass mt-8 scroll-mt-24 overflow-hidden rounded-lg" id="reportes">
         <div className="border-b border-white/10 p-5">
           <h2 className="text-xl font-black text-white">Reportes abiertos</h2>
         </div>
         <AdminReports reports={reports} />
       </section>
       {currentProfile?.is_super_admin && user ? (
-        <section className="glass mt-8 overflow-hidden rounded-lg">
+        <section className="glass mt-8 scroll-mt-24 overflow-hidden rounded-lg" id="permisos">
           <div className="border-b border-white/10 p-5">
             <p className="text-xs font-black uppercase tracking-[0.18em] text-yellow-300">
               Solo administrador principal
