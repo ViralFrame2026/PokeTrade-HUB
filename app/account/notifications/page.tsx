@@ -177,8 +177,14 @@ export default async function NotificationsPage() {
               const Icon = meta.icon;
               const listingId = notification.payload?.listing_id;
               const raffleId = notification.payload?.raffle_id;
+              const isDeletedContent =
+                notification.type === "listing_deleted" || notification.type === "raffle_deleted";
               const href =
-                notification.type === "rating_received" && listingId
+                notification.type === "listing_deleted"
+                  ? "/account/listings"
+                  : notification.type === "raffle_deleted"
+                    ? "/account/raffles"
+                    : notification.type === "rating_received" && listingId
                   ? `/listings/${listingId}`
                   : notification.type === "operation_completed" && listingId
                     ? `/listings/${listingId}`
@@ -228,7 +234,9 @@ export default async function NotificationsPage() {
                         }).format(new Date(notification.created_at))}
                       </p>
                       <NotificationLink href={href} notificationId={notification.id}>
-                        {notification.type === "rating_received"
+                        {isDeletedContent
+                          ? "Entendido"
+                          : notification.type === "rating_received"
                           ? "Ver valoración"
                           : ["raffle_approved", "raffle_won", "raffle_drawn"].includes(
                           notification.type

@@ -9,17 +9,19 @@ export const metadata: Metadata = {
   creator: "POKETRADE HUB",
   metadataBase: new URL("https://poketrade-hub.vercel.app"),
   title: {
-    default: "POKETRADE HUB",
+    default: "POKETRADE HUB - Marketplace Pokemon TCG",
     template: "%s | POKETRADE HUB"
   },
   description:
-    "Marketplace argentino para comprar, vender, intercambiar y sortear cartas oficiales de Pokémon TCG.",
+    "Marketplace argentino para comprar, vender, intercambiar y sortear cartas oficiales de Pokemon TCG con moderacion, reputacion y catalogo oficial.",
   keywords: [
-    "Pokémon TCG",
-    "cartas Pokémon",
+    "Pokemon TCG",
+    "cartas Pokemon",
     "marketplace TCG",
-    "intercambio Pokémon",
-    "sorteos Pokémon",
+    "intercambio Pokemon",
+    "sorteos Pokemon",
+    "cartas coleccionables",
+    "TCG Argentina",
     "PokeTrade HUB"
   ],
   alternates: {
@@ -31,12 +33,12 @@ export const metadata: Metadata = {
   },
   manifest: "/site.webmanifest",
   openGraph: {
-    title: "POKETRADE HUB",
+    title: "POKETRADE HUB - Marketplace Pokemon TCG",
     description:
-      "Marketplace Pokémon TCG con reputación, sorteos, moderación y catálogo oficial.",
+      "Compra, vende, intercambia y sortea cartas oficiales de Pokemon TCG con reputacion, moderacion y catalogo oficial.",
     images: [
       {
-        alt: "POKETRADE HUB marketplace Pokémon TCG",
+        alt: "POKETRADE HUB marketplace Pokemon TCG",
         height: 720,
         url: "/assets/pokemon-card-banner.webp",
         width: 1880
@@ -61,9 +63,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "POKETRADE HUB",
-    description:
-      "Comprá, vendé, intercambiá y sorteá cartas oficiales de Pokémon TCG.",
+    title: "POKETRADE HUB - Marketplace Pokemon TCG",
+    description: "Compra, vende, intercambia y sortea cartas oficiales de Pokemon TCG.",
     images: ["/assets/pokemon-card-banner.webp"]
   }
 };

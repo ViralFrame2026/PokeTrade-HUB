@@ -9,12 +9,14 @@ import {
   Eye,
   Pencil,
   Plus,
+  Share2,
   Store,
   UserRound
 } from "lucide-react";
 import { redirect } from "next/navigation";
 import { DeleteListingButton } from "@/components/delete-listing-button";
 import { ListingStatusControl } from "@/components/listing-status-control";
+import { ShareListingButton } from "@/components/share-listing-button";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -128,6 +130,22 @@ function availabilityLabel(status: string) {
     sold: "Vendida",
     traded: "Intercambiada"
   }[status] ?? status;
+}
+
+function nextActionLabel(listing: ListingRow) {
+  if (listing.moderation_status === "approved" && listing.status === "active") {
+    return "Tu carta ya esta visible en el marketplace. Compartila o cambia el estado cuando cierres la operacion.";
+  }
+
+  if (listing.moderation_status === "approved") {
+    return "La publicacion queda guardada con su estado actual. Puedes eliminarla cuando quieras.";
+  }
+
+  if (listing.moderation_status === "rejected" || listing.moderation_status === "changes_requested") {
+    return "Edita los datos pedidos y vuelve a enviarla para moderacion.";
+  }
+
+  return "El equipo la esta revisando. Cuando se apruebe, aparecera en el marketplace.";
 }
 
 export default async function MyListingsPage({
@@ -323,6 +341,9 @@ export default async function MyListingsPage({
                       {[card?.set_name, product?.condition].filter(Boolean).join(" | ")}
                     </p>
                     <p className="mt-2 font-black text-red-500">{priceLabel(listing)}</p>
+                    <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+                      {nextActionLabel(listing)}
+                    </p>
                     {listing.type === "sale" && listing.status === "sold" ? (
                       <p className="mt-2 rounded-lg border border-yellow-200 bg-yellow-50 px-3 py-2 text-xs font-bold text-yellow-900">
                         Comisión estimada PokeTrade: {saleCommission.commission} | Neto vendedor:{" "}
@@ -357,6 +378,14 @@ export default async function MyListingsPage({
                       </Link>
                     ) : null}
                     {listing.moderation_status === "approved" ? (
+                      <div className="w-full sm:max-w-52">
+                        <ShareListingButton
+                          title={card?.official_name ?? listing.title}
+                          url={`/listings/${listing.id}`}
+                        />
+                      </div>
+                    ) : null}
+                    {listing.moderation_status === "approved" ? (
                       <ListingStatusControl
                         counterparties={counterpartiesByListing.get(listing.id) ?? []}
                         currentStatus={listing.status}
@@ -364,6 +393,12 @@ export default async function MyListingsPage({
                         listingPrice={listing.price}
                         listingType={listing.type}
                       />
+                    ) : null}
+                    {listing.moderation_status !== "approved" ? (
+                      <span className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-black text-slate-500">
+                        <Share2 className="h-4 w-4" />
+                        Compartir al aprobarse
+                      </span>
                     ) : null}
                     <DeleteListingButton
                       listingId={listing.id}

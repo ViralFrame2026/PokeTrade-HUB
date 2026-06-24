@@ -28,8 +28,9 @@ export default function TermsPage() {
       <section className="mx-auto max-w-4xl space-y-5 px-4 py-12 sm:px-6 lg:px-8">
         {[
           ["Responsabilidad del usuario", "Cada usuario es responsable de la veracidad de sus publicaciones, mensajes, sorteos y acuerdos."],
-          ["Moderacion", "PokeTrade HUB puede revisar, rechazar, pausar o eliminar contenido que incumpla reglas o afecte la confianza de la comunidad."],
+          ["Contenido y eliminacion", "Cada usuario puede eliminar sus propias publicaciones y sorteos cuando quiera. PokeTrade HUB tambien puede revisar, rechazar, pausar o eliminar contenido que incumpla reglas, use datos falsos, afecte la confianza de la comunidad o represente riesgo para otros usuarios."],
           ["Operaciones entre usuarios", "La plataforma facilita el contacto, pero no reemplaza la verificacion personal de estado, pago, envio o entrega."],
+          ["Cuentas administradoras", "Las cuentas con permisos de administrador pueden moderar contenido, resolver reportes, gestionar permisos internos y registrar acciones de seguridad dentro del panel."],
           ["Cambios", "Estas condiciones pueden actualizarse a medida que la plataforma crece y suma nuevas funciones."]
         ].map(([title, copy]) => (
           <article className="rounded-lg border border-white/10 bg-white/[0.06] p-6" key={title}>

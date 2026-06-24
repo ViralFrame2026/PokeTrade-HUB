@@ -73,6 +73,15 @@ export default function SafetyPage() {
           </div>
         </div>
 
+        <div className="mt-5 rounded-lg border border-yellow-300/40 bg-yellow-400/10 p-6">
+          <h2 className="text-xl font-black">Control del usuario y moderacion</h2>
+          <p className="mt-3 leading-7 text-blue-100">
+            Puedes eliminar tus publicaciones cuando ya no esten disponibles. Si un reporte
+            muestra informacion falsa, fotos engañosas o actividad sospechosa, el equipo puede
+            intervenir y retirar el contenido para proteger la confianza del marketplace.
+          </p>
+        </div>
+
         <div className="mt-10 flex flex-wrap gap-3">
           <ButtonLink href="/rules" variant="light">
             Ver reglas

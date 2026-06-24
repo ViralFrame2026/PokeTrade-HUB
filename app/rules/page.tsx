@@ -27,6 +27,16 @@ const rules = [
     icon: ShieldCheck,
     title: "Moderacion activa",
     copy: "El equipo puede aprobar, rechazar, pausar o eliminar contenido que ponga en riesgo a la comunidad."
+  },
+  {
+    icon: Store,
+    title: "Eliminacion libre",
+    copy: "Cada usuario puede eliminar sus publicaciones cuando ya no quiera vender, intercambiar, regalar o mostrar una carta."
+  },
+  {
+    icon: BadgeCheck,
+    title: "Sin fotos robadas",
+    copy: "Las fotos reales son opcionales, pero si se suben deben representar la carta ofrecida y no deben engañar al comprador."
   }
 ];
 

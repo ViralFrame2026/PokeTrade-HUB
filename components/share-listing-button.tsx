@@ -5,24 +5,25 @@ import { useState } from "react";
 
 type ShareListingButtonProps = {
   title: string;
+  url?: string;
 };
 
-export function ShareListingButton({ title }: ShareListingButtonProps) {
+export function ShareListingButton({ title, url }: ShareListingButtonProps) {
   const [copied, setCopied] = useState(false);
 
   async function shareListing() {
-    const url = window.location.href;
+    const shareUrl = url ? new URL(url, window.location.origin).toString() : window.location.href;
 
     try {
       if (navigator.share) {
         await navigator.share({
           title,
-          url
+          url: shareUrl
         });
         return;
       }
 
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2200);
     } catch {
