@@ -2,6 +2,7 @@ import { ArrowLeft, Search, Store, UserRound } from "lucide-react";
 import Link from "next/link";
 import { ListingCard } from "@/components/listing-card";
 import { MarketplaceFilters } from "@/components/marketplace-filters";
+import { SiteMenu } from "@/components/site-menu";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { Listing } from "@/lib/types";
@@ -188,24 +189,30 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
   return (
     <main className="min-h-screen bg-[#070a12] text-white">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <Link className="flex items-center gap-3" href="/">
-            <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
-            <div>
-              <p className="text-sm font-black tracking-[0.2em] text-yellow-300">POKETRADE</p>
-              <p className="text-xs font-bold text-blue-100">MARKETPLACE</p>
-            </div>
-          </Link>
+        <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
+          <div className="flex min-w-0 items-center gap-3">
+            <SiteMenu />
+            <Link className="flex min-w-0 items-center gap-3" href="/">
+              <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
+              <div className="min-w-0">
+                <p className="truncate text-sm font-black tracking-[0.2em] text-yellow-300">
+                  POKETRADE
+                </p>
+                <p className="truncate text-xs font-bold text-blue-100">MARKETPLACE</p>
+              </div>
+            </Link>
+          </div>
           <div className="flex items-center gap-2">
             <Link
               aria-label="Mis publicaciones"
-              className="grid h-11 w-11 place-items-center rounded-lg border border-blue-300 text-blue-100 transition hover:border-yellow-300 hover:text-yellow-300"
+              className="hidden h-11 items-center justify-center gap-2 rounded-lg border border-blue-300 px-3 text-sm font-bold text-blue-100 transition hover:border-yellow-300 hover:text-yellow-300 sm:inline-flex"
               href="/account/listings"
               title="Mis publicaciones"
             >
               <UserRound className="h-4 w-4" />
+              Mis publicaciones
             </Link>
-            <ButtonLink href="/publish" icon={Store}>
+            <ButtonLink href="/publish" icon={Store} size="sm">
               Publicar
             </ButtonLink>
           </div>

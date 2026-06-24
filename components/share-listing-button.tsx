@@ -2,13 +2,15 @@
 
 import { Check, Share2 } from "lucide-react";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 type ShareListingButtonProps = {
+  className?: string;
   title: string;
   url?: string;
 };
 
-export function ShareListingButton({ title, url }: ShareListingButtonProps) {
+export function ShareListingButton({ className, title, url }: ShareListingButtonProps) {
   const [copied, setCopied] = useState(false);
 
   async function shareListing() {
@@ -33,7 +35,10 @@ export function ShareListingButton({ title, url }: ShareListingButtonProps) {
 
   return (
     <button
-      className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-blue-200 bg-white px-5 py-3 font-bold text-blue-800 transition hover:bg-blue-50"
+      className={cn(
+        "mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-blue-200 bg-white px-5 py-3 font-bold text-blue-800 transition hover:bg-blue-50",
+        className
+      )}
       onClick={shareListing}
       type="button"
     >

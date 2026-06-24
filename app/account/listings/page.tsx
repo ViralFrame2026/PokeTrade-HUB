@@ -17,6 +17,7 @@ import { redirect } from "next/navigation";
 import { DeleteListingButton } from "@/components/delete-listing-button";
 import { ListingStatusControl } from "@/components/listing-status-control";
 import { ShareListingButton } from "@/components/share-listing-button";
+import { SiteMenu } from "@/components/site-menu";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -224,18 +225,23 @@ export default async function MyListingsPage({
   return (
     <main className="min-h-screen bg-[#071535] text-slate-900">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <Link className="flex items-center gap-3" href="/">
-            <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
-            <div>
-              <p className="text-sm font-black tracking-[0.2em] text-yellow-300">POKETRADE</p>
-              <p className="text-xs font-bold text-blue-100">MI CUENTA</p>
-            </div>
-          </Link>
+        <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
+          <div className="flex min-w-0 items-center gap-3">
+            <SiteMenu badges={{ listings: pending }} />
+            <Link className="flex min-w-0 items-center gap-3" href="/">
+              <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
+              <div className="min-w-0">
+                <p className="truncate text-sm font-black tracking-[0.2em] text-yellow-300">
+                  POKETRADE
+                </p>
+                <p className="truncate text-xs font-bold text-blue-100">MI CUENTA</p>
+              </div>
+            </Link>
+          </div>
           <div className="flex items-center gap-2">
             <Link
               aria-label="Notificaciones"
-              className="grid h-11 w-11 place-items-center rounded-lg border border-blue-300 text-blue-100 transition hover:border-yellow-300 hover:text-yellow-300"
+              className="grid h-10 w-10 place-items-center rounded-lg border border-blue-300 text-blue-100 transition hover:border-yellow-300 hover:text-yellow-300 sm:h-11 sm:w-11"
               href="/account/notifications"
               title="Notificaciones"
             >
@@ -243,13 +249,13 @@ export default async function MyListingsPage({
             </Link>
             <Link
               aria-label="Mi perfil"
-              className="grid h-11 w-11 place-items-center rounded-lg border border-blue-300 text-blue-100 transition hover:border-yellow-300 hover:text-yellow-300"
+              className="hidden h-11 w-11 place-items-center rounded-lg border border-blue-300 text-blue-100 transition hover:border-yellow-300 hover:text-yellow-300 sm:grid"
               href="/account/profile"
               title="Mi perfil"
             >
               <UserRound className="h-4 w-4" />
             </Link>
-            <ButtonLink href="/publish" icon={Plus}>
+            <ButtonLink href="/publish" icon={Plus} size="sm">
               Publicar
             </ButtonLink>
           </div>
@@ -380,6 +386,7 @@ export default async function MyListingsPage({
                     {listing.moderation_status === "approved" ? (
                       <div className="w-full sm:max-w-52">
                         <ShareListingButton
+                          className="mt-0 px-4 py-2 text-sm"
                           title={card?.official_name ?? listing.title}
                           url={`/listings/${listing.id}`}
                         />
