@@ -1,8 +1,11 @@
-import { ArrowLeft, ExternalLink, ShieldCheck, Store } from "lucide-react";
+import { ArrowLeft, ExternalLink, ShieldCheck, Star, Store } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { ListingStatusControl } from "@/components/listing-status-control";
 import { MessageComposer } from "@/components/message-composer";
+import { SiteMenu } from "@/components/site-menu";
+import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -18,6 +21,7 @@ type MessageRow = {
 type Related<T> = T | T[] | null;
 
 type ListingContext = {
+  completed_with_id: string | null;
   id: string;
   moderation_status: string;
   price: number | null;
@@ -93,7 +97,7 @@ export default async function ConversationPage({
   const [{ data: listing }, { data: profile }] = await Promise.all([
     supabase
       .from("listings")
-      .select("id, title, seller_id, moderation_status, type, status, price, trade_wants, products!listings_product_id_fkey(condition, cards!products_card_id_fkey(official_name, image_large, set_name))")
+      .select("id, title, seller_id, completed_with_id, moderation_status, type, status, price, trade_wants, products!listings_product_id_fkey(condition, cards!products_card_id_fkey(official_name, image_large, set_name))")
       .eq("id", listingId)
       .maybeSingle(),
     supabase.from("profiles").select("id, display_name").eq("id", otherId).maybeSingle()
@@ -112,6 +116,9 @@ export default async function ConversationPage({
   const listingContext = listing as ListingContext;
   const product = firstRelated(listingContext.products);
   const card = firstRelated(product?.cards ?? null);
+  const isSeller = listingContext.seller_id === user.id;
+  const wasClosedWithCurrentUser = listingContext.completed_with_id === user.id;
+  const isClosed = ["sold", "traded", "finished"].includes(listingContext.status);
 
   const { data } = await supabase
     .from("messages")
@@ -145,14 +152,17 @@ export default async function ConversationPage({
   return (
     <main className="min-h-screen bg-[#071535] text-slate-900">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
-        <nav className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
-          <Link className="flex items-center gap-3" href="/account/messages">
-            <ArrowLeft className="h-5 w-5" />
-            <div>
-              <p className="font-black">{profile.display_name}</p>
-              <p className="max-w-[220px] truncate text-xs text-blue-100">{listing.title}</p>
-            </div>
-          </Link>
+        <nav className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
+          <div className="flex min-w-0 items-center gap-3">
+            <SiteMenu />
+            <Link className="flex min-w-0 items-center gap-3" href="/account/messages">
+              <ArrowLeft className="h-5 w-5 shrink-0" />
+              <div className="min-w-0">
+                <p className="truncate font-black">{profile.display_name}</p>
+                <p className="max-w-[220px] truncate text-xs text-blue-100">{listing.title}</p>
+              </div>
+            </Link>
+          </div>
           <Link
             aria-label="Ver publicación"
             className="grid h-10 w-10 place-items-center rounded-lg border border-blue-300 transition hover:border-yellow-300 hover:text-yellow-300"
@@ -214,6 +224,47 @@ export default async function ConversationPage({
                 fuera de una operación clara.
               </span>
             </p>
+          </div>
+          <div className="grid gap-4 border-b border-white/10 bg-[#071535] p-4 sm:p-6 lg:grid-cols-[1fr_320px] lg:items-start">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-yellow-300">
+                Flujo de operacion
+              </p>
+              <h2 className="mt-2 text-xl font-black text-white">
+                {isSeller
+                  ? "Cerra la operacion cuando ya este acordada"
+                  : isClosed && wasClosedWithCurrentUser
+                    ? "La operacion fue cerrada contigo"
+                    : "Acorda los detalles con el vendedor"}
+              </h2>
+              <p className="mt-2 text-sm font-semibold leading-6 text-blue-100">
+                {isSeller
+                  ? "Cuando confirmes la venta, intercambio o entrega, la publicacion sale del marketplace activo y la otra persona puede valorar la experiencia."
+                  : isClosed && wasClosedWithCurrentUser
+                    ? "Ya podes valorar al vendedor para ayudar a construir reputacion real en la comunidad."
+                    : "Cuando el vendedor cierre la operacion contigo, vas a verla en Mis operaciones y podras valorar la experiencia."}
+              </p>
+            </div>
+            {isSeller ? (
+              <ListingStatusControl
+                counterparties={[{ id: otherId, name: profile.display_name }]}
+                currentStatus={listingContext.status}
+                listingId={listingId}
+                listingPrice={listingContext.price}
+                listingType={listingContext.type}
+              />
+            ) : isClosed && wasClosedWithCurrentUser ? (
+              <ButtonLink href={`/listings/${listingId}`} icon={Star}>
+                Valorar vendedor
+              </ButtonLink>
+            ) : (
+              <Link
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-black text-white transition hover:border-yellow-300 hover:text-yellow-300"
+                href="/account/operations"
+              >
+                Ver mis operaciones
+              </Link>
+            )}
           </div>
           <div className="min-h-[55vh] space-y-3 bg-[#0b1d46] p-4 sm:p-6">
             {messages.length ? (
