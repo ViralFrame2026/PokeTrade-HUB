@@ -66,6 +66,29 @@ function priceLabel(type: string, price: number | null) {
   }).format(price ?? 0);
 }
 
+function trustLevel({
+  closedOperations,
+  isVerified,
+  listingsCount,
+  ratingCount
+}: {
+  closedOperations: number;
+  isVerified: boolean;
+  listingsCount: number;
+  ratingCount: number;
+}) {
+  const score =
+    (isVerified ? 35 : 0) +
+    Math.min(ratingCount * 12, 30) +
+    Math.min(closedOperations * 8, 24) +
+    Math.min(listingsCount * 4, 12);
+
+  if (score >= 70) return { label: "Confianza alta", score };
+  if (score >= 35) return { label: "Confianza en crecimiento", score };
+
+  return { label: "Perfil nuevo", score };
+}
+
 export async function generateMetadata({
   params
 }: {
@@ -206,6 +229,12 @@ export default async function PublicProfilePage({
   const averageRating = Number(profile.reputation_average).toFixed(1);
   const closedOperations = operationsResult.count ?? 0;
   const approvedRaffles = rafflesResult.count ?? 0;
+  const trust = trustLevel({
+    closedOperations,
+    isVerified: profile.is_verified,
+    listingsCount: listings.length,
+    ratingCount: profile.reputation_count
+  });
   const trustSignals = [
     profile.is_verified ? "Perfil verificado por el equipo" : "Perfil público con actividad visible",
     `${listings.length} publicación${listings.length === 1 ? "" : "es"} activa${listings.length === 1 ? "" : "s"}`,
@@ -314,6 +343,25 @@ export default async function PublicProfilePage({
               <ShieldCheck className="h-4 w-4" />
               Señales de confianza
             </p>
+            <div className="mt-4 rounded-lg border border-white/10 bg-slate-950/35 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xl font-black text-white">{trust.label}</p>
+                  <p className="mt-1 text-xs font-semibold text-blue-100">
+                    Score interno basado en verificacion, operaciones, publicaciones y valoraciones.
+                  </p>
+                </div>
+                <span className="rounded-full bg-yellow-400 px-3 py-1 text-sm font-black text-blue-950">
+                  {Math.min(trust.score, 100)}/100
+                </span>
+              </div>
+              <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
+                <div
+                  className="h-full rounded-full bg-yellow-400"
+                  style={{ width: `${Math.min(trust.score, 100)}%` }}
+                />
+              </div>
+            </div>
             <div className="mt-4 grid gap-3">
               {trustSignals.map((signal) => (
                 <p
