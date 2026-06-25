@@ -14,6 +14,7 @@ import {
   MarkAllNotificationsReadButton,
   NotificationLink
 } from "@/components/notification-actions";
+import { SiteMenu } from "@/components/site-menu";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -35,52 +36,27 @@ type NotificationRow = {
 };
 
 function notificationMeta(type: string) {
-  if (type === "listing_approved") {
-    return {
-      className: "bg-emerald-100 text-emerald-700",
-      icon: CheckCircle2
-    };
+  if (type === "listing_approved" || type === "report_resolved") {
+    return { className: "bg-emerald-100 text-emerald-700", icon: CheckCircle2 };
   }
 
   if (type === "listing_rejected" || type === "listing_deleted" || type === "raffle_deleted") {
-    return {
-      className: "bg-red-100 text-red-700",
-      icon: AlertCircle
-    };
+    return { className: "bg-red-100 text-red-700", icon: AlertCircle };
   }
 
   if (type.startsWith("commission_")) {
-    return {
-      className: "bg-emerald-100 text-emerald-700",
-      icon: DollarSign
-    };
+    return { className: "bg-emerald-100 text-emerald-700", icon: DollarSign };
   }
 
   if (type === "operation_completed") {
-    return {
-      className: "bg-blue-100 text-blue-700",
-      icon: Handshake
-    };
-  }
-
-  if (type === "report_resolved") {
-    return {
-      className: "bg-emerald-100 text-emerald-700",
-      icon: CheckCircle2
-    };
+    return { className: "bg-blue-100 text-blue-700", icon: Handshake };
   }
 
   if (type === "raffle_won" || type === "raffle_drawn" || type === "rating_received") {
-    return {
-      className: "bg-yellow-100 text-amber-700",
-      icon: CheckCircle2
-    };
+    return { className: "bg-yellow-100 text-amber-700", icon: CheckCircle2 };
   }
 
-  return {
-    className: "bg-blue-100 text-blue-700",
-    icon: Info
-  };
+  return { className: "bg-blue-100 text-blue-700", icon: Info };
 }
 
 function notificationCategory(type: string) {
@@ -92,6 +68,49 @@ function notificationCategory(type: string) {
   if (type.startsWith("commission_")) return "finance";
   if (type === "report_resolved") return "activity";
   return "activity";
+}
+
+function notificationTarget(notification: NotificationRow) {
+  const listingId = notification.payload?.listing_id;
+  const raffleId = notification.payload?.raffle_id;
+
+  if (notification.type === "listing_deleted") {
+    return { href: "/account/listings", label: "Entendido" };
+  }
+
+  if (notification.type === "raffle_deleted") {
+    return { href: "/account/raffles", label: "Entendido" };
+  }
+
+  if (notification.type === "operation_completed") {
+    return { href: "/account/operations", label: "Ver operacion" };
+  }
+
+  if (notification.type === "rating_received" && listingId) {
+    return { href: `/listings/${listingId}`, label: "Ver valoracion" };
+  }
+
+  if (notification.type.startsWith("commission_")) {
+    return { href: "/account/listings", label: "Ver mis publicaciones" };
+  }
+
+  if (notification.type === "report_resolved" && listingId) {
+    return { href: `/listings/${listingId}`, label: "Ver publicacion" };
+  }
+
+  if (["raffle_approved", "raffle_won", "raffle_drawn"].includes(notification.type) && raffleId) {
+    return { href: `/raffles/${raffleId}`, label: "Ver sorteo" };
+  }
+
+  if (notification.type.startsWith("raffle_")) {
+    return { href: "/raffles", label: "Ver sorteos" };
+  }
+
+  if (notification.type === "listing_approved" && listingId) {
+    return { href: `/listings/${listingId}`, label: "Ver publicacion" };
+  }
+
+  return { href: "/account/listings", label: "Ver mis publicaciones" };
 }
 
 export default async function NotificationsPage() {
@@ -117,23 +136,26 @@ export default async function NotificationsPage() {
   const raffleCount = notifications.filter(
     (notification) => notificationCategory(notification.type) === "raffles"
   ).length;
-  const operationsCount = notifications.filter(
-    (notification) =>
-      notificationCategory(notification.type) === "operations" ||
-      notificationCategory(notification.type) === "finance"
+  const operationsCount = notifications.filter((notification) =>
+    ["operations", "finance"].includes(notificationCategory(notification.type))
   ).length;
 
   return (
     <main className="min-h-screen bg-[#071535] text-white">
       <header className="border-b-4 border-yellow-400 bg-blue-800 text-white">
-        <nav className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4 sm:px-6">
-          <Link className="flex items-center gap-3" href="/">
-            <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
-            <div>
-              <p className="text-sm font-black tracking-[0.2em] text-yellow-300">POKETRADE</p>
-              <p className="text-xs font-bold text-blue-100">NOTIFICACIONES</p>
-            </div>
-          </Link>
+        <nav className="mx-auto flex max-w-4xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
+          <div className="flex min-w-0 items-center gap-3">
+            <SiteMenu badges={{ notifications: unreadCount }} />
+            <Link className="flex min-w-0 items-center gap-3" href="/">
+              <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
+              <div className="min-w-0">
+                <p className="truncate text-sm font-black tracking-[0.2em] text-yellow-300">
+                  POKETRADE
+                </p>
+                <p className="truncate text-xs font-bold text-blue-100">NOTIFICACIONES</p>
+              </div>
+            </Link>
+          </div>
           <span className="rounded-full bg-yellow-400 px-3 py-1 text-xs font-black text-blue-950">
             {unreadCount} sin leer
           </span>
@@ -143,29 +165,29 @@ export default async function NotificationsPage() {
       <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_82%_0%,rgba(250,204,21,.18),transparent_30%),linear-gradient(135deg,#123cba_0%,#071535_72%)]">
         <div className="absolute inset-0 opacity-15 [background-image:linear-gradient(120deg,rgba(255,255,255,.16)_1px,transparent_1px)] [background-size:34px_34px]" />
         <div className="relative mx-auto max-w-4xl px-4 py-10 sm:px-6">
-        <Link
-          className="inline-flex items-center gap-2 text-sm font-bold text-blue-100 hover:text-yellow-300"
-          href="/account"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Volver a mi cuenta
-        </Link>
+          <Link
+            className="inline-flex items-center gap-2 text-sm font-bold text-blue-100 hover:text-yellow-300"
+            href="/account"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Volver a mi cuenta
+          </Link>
 
-        <div className="mt-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
-            <h1 className="text-4xl font-black text-white">Notificaciones</h1>
-            <p className="mt-2 text-blue-100">
-              Avisos sobre moderación y actividad de tu cuenta.
-            </p>
+          <div className="mt-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
+              <h1 className="text-4xl font-black text-white">Notificaciones</h1>
+              <p className="mt-2 text-blue-100">
+                Avisos sobre moderacion y actividad de tu cuenta.
+              </p>
+            </div>
+            <MarkAllNotificationsReadButton disabled={unreadCount === 0} />
           </div>
-          <MarkAllNotificationsReadButton disabled={unreadCount === 0} />
-        </div>
-        <div className="mt-8 grid gap-3 sm:grid-cols-4">
-          <SummaryCard icon={Bell} label="Sin leer" value={unreadCount} />
-          <SummaryCard icon={CheckCircle2} label="Moderación" value={moderationCount} />
-          <SummaryCard icon={Gift} label="Sorteos" value={raffleCount} />
-          <SummaryCard icon={Handshake} label="Operaciones" value={operationsCount} />
-        </div>
+          <div className="mt-8 grid gap-3 sm:grid-cols-4">
+            <SummaryCard icon={Bell} label="Sin leer" value={unreadCount} />
+            <SummaryCard icon={CheckCircle2} label="Moderacion" value={moderationCount} />
+            <SummaryCard icon={Gift} label="Sorteos" value={raffleCount} />
+            <SummaryCard icon={Handshake} label="Operaciones" value={operationsCount} />
+          </div>
         </div>
       </section>
 
@@ -175,32 +197,7 @@ export default async function NotificationsPage() {
             {notifications.map((notification) => {
               const meta = notificationMeta(notification.type);
               const Icon = meta.icon;
-              const listingId = notification.payload?.listing_id;
-              const raffleId = notification.payload?.raffle_id;
-              const isDeletedContent =
-                notification.type === "listing_deleted" || notification.type === "raffle_deleted";
-              const href =
-                notification.type === "listing_deleted"
-                  ? "/account/listings"
-                  : notification.type === "raffle_deleted"
-                    ? "/account/raffles"
-                    : notification.type === "rating_received" && listingId
-                  ? `/listings/${listingId}`
-                  : notification.type === "operation_completed" && listingId
-                    ? `/listings/${listingId}`
-                  : notification.type.startsWith("commission_")
-                    ? "/account/listings"
-                  : notification.type === "report_resolved" && listingId
-                    ? `/listings/${listingId}`
-                  : ["raffle_approved", "raffle_won", "raffle_drawn"].includes(
-                  notification.type
-                ) && raffleId
-                  ? `/raffles/${raffleId}`
-                  : notification.type === "listing_approved" && listingId
-                  ? `/listings/${listingId}`
-                  : notification.type.startsWith("raffle_")
-                    ? "/raffles"
-                    : "/account/listings";
+              const target = notificationTarget(notification);
 
               return (
                 <article
@@ -212,7 +209,9 @@ export default async function NotificationsPage() {
                   key={notification.id}
                 >
                   <div className="flex items-start gap-4">
-                    <div className={`grid h-11 w-11 shrink-0 place-items-center rounded-full ${meta.className}`}>
+                    <div
+                      className={`grid h-11 w-11 shrink-0 place-items-center rounded-full ${meta.className}`}
+                    >
                       <Icon className="h-5 w-5" />
                     </div>
                     <div className="min-w-0 flex-1">
@@ -233,20 +232,8 @@ export default async function NotificationsPage() {
                           timeStyle: "short"
                         }).format(new Date(notification.created_at))}
                       </p>
-                      <NotificationLink href={href} notificationId={notification.id}>
-                        {isDeletedContent
-                          ? "Entendido"
-                          : notification.type === "rating_received"
-                          ? "Ver valoración"
-                          : ["raffle_approved", "raffle_won", "raffle_drawn"].includes(
-                          notification.type
-                        )
-                          ? "Ver sorteo"
-                          : notification.type === "listing_approved"
-                            ? "Ver publicación"
-                            : notification.type.startsWith("raffle_")
-                              ? "Ver sorteos"
-                              : "Ver mis publicaciones"}
+                      <NotificationLink href={target.href} notificationId={notification.id}>
+                        {target.label}
                       </NotificationLink>
                     </div>
                   </div>
@@ -261,7 +248,7 @@ export default async function NotificationsPage() {
               <h2 className="mt-4 text-xl font-black text-white">No tienes notificaciones</h2>
               <p className="mt-2 leading-7 text-blue-100">
                 Cuando publiques cartas, participes en sorteos o recibas actividad en tu
-                cuenta, los avisos importantes aparecerán acá.
+                cuenta, los avisos importantes apareceran aca.
               </p>
               <div className="mt-6 flex flex-wrap justify-center gap-3">
                 <ButtonLink href="/publish" variant="light">
