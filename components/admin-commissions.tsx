@@ -1,5 +1,6 @@
 "use client";
 
+import { ConfirmActionModal } from "@/components/confirm-action-modal";
 import { CheckCircle2, Clock3, FileText, Loader2, XCircle } from "lucide-react";
 import { useState } from "react";
 
@@ -57,13 +58,15 @@ export function AdminCommissions({
 }) {
   const [commissions, setCommissions] = useState(initialCommissions);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [pendingAction, setPendingAction] = useState<{
+    commission: AdminCommission;
+    label: string;
+    status: string;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function updateStatus(commission: AdminCommission, status: string) {
     if (commission.status === status || commission.status === "estimada") return;
-
-    const label = statusLabels[status]?.toLowerCase() ?? status;
-    if (!window.confirm(`¿Marcar esta comisión como ${label}?`)) return;
 
     setBusyId(commission.id);
     setError(null);
@@ -77,7 +80,7 @@ export function AdminCommissions({
       const payload = (await response.json()) as { error: string | null };
 
       if (!response.ok || payload.error) {
-        throw new Error(payload.error ?? "No pudimos actualizar la comisión.");
+        throw new Error(payload.error ?? "No pudimos actualizar la comision.");
       }
 
       setCommissions((current) =>
@@ -87,17 +90,18 @@ export function AdminCommissions({
       setError(
         statusError instanceof Error
           ? statusError.message
-          : "No pudimos actualizar la comisión."
+          : "No pudimos actualizar la comision."
       );
     } finally {
       setBusyId(null);
+      setPendingAction(null);
     }
   }
 
   if (commissions.length === 0) {
     return (
       <div className="mt-4 rounded-lg border border-white/10 bg-white/[0.04] p-4 text-sm font-semibold text-slate-400">
-        Todavía no hay ventas cerradas para calcular comisiones.
+        Todavia no hay ventas cerradas para calcular comisiones.
       </div>
     );
   }
@@ -111,7 +115,7 @@ export function AdminCommissions({
       ) : null}
       {!ledgerEnabled ? (
         <div className="mb-4 rounded-lg border border-yellow-300/30 bg-yellow-400/10 p-4 text-sm font-semibold text-yellow-100">
-          Estas filas son estimadas. Pegá la migración de comisiones en Supabase para activar
+          Estas filas son estimadas. Pega la migracion de comisiones en Supabase para activar
           estados reales.
         </div>
       ) : null}
@@ -124,9 +128,9 @@ export function AdminCommissions({
               <th className="px-4 py-3">Estado</th>
               <th className="px-4 py-3">Fecha</th>
               <th className="px-4 py-3 text-right">Venta</th>
-              <th className="px-4 py-3 text-right">Comisión</th>
+              <th className="px-4 py-3 text-right">Comision</th>
               <th className="px-4 py-3 text-right">Neto vendedor</th>
-              <th className="px-4 py-3 text-right">Acción</th>
+              <th className="px-4 py-3 text-right">Accion</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/10">
@@ -181,7 +185,13 @@ export function AdminCommissions({
                             }`}
                             disabled={busyId === commission.id || selected}
                             key={option.value}
-                            onClick={() => updateStatus(commission, option.value)}
+                            onClick={() =>
+                              setPendingAction({
+                                commission,
+                                label: statusLabels[option.value]?.toLowerCase() ?? option.value,
+                                status: option.value
+                              })
+                            }
                             title={option.label}
                             type="button"
                           >
@@ -201,6 +211,16 @@ export function AdminCommissions({
           </tbody>
         </table>
       </div>
+      {pendingAction ? (
+        <ConfirmActionModal
+          body={`Vas a marcar esta comision como ${pendingAction.label}.`}
+          confirmLabel="Si, actualizar"
+          isBusy={busyId === pendingAction.commission.id}
+          onCancel={() => setPendingAction(null)}
+          onConfirm={() => updateStatus(pendingAction.commission, pendingAction.status)}
+          title="Actualizar comision"
+        />
+      ) : null}
     </div>
   );
 }

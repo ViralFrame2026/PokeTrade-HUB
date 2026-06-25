@@ -1,5 +1,6 @@
 "use client";
 
+import { ConfirmActionModal } from "@/components/confirm-action-modal";
 import { Loader2, Search, Shield, ShieldOff, Star, UserCheck, X } from "lucide-react";
 import { useState } from "react";
 
@@ -22,6 +23,11 @@ export function AdminUsers({
   const [query, setQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | "admins" | "users">("all");
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [pendingPermission, setPendingPermission] = useState<{
+    action: string;
+    enabled: boolean;
+    user: AdminUser;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const normalizedQuery = query.trim().toLowerCase();
   const filteredUsers = users.filter((user) => {
@@ -39,9 +45,6 @@ export function AdminUsers({
   const adminCount = users.filter((user) => user.isAdmin).length;
 
   async function setAdmin(user: AdminUser, enabled: boolean) {
-    const action = enabled ? "dar permisos de administrador" : "retirar los permisos";
-    if (!window.confirm(`¿Confirmás ${action} a ${user.displayName}?`)) return;
-
     setBusyId(user.id);
     setError(null);
 
@@ -68,6 +71,7 @@ export function AdminUsers({
       );
     } finally {
       setBusyId(null);
+      setPendingPermission(null);
     }
   }
 
@@ -90,7 +94,7 @@ export function AdminUsers({
           />
           {query ? (
             <button
-              aria-label="Limpiar búsqueda"
+              aria-label="Limpiar busqueda"
               className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-md text-slate-400 transition hover:bg-white/10 hover:text-white"
               onClick={() => setQuery("")}
               type="button"
@@ -168,7 +172,15 @@ export function AdminUsers({
                           : "bg-emerald-400 text-emerald-950"
                       }`}
                       disabled={busyId === user.id}
-                      onClick={() => setAdmin(user, !user.isAdmin)}
+                      onClick={() =>
+                        setPendingPermission({
+                          action: user.isAdmin
+                            ? "retirar los permisos"
+                            : "dar permisos de administrador",
+                          enabled: !user.isAdmin,
+                          user
+                        })
+                      }
                       type="button"
                     >
                       {busyId === user.id ? (
@@ -191,11 +203,21 @@ export function AdminUsers({
             <UserCheck className="h-10 w-10 text-slate-500" />
             <p className="mt-3 font-black text-white">No encontramos usuarios</p>
             <p className="mt-1 max-w-md text-sm text-slate-400">
-              Cambia el texto de búsqueda o limpia el filtro de rol para volver a ver la lista.
+              Cambia el texto de busqueda o limpia el filtro de rol para volver a ver la lista.
             </p>
           </div>
         ) : null}
       </div>
+      {pendingPermission ? (
+        <ConfirmActionModal
+          body={`Vas a ${pendingPermission.action} a ${pendingPermission.user.displayName}.`}
+          confirmLabel="Si, confirmar"
+          isBusy={busyId === pendingPermission.user.id}
+          onCancel={() => setPendingPermission(null)}
+          onConfirm={() => setAdmin(pendingPermission.user, pendingPermission.enabled)}
+          title="Confirmar permisos"
+        />
+      ) : null}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { ConfirmActionModal } from "@/components/confirm-action-modal";
 import { AlertTriangle, Check, CheckCircle2, Loader2, UserCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -28,6 +29,7 @@ export function ListingStatusControl({
   const [status, setStatus] = useState(currentStatus);
   const [counterpartyId, setCounterpartyId] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const completedValue =
@@ -67,19 +69,6 @@ export function ListingStatusControl({
       return;
     }
 
-    if (closing) {
-      const confirmed = window.confirm(
-        `${closeLabel}: esta accion cierra la publicacion y avisa a ${
-          selectedCounterparty?.name ?? "la otra persona"
-        }. Continuar?`
-      );
-
-      if (!confirmed) {
-        setStatus(currentStatus);
-        return;
-      }
-    }
-
     setIsSaving(true);
     setError(null);
 
@@ -108,7 +97,24 @@ export function ListingStatusControl({
       );
     } finally {
       setIsSaving(false);
+      setIsConfirming(false);
     }
+  }
+
+  function requestStatusSave() {
+    if (!changing) return;
+
+    if (closing && !counterpartyId) {
+      setError("Selecciona con quien concretaste la operacion.");
+      return;
+    }
+
+    if (closing) {
+      setIsConfirming(true);
+      return;
+    }
+
+    void saveStatus();
   }
 
   return (
@@ -194,7 +200,7 @@ export function ListingStatusControl({
       <button
         className="mt-2 inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-blue-700 px-3 text-xs font-black text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
         disabled={isSaving || !changing || (closing && !counterpartyId)}
-        onClick={saveStatus}
+        onClick={requestStatusSave}
         type="button"
       >
         {isSaving ? (
@@ -206,6 +212,21 @@ export function ListingStatusControl({
         )}
         {closing && changing ? closeLabel : "Actualizar estado"}
       </button>
+      {isConfirming ? (
+        <ConfirmActionModal
+          body={`${closeLabel}: esta accion cierra la publicacion y avisa a ${
+            selectedCounterparty?.name ?? "la otra persona"
+          }.`}
+          confirmLabel="Si, confirmar"
+          isBusy={isSaving}
+          onCancel={() => {
+            setIsConfirming(false);
+            setStatus(currentStatus);
+          }}
+          onConfirm={saveStatus}
+          title={closeLabel}
+        />
+      ) : null}
       {error ? <p className="mt-2 text-xs font-semibold text-red-600">{error}</p> : null}
     </div>
   );
