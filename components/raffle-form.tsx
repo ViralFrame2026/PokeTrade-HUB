@@ -1,11 +1,21 @@
 "use client";
 
 import { CalendarClock, Gift, Loader2, Users } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 const TITLE_MAX_LENGTH = 100;
 const PRIZE_MAX_LENGTH = 160;
 const REQUIREMENTS_MAX_LENGTH = 1000;
+const RAFFLE_DRAFT_KEY = "poketrade-raffle-draft";
+
+type RaffleDraft = {
+  closesAt: string;
+  entryLimit: string;
+  imageUrl: string;
+  prize: string;
+  requirements: string;
+  title: string;
+};
 
 function minimumCloseDateTime() {
   const value = new Date(Date.now() + 60 * 60 * 1000);
@@ -23,10 +33,72 @@ export function RaffleForm() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDraftReady, setIsDraftReady] = useState(false);
+  const [draftNotice, setDraftNotice] = useState<string | null>(null);
   const minCloseDateTime = minimumCloseDateTime();
   const titleRemaining = TITLE_MAX_LENGTH - title.length;
   const prizeRemaining = PRIZE_MAX_LENGTH - prize.length;
   const requirementsRemaining = REQUIREMENTS_MAX_LENGTH - requirements.length;
+
+  useEffect(() => {
+    try {
+      const storedDraft = window.localStorage.getItem(RAFFLE_DRAFT_KEY);
+      if (!storedDraft) return;
+
+      const draft = JSON.parse(storedDraft) as Partial<RaffleDraft>;
+      setTitle(draft.title ?? "");
+      setPrize(draft.prize ?? "");
+      setRequirements(draft.requirements ?? "");
+      setClosesAt(draft.closesAt ?? "");
+      setEntryLimit(draft.entryLimit ?? "");
+      setImageUrl(draft.imageUrl ?? "");
+
+      if (
+        draft.title ||
+        draft.prize ||
+        draft.requirements ||
+        draft.closesAt ||
+        draft.entryLimit ||
+        draft.imageUrl
+      ) {
+        setDraftNotice("Recuperamos tu borrador de sorteo.");
+      }
+    } catch {
+      window.localStorage.removeItem(RAFFLE_DRAFT_KEY);
+    } finally {
+      setIsDraftReady(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isDraftReady) return;
+
+    const draft: RaffleDraft = {
+      closesAt,
+      entryLimit,
+      imageUrl,
+      prize,
+      requirements,
+      title
+    };
+
+    window.localStorage.setItem(RAFFLE_DRAFT_KEY, JSON.stringify(draft));
+  }, [closesAt, entryLimit, imageUrl, isDraftReady, prize, requirements, title]);
+
+  function clearDraft() {
+    window.localStorage.removeItem(RAFFLE_DRAFT_KEY);
+    setDraftNotice(null);
+  }
+
+  function resetForm() {
+    setTitle("");
+    setPrize("");
+    setRequirements("");
+    setClosesAt("");
+    setEntryLimit("");
+    setImageUrl("");
+    clearDraft();
+  }
 
   async function submitRaffle(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -54,12 +126,7 @@ export function RaffleForm() {
       }
 
       setSuccess("Sorteo enviado a moderación.");
-      setTitle("");
-      setPrize("");
-      setRequirements("");
-      setClosesAt("");
-      setEntryLimit("");
-      setImageUrl("");
+      resetForm();
     } catch (submitError) {
       setError(
         submitError instanceof Error ? submitError.message : "No pudimos crear el sorteo."
@@ -162,6 +229,22 @@ export function RaffleForm() {
       {error ? (
         <div className="mt-4 rounded-lg border border-red-400/30 bg-red-500/10 p-4 text-sm font-semibold text-red-100">
           {error}
+        </div>
+      ) : null}
+      {draftNotice ? (
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-blue-300/30 bg-blue-500/10 p-4 text-sm font-semibold text-blue-100">
+          <span>{draftNotice}</span>
+          <button
+            className="rounded-md border border-white/15 bg-white/10 px-3 py-2 text-xs font-black text-white transition hover:border-pokemonYellow/60 hover:text-pokemonYellow"
+            onClick={() => {
+              resetForm();
+              setSuccess(null);
+              setError(null);
+            }}
+            type="button"
+          >
+            Empezar de cero
+          </button>
         </div>
       ) : null}
       {success ? (
