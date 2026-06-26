@@ -6,6 +6,37 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  alternates: {
+    canonical: "/raffles"
+  },
+  description:
+    "Sorteos gratuitos y moderados de cartas y productos Pokemon TCG creados por la comunidad de PokeTrade HUB.",
+  openGraph: {
+    description:
+      "Participa en sorteos gratuitos de cartas y productos Pokemon TCG revisados por moderacion.",
+    images: [
+      {
+        alt: "Sorteos Pokemon TCG en PokeTrade HUB",
+        height: 720,
+        url: "/assets/pokemon-card-banner.webp",
+        width: 1880
+      }
+    ],
+    title: "Sorteos Pokemon TCG",
+    type: "website",
+    url: "/raffles"
+  },
+  title: "Sorteos Pokemon TCG",
+  twitter: {
+    card: "summary_large_image",
+    description:
+      "Participa en sorteos gratuitos de cartas y productos Pokemon TCG revisados por moderacion.",
+    images: ["/assets/pokemon-card-banner.webp"],
+    title: "Sorteos Pokemon TCG"
+  }
+};
+
 type RaffleRow = {
   closes_at: string;
   entry_limit: number | null;

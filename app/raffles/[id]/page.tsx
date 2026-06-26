@@ -7,6 +7,7 @@ import {
   Trophy,
   Users
 } from "lucide-react";
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -15,6 +16,81 @@ import { RaffleEntryButton } from "@/components/raffle-entry-button";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
+
+type RaffleDetailRow = {
+  closes_at: string;
+  id: string;
+  image_path: string | null;
+  prize: string;
+  profiles: { display_name: string } | { display_name: string }[] | null;
+  title: string;
+};
+
+async function getPublicRaffle(id: string) {
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase
+    .from("raffles")
+    .select(
+      "id, title, prize, image_path, closes_at, profiles!raffles_creator_id_fkey(display_name)"
+    )
+    .eq("id", id)
+    .eq("moderation_status", "approved")
+    .maybeSingle();
+
+  return data as RaffleDetailRow | null;
+}
+
+function raffleCreatorName(value: RaffleDetailRow["profiles"]) {
+  return Array.isArray(value)
+    ? value[0]?.display_name ?? "Entrenador TCG"
+    : value?.display_name ?? "Entrenador TCG";
+}
+
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const raffle = await getPublicRaffle(id);
+
+  if (!raffle) {
+    return {
+      robots: { follow: false, index: false },
+      title: "Sorteo no encontrado"
+    };
+  }
+
+  const canonical = `/raffles/${raffle.id}`;
+  const creator = raffleCreatorName(raffle.profiles);
+  const title = `${raffle.title} - Sorteo Pokemon TCG`;
+  const description = `${raffle.prize}. Sorteo gratuito organizado por ${creator} en PokeTrade HUB.`;
+  const image = raffle.image_path || "/assets/pokemon-card-banner.webp";
+
+  return {
+    alternates: { canonical },
+    description,
+    openGraph: {
+      description,
+      images: [
+        {
+          alt: `${raffle.title} en PokeTrade HUB`,
+          url: image
+        }
+      ],
+      title,
+      type: "article",
+      url: canonical
+    },
+    title,
+    twitter: {
+      card: "summary_large_image",
+      description,
+      images: [image],
+      title
+    }
+  };
+}
 
 export default async function RaffleDetailPage({
   params

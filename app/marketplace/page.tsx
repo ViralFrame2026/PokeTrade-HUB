@@ -9,6 +9,37 @@ import type { Listing } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  alternates: {
+    canonical: "/marketplace"
+  },
+  description:
+    "Explora cartas Pokemon TCG en venta, intercambio o regalo dentro de PokeTrade HUB, con publicaciones moderadas y perfiles con reputacion.",
+  openGraph: {
+    description:
+      "Cartas Pokemon TCG oficiales para comprar, vender e intercambiar en una comunidad moderada.",
+    images: [
+      {
+        alt: "Marketplace PokeTrade HUB de cartas Pokemon TCG",
+        height: 720,
+        url: "/assets/pokemon-card-banner.webp",
+        width: 1880
+      }
+    ],
+    title: "Marketplace Pokemon TCG",
+    type: "website",
+    url: "/marketplace"
+  },
+  title: "Marketplace Pokemon TCG",
+  twitter: {
+    card: "summary_large_image",
+    description:
+      "Cartas Pokemon TCG oficiales para comprar, vender e intercambiar en una comunidad moderada.",
+    images: ["/assets/pokemon-card-banner.webp"],
+    title: "Marketplace Pokemon TCG"
+  }
+};
+
 type Related<T> = T | T[] | null;
 
 type MarketplacePageProps = {

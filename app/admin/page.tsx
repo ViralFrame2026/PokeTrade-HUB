@@ -25,6 +25,10 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const metadata = {
+  robots: {
+    follow: false,
+    index: false
+  },
   title: "Panel Administrador"
 };
 
