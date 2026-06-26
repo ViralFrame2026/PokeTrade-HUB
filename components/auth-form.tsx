@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, EyeOff, Loader2, LockKeyhole, Mail, UserRound } from "lucide-react";
+import { CheckCircle2, Eye, EyeOff, Loader2, LockKeyhole, Mail, UserRound } from "lucide-react";
 import Link from "next/link";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
@@ -19,6 +19,14 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
   const [error, setError] = useState<string | null>(initialError);
   const [message, setMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const passwordChecks = [
+    { label: "6 caracteres minimo", valid: password.length >= 6 },
+    { label: "Incluye una letra", valid: /[a-zA-Z]/.test(password) },
+    { label: "Incluye un numero", valid: /\d/.test(password) }
+  ];
+  const passwordScore = passwordChecks.filter((check) => check.valid).length;
+  const passwordStrength =
+    passwordScore === 3 ? "Fuerte" : passwordScore === 2 ? "Correcta" : "Basica";
 
   function changeMode(nextMode: "login" | "register" | "reset") {
     setMode(nextMode);
@@ -34,14 +42,25 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
     setIsSubmitting(true);
 
     const supabase = createSupabaseBrowserClient();
+    const normalizedEmail = email.trim().toLowerCase();
 
     try {
       if (mode === "register") {
+        if (displayName.trim().length < 2) {
+          setError("El nombre publico debe tener al menos 2 caracteres.");
+          return;
+        }
+
+        if (passwordScore < 2) {
+          setError("Usa una contrasena un poco mas fuerte antes de crear la cuenta.");
+          return;
+        }
+
         const emailRedirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(
           nextPath
         )}`;
         const { data, error: signUpError } = await supabase.auth.signUp({
-          email,
+          email: normalizedEmail,
           password,
           options: {
             data: {
@@ -66,7 +85,7 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
         const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(
           "/account/password"
         )}`;
-        const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        const { error: resetError } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
           redirectTo
         });
 
@@ -77,7 +96,7 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
       }
 
       const { error: signInError } = await supabase.auth.signInWithPassword({
-        email,
+        email: normalizedEmail,
         password
       });
 
@@ -183,6 +202,43 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
+            {mode === "register" ? (
+              <div className="mt-3 rounded-lg border border-white/10 bg-white/[0.04] p-3">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-300">
+                    Seguridad
+                  </p>
+                  <span
+                    className={`rounded-full px-2 py-1 text-[11px] font-black ${
+                      passwordScore === 3
+                        ? "bg-emerald-400 text-emerald-950"
+                        : passwordScore === 2
+                          ? "bg-yellow-400 text-slate-950"
+                          : "bg-white/10 text-slate-300"
+                    }`}
+                  >
+                    {passwordStrength}
+                  </span>
+                </div>
+                <div className="mt-3 grid gap-2">
+                  {passwordChecks.map((check) => (
+                    <p
+                      className={`flex items-center gap-2 text-xs font-semibold ${
+                        check.valid ? "text-emerald-200" : "text-slate-400"
+                      }`}
+                      key={check.label}
+                    >
+                      <CheckCircle2
+                        className={`h-4 w-4 ${
+                          check.valid ? "fill-emerald-400 text-emerald-400" : "text-slate-600"
+                        }`}
+                      />
+                      {check.label}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </label>
         ) : (
           <p className="mt-4 rounded-lg border border-white/10 bg-white/5 p-3 text-sm leading-6 text-slate-300">
