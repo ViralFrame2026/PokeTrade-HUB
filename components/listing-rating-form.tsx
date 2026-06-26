@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, Star } from "lucide-react";
+import { CheckCircle2, Loader2, Star } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -11,12 +11,14 @@ export function ListingRatingForm({ listingId }: { listingId: string }) {
   const [stars, setStars] = useState(5);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function submitRating(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsSubmitting(true);
     setError(null);
+    setSuccess(false);
 
     try {
       const response = await fetch("/api/ratings", {
@@ -30,14 +32,17 @@ export function ListingRatingForm({ listingId }: { listingId: string }) {
       });
       const payload = (await response.json()) as { error?: string | null };
       if (!response.ok || payload.error) {
-        throw new Error(payload.error ?? "No pudimos guardar tu valoración.");
+        throw new Error(payload.error ?? "No pudimos guardar tu valoracion.");
       }
+
+      setSuccess(true);
+      setComment("");
       router.refresh();
     } catch (ratingError) {
       setError(
         ratingError instanceof Error
           ? ratingError.message
-          : "No pudimos guardar tu valoración."
+          : "No pudimos guardar tu valoracion."
       );
     } finally {
       setIsSubmitting(false);
@@ -50,11 +55,11 @@ export function ListingRatingForm({ listingId }: { listingId: string }) {
       onSubmit={submitRating}
     >
       <p className="text-xs font-black uppercase tracking-[0.15em] text-amber-700">
-        Operación finalizada
+        Operacion finalizada
       </p>
       <h3 className="mt-2 text-lg font-black text-blue-950">Valora al vendedor</h3>
       <p className="mt-2 text-sm leading-6 text-amber-900">
-        Tu valoración queda visible en el perfil público y ayuda a construir confianza.
+        Tu valoracion queda visible en el perfil publico y ayuda a construir confianza.
       </p>
       <div className="mt-4 flex gap-1" role="radiogroup" aria-label="Estrellas">
         {[1, 2, 3, 4, 5].map((value) => (
@@ -81,8 +86,11 @@ export function ListingRatingForm({ listingId }: { listingId: string }) {
         <textarea
           className="mt-2 min-h-24 w-full resize-none rounded-lg border border-yellow-200 bg-white px-3 py-3 text-slate-800 outline-none focus:border-blue-500"
           maxLength={MAX_COMMENT_LENGTH}
-          onChange={(event) => setComment(event.target.value)}
-          placeholder="Cuenta brevemente cómo fue la operación"
+          onChange={(event) => {
+            setComment(event.target.value);
+            setSuccess(false);
+          }}
+          placeholder="Cuenta brevemente como fue la operacion"
           value={comment}
         />
         <span className="mt-1 block text-right text-xs font-semibold text-slate-500">
@@ -95,8 +103,14 @@ export function ListingRatingForm({ listingId }: { listingId: string }) {
         type="submit"
       >
         {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Star className="h-4 w-4" />}
-        Publicar valoración
+        Publicar valoracion
       </button>
+      {success ? (
+        <p className="mt-3 flex items-center gap-2 text-sm font-black text-emerald-700">
+          <CheckCircle2 className="h-4 w-4" />
+          Valoracion publicada
+        </p>
+      ) : null}
       {error ? <p className="mt-3 text-sm font-semibold text-red-600">{error}</p> : null}
     </form>
   );

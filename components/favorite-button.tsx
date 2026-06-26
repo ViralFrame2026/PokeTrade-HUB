@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, Loader2 } from "lucide-react";
+import { CheckCircle2, Heart, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -18,6 +18,7 @@ export function FavoriteButton({
   const router = useRouter();
   const [isFavorite, setIsFavorite] = useState(initialFavorite);
   const [isBusy, setIsBusy] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function toggleFavorite() {
@@ -28,8 +29,10 @@ export function FavoriteButton({
 
     setIsBusy(true);
     setError(null);
+    setFeedback(null);
 
     try {
+      const nextFavorite = !isFavorite;
       const response = await fetch(`/api/favorites/${listingId}`, {
         method: isFavorite ? "DELETE" : "POST"
       });
@@ -39,7 +42,9 @@ export function FavoriteButton({
         throw new Error(payload.error ?? "No pudimos actualizar el favorito.");
       }
 
-      setIsFavorite((current) => !current);
+      setIsFavorite(nextFavorite);
+      setFeedback(nextFavorite ? "Agregada a favoritos" : "Quitada de favoritos");
+      window.setTimeout(() => setFeedback(null), 2400);
     } catch (favoriteError) {
       setError(
         favoriteError instanceof Error
@@ -71,6 +76,12 @@ export function FavoriteButton({
         )}
         {isFavorite ? "Guardada en favoritos" : "Guardar en favoritos"}
       </button>
+      {feedback ? (
+        <p className="mt-2 flex items-center justify-center gap-2 text-xs font-black text-emerald-600">
+          <CheckCircle2 className="h-4 w-4" />
+          {feedback}
+        </p>
+      ) : null}
       {error ? <p className="mt-2 text-center text-xs font-semibold text-red-600">{error}</p> : null}
     </div>
   );
