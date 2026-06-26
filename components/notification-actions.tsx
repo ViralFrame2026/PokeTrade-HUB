@@ -1,34 +1,57 @@
 "use client";
 
-import { CheckCheck, Loader2 } from "lucide-react";
+import { CheckCheck, CheckCircle2, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function MarkAllNotificationsReadButton({ disabled }: { disabled: boolean }) {
   const router = useRouter();
   const [isBusy, setIsBusy] = useState(false);
+  const [status, setStatus] = useState<"idle" | "done" | "error">("idle");
 
   async function markAllRead() {
     setIsBusy(true);
+    setStatus("idle");
 
     try {
       const response = await fetch("/api/notifications", { method: "PATCH" });
-      if (response.ok) router.refresh();
+      if (!response.ok) {
+        throw new Error("No pudimos actualizar las notificaciones.");
+      }
+
+      setStatus("done");
+      window.setTimeout(() => setStatus("idle"), 2500);
+      router.refresh();
+    } catch {
+      setStatus("error");
     } finally {
       setIsBusy(false);
     }
   }
 
   return (
-    <button
-      className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-blue-200 bg-white px-4 text-sm font-black text-blue-800 transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50"
-      disabled={disabled || isBusy}
-      onClick={markAllRead}
-      type="button"
-    >
-      {isBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCheck className="h-4 w-4" />}
-      Marcar todas como leídas
-    </button>
+    <div>
+      <button
+        className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-blue-200 bg-white px-4 text-sm font-black text-blue-800 transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50"
+        disabled={disabled || isBusy}
+        onClick={markAllRead}
+        type="button"
+      >
+        {isBusy ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : status === "done" ? (
+          <CheckCircle2 className="h-4 w-4" />
+        ) : (
+          <CheckCheck className="h-4 w-4" />
+        )}
+        {status === "done" ? "Listo" : "Marcar todas como leidas"}
+      </button>
+      {status === "error" ? (
+        <p className="mt-2 text-xs font-semibold text-red-600">
+          No pudimos actualizar las notificaciones.
+        </p>
+      ) : null}
+    </div>
   );
 }
 

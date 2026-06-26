@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, Send } from "lucide-react";
+import { CheckCircle2, Loader2, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
@@ -47,6 +47,7 @@ export function MessageComposer({
   const router = useRouter();
   const [body, setBody] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const remainingCharacters = MAX_MESSAGE_LENGTH - body.length;
   const messages = quickMessages(intent, listingType);
@@ -57,6 +58,7 @@ export function MessageComposer({
     if (!message) return;
 
     setError(null);
+    setSent(false);
     setIsSending(true);
 
     try {
@@ -72,6 +74,8 @@ export function MessageComposer({
       }
 
       setBody("");
+      setSent(true);
+      window.setTimeout(() => setSent(false), 2800);
       router.refresh();
     } catch (sendError) {
       setError(
@@ -106,7 +110,10 @@ export function MessageComposer({
           disabled={isSending}
           id="message-body"
           maxLength={MAX_MESSAGE_LENGTH}
-          onChange={(event) => setBody(event.target.value)}
+          onChange={(event) => {
+            setBody(event.target.value);
+            setSent(false);
+          }}
           onKeyDown={(event) => {
             if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
               event.currentTarget.form?.requestSubmit();
@@ -135,6 +142,12 @@ export function MessageComposer({
           {remainingCharacters} caracteres restantes
         </span>
       </div>
+      {sent ? (
+        <p className="mt-2 flex items-center gap-2 text-sm font-black text-emerald-300">
+          <CheckCircle2 className="h-4 w-4" />
+          Mensaje enviado
+        </p>
+      ) : null}
       {error ? <p className="mt-2 text-sm font-semibold text-red-300">{error}</p> : null}
     </form>
   );
