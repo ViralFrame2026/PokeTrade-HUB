@@ -10,6 +10,40 @@ type AuthFormProps = {
   nextPath: string;
 };
 
+function friendlyAuthError(error: unknown) {
+  if (!(error instanceof Error)) {
+    return "No pudimos completar la autenticacion.";
+  }
+
+  const message = error.message.toLowerCase();
+
+  if (message.includes("invalid login credentials")) {
+    return "Email o contrasena incorrectos.";
+  }
+
+  if (message.includes("email not confirmed")) {
+    return "Todavia falta confirmar tu email antes de ingresar.";
+  }
+
+  if (message.includes("user already registered") || message.includes("already registered")) {
+    return "Ya existe una cuenta con ese email. Intenta ingresar.";
+  }
+
+  if (message.includes("password should be at least") || message.includes("weak password")) {
+    return "La contrasena es demasiado debil. Usa al menos 6 caracteres, letras y numeros.";
+  }
+
+  if (message.includes("rate limit") || message.includes("too many")) {
+    return "Hubo demasiados intentos. Espera un momento y vuelve a probar.";
+  }
+
+  if (message.includes("network") || message.includes("fetch")) {
+    return "No pudimos conectar con el servidor. Revisa tu conexion e intenta de nuevo.";
+  }
+
+  return error.message || "No pudimos completar la autenticacion.";
+}
+
 export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
   const [mode, setMode] = useState<"login" | "register" | "reset">("login");
   const [displayName, setDisplayName] = useState("");
@@ -91,7 +125,7 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
 
         if (resetError) throw resetError;
 
-        setMessage("Te enviamos un enlace para cambiar tu contraseña.");
+        setMessage("Te enviamos un enlace para cambiar tu contrasena.");
         return;
       }
 
@@ -104,11 +138,7 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
 
       window.location.assign(nextPath);
     } catch (authError) {
-      setError(
-        authError instanceof Error
-          ? authError.message
-          : "No pudimos completar la autenticación."
-      );
+      setError(friendlyAuthError(authError));
     } finally {
       setIsSubmitting(false);
     }
@@ -141,7 +171,7 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
         {mode === "register" ? (
           <>
             <label className="block text-sm font-bold text-slate-200">
-              Nombre público
+              Nombre publico
               <div className="relative mt-2">
                 <UserRound className="pointer-events-none absolute left-3 top-3 h-5 w-5 text-slate-500" />
                 <input
@@ -157,7 +187,7 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
               </div>
             </label>
             <p className="mt-2 text-xs leading-5 text-slate-400">
-              Este nombre se verá en tus publicaciones, mensajes y sorteos.
+              Este nombre se vera en tus publicaciones, mensajes y sorteos.
             </p>
           </>
         ) : null}
@@ -180,7 +210,7 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
 
         {mode !== "reset" ? (
           <label className="mt-4 block text-sm font-bold text-slate-200">
-            Contraseña
+            Contrasena
             <div className="relative mt-2">
               <LockKeyhole className="pointer-events-none absolute left-3 top-3 h-5 w-5 text-slate-500" />
               <input
@@ -188,13 +218,13 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
                 className="w-full rounded-lg border border-white/10 bg-slate-950/70 py-3 pl-10 pr-12 text-white outline-none focus:border-pokemonYellow/60"
                 minLength={6}
                 onChange={(event) => setPassword(event.target.value)}
-                placeholder="Mínimo 6 caracteres"
+                placeholder="Minimo 6 caracteres"
                 required
                 type={showPassword ? "text" : "password"}
                 value={password}
               />
               <button
-                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                aria-label={showPassword ? "Ocultar contrasena" : "Mostrar contrasena"}
                 className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-md text-slate-400 transition hover:bg-white/10 hover:text-pokemonYellow"
                 onClick={() => setShowPassword((current) => !current)}
                 type="button"
@@ -242,7 +272,7 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
           </label>
         ) : (
           <p className="mt-4 rounded-lg border border-white/10 bg-white/5 p-3 text-sm leading-6 text-slate-300">
-            Ingresá tu email y te enviaremos un enlace para crear una nueva contraseña.
+            Ingresa tu email y te enviaremos un enlace para crear una nueva contrasena.
           </p>
         )}
 
@@ -261,7 +291,7 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
         {mode === "register" ? (
           <div className="mt-4 rounded-lg border border-white/10 bg-white/[0.04] p-3 text-xs leading-5 text-slate-300">
             Al crear la cuenta vas a poder publicar cartas, guardar favoritos, enviar
-            mensajes, participar en sorteos y construir reputación.
+            mensajes, participar en sorteos y construir reputacion.
           </div>
         ) : null}
 
@@ -279,7 +309,7 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
         </button>
 
         <p className="mt-4 text-center text-xs leading-5 text-slate-400">
-          Al usar PokeTrade aceptás operar bajo las{" "}
+          Al usar PokeTrade aceptas operar bajo las{" "}
           <Link className="font-bold text-pokemonYellow hover:text-yellow-200" href="/rules">
             reglas de comunidad
           </Link>
@@ -289,7 +319,7 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
           </Link>{" "}
           y los{" "}
           <Link className="font-bold text-pokemonYellow hover:text-yellow-200" href="/terms">
-            términos
+            terminos
           </Link>
           .
         </p>
@@ -300,7 +330,7 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
             onClick={() => changeMode("reset")}
             type="button"
           >
-            Olvidé mi contraseña
+            Olvide mi contrasena
           </button>
         ) : mode === "reset" ? (
           <button
