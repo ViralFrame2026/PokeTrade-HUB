@@ -33,6 +33,19 @@ type CreateListingResponse = {
 
 const DESCRIPTION_MAX_LENGTH = 2000;
 const TRADE_WANTS_MAX_LENGTH = 1000;
+const PUBLISH_DRAFT_KEY = "poketrade-publish-draft";
+
+type PublishDraft = {
+  condition: string;
+  description: string;
+  listingType: "sale" | "trade" | "free";
+  locationCity: string;
+  locationCountry: string;
+  price: string;
+  query: string;
+  selectedCard: PokemonTcgCard | null;
+  tradeWants: string;
+};
 
 export function PublishForm() {
   const [query, setQuery] = useState("");
@@ -49,6 +62,8 @@ export function PublishForm() {
   const [success, setSuccess] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDraftReady, setIsDraftReady] = useState(false);
+  const [draftNotice, setDraftNotice] = useState<string | null>(null);
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
@@ -63,6 +78,84 @@ export function PublishForm() {
       previews.forEach((preview) => URL.revokeObjectURL(preview));
     };
   }, [photos]);
+
+  useEffect(() => {
+    try {
+      const storedDraft = window.localStorage.getItem(PUBLISH_DRAFT_KEY);
+      if (!storedDraft) return;
+
+      const draft = JSON.parse(storedDraft) as Partial<PublishDraft>;
+      setQuery(draft.query ?? "");
+      setSelectedCard(draft.selectedCard ?? null);
+      setListingType(draft.listingType ?? "sale");
+      setCondition(draft.condition ?? "Near Mint");
+      setPrice(draft.price ?? "");
+      setTradeWants(draft.tradeWants ?? "");
+      setDescription(draft.description ?? "");
+      setLocationCity(draft.locationCity ?? "");
+      setLocationCountry(draft.locationCountry ?? "");
+
+      if (
+        draft.selectedCard ||
+        draft.description ||
+        draft.price ||
+        draft.tradeWants ||
+        draft.locationCity ||
+        draft.locationCountry
+      ) {
+        setDraftNotice("Recuperamos tu borrador de publicacion.");
+      }
+    } catch {
+      window.localStorage.removeItem(PUBLISH_DRAFT_KEY);
+    } finally {
+      setIsDraftReady(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isDraftReady) return;
+
+    const draft: PublishDraft = {
+      condition,
+      description,
+      listingType,
+      locationCity,
+      locationCountry,
+      price,
+      query,
+      selectedCard,
+      tradeWants
+    };
+
+    window.localStorage.setItem(PUBLISH_DRAFT_KEY, JSON.stringify(draft));
+  }, [
+    condition,
+    description,
+    isDraftReady,
+    listingType,
+    locationCity,
+    locationCountry,
+    price,
+    query,
+    selectedCard,
+    tradeWants
+  ]);
+
+  function clearDraft() {
+    window.localStorage.removeItem(PUBLISH_DRAFT_KEY);
+    setDraftNotice(null);
+  }
+
+  function resetForm() {
+    setCards([]);
+    setSelectedCard(null);
+    setQuery("");
+    setDescription("");
+    setPrice("");
+    setTradeWants("");
+    setPhotos([]);
+    clearDraft();
+  }
 
   function handlePhotos(files: FileList | null) {
     if (!files) return;
@@ -172,13 +265,7 @@ export function PublishForm() {
           setSuccess(
             `Publicación ${listingId} enviada. Quedó pendiente de moderación.`
           );
-          setCards([]);
-          setSelectedCard(null);
-          setQuery("");
-          setDescription("");
-          setPrice("");
-          setTradeWants("");
-          setPhotos([]);
+          resetForm();
           return;
         }
 
@@ -230,13 +317,7 @@ export function PublishForm() {
       setSuccess(
         `Publicación ${listingId} enviada con ${photos.length} foto(s). Quedó pendiente de moderación.`
       );
-      setCards([]);
-      setSelectedCard(null);
-      setQuery("");
-      setDescription("");
-      setPrice("");
-      setTradeWants("");
-      setPhotos([]);
+      resetForm();
     } catch (submitError) {
       setError(
         submitError instanceof Error
@@ -314,6 +395,23 @@ export function PublishForm() {
       {error ? (
         <div className="mt-4 rounded-lg border border-red-400/30 bg-red-500/10 p-4 text-sm font-semibold text-red-100">
           {error}
+        </div>
+      ) : null}
+
+      {draftNotice ? (
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-blue-300/30 bg-blue-500/10 p-4 text-sm font-semibold text-blue-100">
+          <span>{draftNotice}</span>
+          <button
+            className="rounded-md border border-white/15 bg-white/10 px-3 py-2 text-xs font-black text-white transition hover:border-pokemonYellow/60 hover:text-pokemonYellow"
+            onClick={() => {
+              resetForm();
+              setSuccess(null);
+              setError(null);
+            }}
+            type="button"
+          >
+            Empezar de cero
+          </button>
         </div>
       ) : null}
 
