@@ -1,28 +1,58 @@
-import { AlertTriangle, CheckCircle2, Handshake, ShieldCheck } from "lucide-react";
+import {
+  AlertTriangle,
+  Camera,
+  CheckCircle2,
+  Handshake,
+  MessageCircle,
+  ShieldCheck
+} from "lucide-react";
 import { ButtonLink } from "@/components/ui/button-link";
 
 export const metadata = {
   title: "Seguridad",
   description:
-    "Buenas prácticas para comprar, vender e intercambiar cartas Pokémon TCG en PokeTrade HUB."
+    "Buenas practicas para comprar, vender e intercambiar cartas Pokemon TCG en PokeTrade HUB."
 };
 
 const safeSteps = [
   {
     icon: ShieldCheck,
-    title: "Usá publicaciones oficiales",
-    copy: "Cada publicación debe estar vinculada a una carta real del catálogo Pokémon TCG."
+    title: "Usa cartas oficiales",
+    copy: "Cada publicacion debe estar enlazada a una carta real del catalogo Pokemon TCG para reducir errores y publicaciones inventadas."
   },
   {
-    icon: Handshake,
-    title: "Acorda todo por mensajes",
-    copy: "Dejá precio, estado, entrega y condiciones claros antes de cerrar una operación."
+    icon: Camera,
+    title: "Pide fotos cuando haga falta",
+    copy: "Las fotos reales son opcionales, pero para cartas caras, selladas o sensibles conviene pedir imagenes claras antes de cerrar."
+  },
+  {
+    icon: MessageCircle,
+    title: "Deja acuerdos por mensaje",
+    copy: "Coordina precio, estado, zona, entrega, envio y condiciones dentro de la conversacion para mantener un registro."
   },
   {
     icon: CheckCircle2,
-    title: "Revisá reputación",
-    copy: "Antes de comprar o intercambiar, mirá el perfil, historial y valoraciones del usuario."
+    title: "Revisa reputacion",
+    copy: "Mira perfil, valoraciones, historial y comportamiento antes de comprar, vender, intercambiar o entregar productos."
+  },
+  {
+    icon: Handshake,
+    title: "Confirma antes de cerrar",
+    copy: "Marca una operacion como vendida, intercambiada o finalizada solo cuando realmente haya sido concretada."
+  },
+  {
+    icon: AlertTriangle,
+    title: "Reporta riesgos",
+    copy: "Si ves datos falsos, presion sospechosa, fotos enganadoras o intentos de estafa, reporta la publicacion."
   }
+];
+
+const redFlags = [
+  "Precio demasiado bajo sin explicacion clara.",
+  "Presion para salir de la plataforma de inmediato.",
+  "Negativa a mostrar fotos reales cuando el producto lo amerita.",
+  "Cambios de precio o condiciones despues de acordar.",
+  "Perfiles nuevos con comportamiento insistente o datos inconsistentes."
 ];
 
 export default function SafetyPage() {
@@ -37,17 +67,17 @@ export default function SafetyPage() {
             Centro de confianza
           </p>
           <h1 className="mt-3 max-w-3xl text-4xl font-black leading-tight sm:text-6xl">
-            Seguridad para operar con cartas Pokémon TCG
+            Seguridad para operar con cartas Pokemon TCG
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-blue-100">
-            PokeTrade HUB ayuda a ordenar publicaciones, perfiles y reputación. Aun así,
-            cada operación entre usuarios requiere criterio, confirmación y cuidado.
+            PokeTrade HUB ordena publicaciones, mensajes, reputacion y reportes. Aun asi,
+            cada acuerdo entre usuarios requiere criterio, confirmacion y cuidado.
           </p>
         </div>
       </section>
 
       <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {safeSteps.map((item) => (
             <article className="rounded-lg border border-white/10 bg-white/[0.06] p-6" key={item.title}>
               <div className="grid h-11 w-11 place-items-center rounded-full bg-yellow-400 text-blue-950">
@@ -59,36 +89,40 @@ export default function SafetyPage() {
           ))}
         </div>
 
-        <div className="mt-8 rounded-lg border border-red-300/40 bg-red-500/12 p-6">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="mt-1 h-5 w-5 shrink-0 text-yellow-300" />
-            <div>
-              <h2 className="text-xl font-black">Evitá operaciones sospechosas</h2>
-              <p className="mt-3 leading-7 text-blue-100">
-                Desconfiá de precios demasiado bajos, presión para salir de la plataforma,
-                pedidos de pago sin comprobante o usuarios que no quieran mostrar fotos reales
-                cuando el caso lo amerita.
-              </p>
+        <div className="mt-8 grid gap-5 lg:grid-cols-[1fr_0.9fr]">
+          <div className="rounded-lg border border-red-300/40 bg-red-500/12 p-6">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="mt-1 h-5 w-5 shrink-0 text-yellow-300" />
+              <div>
+                <h2 className="text-xl font-black">Senales de alerta</h2>
+                <ul className="mt-4 space-y-3 text-sm font-semibold leading-6 text-blue-100">
+                  {redFlags.map((flag) => (
+                    <li className="flex gap-2" key={flag}>
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-yellow-300" />
+                      {flag}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="mt-5 rounded-lg border border-yellow-300/40 bg-yellow-400/10 p-6">
-          <h2 className="text-xl font-black">Control del usuario y moderacion</h2>
-          <p className="mt-3 leading-7 text-blue-100">
-            Puedes eliminar tus publicaciones cuando ya no esten disponibles. Si un reporte
-            muestra informacion falsa, fotos engañosas o actividad sospechosa, el equipo puede
-            intervenir y retirar el contenido para proteger la confianza del marketplace.
-          </p>
-        </div>
-
-        <div className="mt-10 flex flex-wrap gap-3">
-          <ButtonLink href="/rules" variant="light">
-            Ver reglas
-          </ButtonLink>
-          <ButtonLink href="/marketplace" variant="blue">
-            Explorar marketplace
-          </ButtonLink>
+          <div className="rounded-lg border border-yellow-300/40 bg-yellow-400/10 p-6">
+            <h2 className="text-xl font-black">Moderacion y control</h2>
+            <p className="mt-3 leading-7 text-blue-100">
+              Puedes eliminar tus publicaciones cuando ya no esten disponibles. Si un reporte
+              muestra informacion falsa, fotos enganadoras o actividad sospechosa, el equipo puede
+              intervenir para proteger la confianza del marketplace.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <ButtonLink href="/rules" variant="light">
+                Ver reglas
+              </ButtonLink>
+              <ButtonLink href="/marketplace" variant="blue">
+                Explorar marketplace
+              </ButtonLink>
+            </div>
+          </div>
         </div>
       </section>
     </main>
