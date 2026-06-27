@@ -816,10 +816,15 @@ export function PublishForm() {
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-sm font-black text-white">
-              Fotos reales del producto <span className="text-slate-400">(opcional)</span>
+              Fotos reales del producto{" "}
+              <span className="text-slate-400">
+                {isCardProduct ? "(opcional)" : "(obligatorio)"}
+              </span>
             </p>
             <p className="mt-1 text-xs leading-5 text-slate-400">
-              Puedes subir hasta 5 fotos. Si no agregas ninguna, se usará la imagen oficial.
+              {isCardProduct
+                ? "Puedes subir hasta 5 fotos. Si no agregas ninguna, se usará la imagen oficial."
+                : "Sube al menos una foto clara. La primera será la imagen principal del producto."}
             </p>
           </div>
           <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-pokemonYellow/50 bg-pokemonYellow/10 px-4 py-2 text-sm font-black text-pokemonYellow transition hover:bg-pokemonYellow/20">
@@ -872,7 +877,9 @@ export function PublishForm() {
           <div className="mt-4 grid min-h-36 place-items-center rounded-lg border-2 border-dashed border-white/10 text-center text-sm text-slate-500">
             <div>
               <Camera className="mx-auto mb-2 h-7 w-7 text-pokemonYellow" />
-              Puedes continuar sin fotos reales.
+              {isCardProduct
+                ? "Puedes continuar sin fotos reales."
+                : "Este producto necesita al menos una foto real."}
             </div>
           </div>
         )}
@@ -880,7 +887,11 @@ export function PublishForm() {
       <div className="mt-5 grid gap-3 sm:grid-cols-3">
         <div className="rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
           <Camera className="mb-3 h-5 w-5 text-pokemonYellow" />
-          {photos.length > 0 ? `${photos.length} foto(s) lista(s)` : "Fotos reales opcionales"}
+          {photos.length > 0
+            ? `${photos.length} foto(s) lista(s)`
+            : isCardProduct
+              ? "Fotos reales opcionales"
+              : "Foto real obligatoria"}
         </div>
         <div className="rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
           <MapPin className="mb-3 h-5 w-5 text-pokemonYellow" />
@@ -910,7 +921,9 @@ export function PublishForm() {
       ) : null}
       {!isReadyToSubmit ? (
         <p className="mt-4 text-center text-sm font-semibold text-slate-400">
-          Primero selecciona una carta oficial para habilitar el envío.
+          {isCardProduct
+            ? "Primero selecciona una carta oficial para habilitar el envío."
+            : "Completa el nombre, tipo y una foto real para habilitar el envío."}
         </p>
       ) : null}
       <button
