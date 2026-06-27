@@ -13,6 +13,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ListingCard } from "@/components/listing-card";
+import { firstRelated, productImage, productMeta, productTitle } from "@/lib/product-display";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { Listing } from "@/lib/types";
 
@@ -27,6 +28,11 @@ type ListingRow = {
   location_country: string | null;
   price: number | null;
   products: Related<{
+    accessory_type: string | null;
+    category: string | null;
+    condition: string | null;
+    sealed_type: string | null;
+    title: string | null;
     cards: Related<{
       image_large: string;
       number: string | null;
@@ -36,6 +42,7 @@ type ListingRow = {
     }>;
   }>;
   trade_wants: string | null;
+  title: string;
   type: string;
 };
 
@@ -46,10 +53,6 @@ type RatingRow = {
   profiles: Related<{ display_name: string }>;
   stars: number;
 };
-
-function firstRelated<T>(value: Related<T>) {
-  return Array.isArray(value) ? value[0] ?? null : value;
-}
 
 function typeLabel(type: string) {
   return { free: "Gratis", sale: "Venta", trade: "Intercambio" }[type] ?? type;
@@ -162,7 +165,7 @@ export default async function PublicProfilePage({
       supabase
         .from("listings")
         .select(
-          "id, description, type, price, trade_wants, location_city, location_country, products!listings_product_id_fkey(cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number))"
+          "id, title, description, type, price, trade_wants, location_city, location_country, products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number))"
         )
         .eq("seller_id", id)
         .eq("moderation_status", "approved")
@@ -192,18 +195,17 @@ export default async function PublicProfilePage({
 
   const listings: Listing[] = ((listingData ?? []) as ListingRow[]).flatMap((row) => {
     const product = firstRelated(row.products);
-    const card = firstRelated(product?.cards ?? null);
 
-    if (!card) return [];
+    if (!product) return [];
 
     return [
       {
-        cardMeta: `${card.set_name} | ${card.rarity ?? "Rareza no informada"} | #${card.number ?? "N/D"}`,
+        cardMeta: productMeta(product),
         description:
           row.description ??
           (row.type === "trade" ? `Busca: ${row.trade_wants ?? "propuestas"}` : ""),
         id: row.id,
-        image: card.image_large,
+        image: productImage(product),
         location:
           [row.location_city, row.location_country].filter(Boolean).join(", ") ||
           "Ubicación no informada",
@@ -212,7 +214,7 @@ export default async function PublicProfilePage({
         sellerId: profile.id,
         sellerRating: Number(profile.reputation_average).toFixed(1),
         status: "Activa",
-        title: card.official_name,
+        title: productTitle(product, row.title),
         type: typeLabel(row.type),
         verified: profile.is_verified
       }

@@ -22,6 +22,15 @@ import { FavoriteButton } from "@/components/favorite-button";
 import { ReportListingForm } from "@/components/report-listing-form";
 import { ShareListingButton } from "@/components/share-listing-button";
 import { StartConversationButton } from "@/components/start-conversation-button";
+import {
+  firstRelated,
+  isCardProduct,
+  productCategoryLabel,
+  productImage,
+  productMeta,
+  productTypeDetail,
+  productTitle
+} from "@/lib/product-display";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -56,7 +65,11 @@ type ListingDetailRow = {
     whatsapp: string | null;
   }>;
   products: Related<{
+    accessory_type: string | null;
+    category: string | null;
     condition: string;
+    sealed_type: string | null;
+    title: string | null;
     cards: Related<{
       image_large: string;
       number: string | null;
@@ -81,10 +94,6 @@ type RatingRow = {
   }>;
   stars: number;
 };
-
-function firstRelated<T>(value: Related<T>) {
-  return Array.isArray(value) ? value[0] ?? null : value;
-}
 
 function typeLabel(type: string) {
   return {
@@ -148,7 +157,7 @@ async function getListing(id: string) {
   const { data } = await supabase
     .from("listings")
     .select(
-      "id, seller_id, completed_with_id, title, description, type, status, price, trade_wants, location_city, location_country, approved_at, created_at, listing_images(storage_path, alt_text, sort_order), profiles!listings_seller_id_fkey(id, display_name, city, country, is_verified, joined_at, reputation_average, reputation_count, whatsapp, instagram), products!listings_product_id_fkey(condition, cards!products_card_id_fkey(pokemon_tcg_id, official_name, image_large, set_name, rarity, number))"
+      "id, seller_id, completed_with_id, title, description, type, status, price, trade_wants, location_city, location_country, approved_at, created_at, listing_images(storage_path, alt_text, sort_order), profiles!listings_seller_id_fkey(id, display_name, city, country, is_verified, joined_at, reputation_average, reputation_count, whatsapp, instagram), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(pokemon_tcg_id, official_name, image_large, set_name, rarity, number))"
     )
     .eq("id", id)
     .eq("moderation_status", "approved")
@@ -165,9 +174,8 @@ export async function generateMetadata({
   const { id } = await params;
   const listing = await getListing(id);
   const product = firstRelated(listing?.products ?? null);
-  const card = firstRelated(product?.cards ?? null);
 
-  if (!listing || !card) {
+  if (!listing || !product) {
     return {
       robots: { follow: false, index: false },
       title: "Publicación no encontrada"
@@ -175,10 +183,12 @@ export async function generateMetadata({
   }
 
   const seller = firstRelated(listing.profiles);
-  const title = `${card.official_name} ${priceLabel(listing)} - ${typeLabel(listing.type)}`;
+  const displayTitle = productTitle(product, listing.title);
+  const displayImage = productImage(product);
+  const title = `${displayTitle} ${priceLabel(listing)} - ${typeLabel(listing.type)}`;
   const description =
     listing.description?.slice(0, 150) ||
-    `${card.official_name} de ${card.set_name}, ${card.rarity ?? "rareza no informada"}, publicado por ${seller?.display_name ?? "Entrenador TCG"} en ${listingLocation(listing)}.`;
+    `${displayTitle}, publicado por ${seller?.display_name ?? "Entrenador TCG"} en ${listingLocation(listing)}.`;
   const canonical = `/listings/${listing.id}`;
 
   return {
@@ -188,8 +198,8 @@ export async function generateMetadata({
       description,
       images: [
         {
-          alt: `${card.official_name} en PokeTrade HUB`,
-          url: card.image_large
+          alt: `${displayTitle} en PokeTrade HUB`,
+          url: displayImage
         }
       ],
       title,
@@ -200,7 +210,7 @@ export async function generateMetadata({
     twitter: {
       card: "summary_large_image",
       description,
-      images: [card.image_large],
+      images: [displayImage],
       title
     }
   };
@@ -220,8 +230,12 @@ export default async function ListingDetailPage({
   const card = firstRelated(product?.cards ?? null);
   const seller = firstRelated(listing.profiles);
 
-  if (!product || !card || !seller) notFound();
+  if (!product || !seller) notFound();
 
+  const displayTitle = productTitle(product, listing.title);
+  const displayImage = productImage(product);
+  const displayMeta = productMeta(product);
+  const cardProduct = isCardProduct(product);
   const location = listingLocation(listing);
   const publishedAt = new Intl.DateTimeFormat("es-AR", {
     dateStyle: "long"
@@ -301,7 +315,7 @@ export default async function ListingDetailPage({
   const realPhotos = [...(listing.listing_images ?? [])]
     .sort((a, b) => a.sort_order - b.sort_order)
     .map((image, index) => ({
-      alt: image.alt_text ?? `Foto real ${index + 1} de ${card.official_name}`,
+      alt: image.alt_text ?? `Foto real ${index + 1} de ${displayTitle}`,
       src: supabase.storage.from("listing-images").getPublicUrl(image.storage_path).data
         .publicUrl,
       type: "real" as const
@@ -309,8 +323,8 @@ export default async function ListingDetailPage({
   const galleryImages = [
     ...realPhotos,
     {
-      alt: `Imagen oficial de ${card.official_name}`,
-      src: card.image_large,
+      alt: cardProduct ? `Imagen oficial de ${displayTitle}` : `Imagen de referencia de ${displayTitle}`,
+      src: displayImage,
       type: "official" as const
     }
   ];
@@ -351,12 +365,12 @@ export default async function ListingDetailPage({
       "@type": "Brand",
       name: "Pokemon TCG"
     },
-    category: "Trading Card",
+    category: productCategoryLabel(product.category),
     description:
       listing.description ||
-      `${card.official_name} de ${card.set_name}, ${card.rarity ?? "rareza no informada"}.`,
+      displayMeta,
     image: galleryImages.map((image) => image.src),
-    name: card.official_name,
+    name: displayTitle,
     offers:
       listing.type === "sale"
         ? {
@@ -373,7 +387,7 @@ export default async function ListingDetailPage({
             url: listingUrl
           }
         : undefined,
-    sku: card.pokemon_tcg_id,
+    sku: card?.pokemon_tcg_id,
     url: listingUrl
   };
 
@@ -405,8 +419,8 @@ export default async function ListingDetailPage({
       <section className="border-b border-white/10 bg-[linear-gradient(135deg,#123cba,#071535)]">
         <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
           <p className="text-sm font-semibold text-blue-100">
-            Marketplace / {card.set_name} /{" "}
-            <span className="text-yellow-300">{card.official_name}</span>
+            Marketplace / {productCategoryLabel(product.category)} /{" "}
+            <span className="text-yellow-300">{displayTitle}</span>
           </p>
         </div>
       </section>
@@ -429,9 +443,18 @@ export default async function ListingDetailPage({
           </div>
 
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
-            <InfoItem label="Set" value={card.set_name} />
-            <InfoItem label="Rareza" value={card.rarity ?? "No informada"} />
-            <InfoItem label="Número" value={card.number ?? "No informado"} />
+            <InfoItem
+              label={cardProduct ? "Set" : "Categoria"}
+              value={card?.set_name ?? productCategoryLabel(product.category)}
+            />
+            <InfoItem
+              label={cardProduct ? "Rareza" : "Tipo"}
+              value={card?.rarity ?? productTypeDetail(product)}
+            />
+            <InfoItem
+              label={cardProduct ? "Numero" : "Estado"}
+              value={card?.number ?? product.condition}
+            />
           </div>
           <RiskChecklist signals={riskSignals} />
         </section>
@@ -448,10 +471,10 @@ export default async function ListingDetailPage({
             </div>
 
             <h1 className="mt-5 text-3xl font-black leading-tight text-blue-950 sm:text-4xl">
-              {card.official_name}
+              {displayTitle}
             </h1>
             <p className="mt-2 font-semibold text-slate-500">
-              ID oficial: {card.pokemon_tcg_id}
+              {cardProduct ? `ID oficial: ${card?.pokemon_tcg_id}` : displayMeta}
             </p>
             <p className="mt-6 text-3xl font-black text-red-500">{priceLabel(listing)}</p>
 
@@ -547,13 +570,13 @@ export default async function ListingDetailPage({
               isAuthenticated={Boolean(user)}
               listingId={listing.id}
             />
-            <ShareListingButton title={`${card.official_name} en PokeTrade HUB`} />
+            <ShareListingButton title={`${displayTitle} en PokeTrade HUB`} />
             {canDeleteListing ? (
               <div className="mt-3">
                 <DeleteListingButton
                   listingId={listing.id}
                   redirectTo="/marketplace"
-                  title={card.official_name}
+                  title={displayTitle}
                 />
               </div>
             ) : null}

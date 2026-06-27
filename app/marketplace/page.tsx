@@ -4,6 +4,7 @@ import { ListingCard } from "@/components/listing-card";
 import { MarketplaceFilters } from "@/components/marketplace-filters";
 import { SiteMenu } from "@/components/site-menu";
 import { ButtonLink } from "@/components/ui/button-link";
+import { firstRelated, productImage, productMeta, productTitle } from "@/lib/product-display";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { Listing } from "@/lib/types";
 
@@ -69,7 +70,11 @@ type ListingRow = {
     reputation_average: number;
   }>;
   products: Related<{
+    accessory_type: string | null;
+    category: string | null;
     condition: string;
+    sealed_type: string | null;
+    title: string | null;
     cards: Related<{
       image_large: string;
       number: string | null;
@@ -79,13 +84,10 @@ type ListingRow = {
     }>;
   }>;
   status: string;
+  title: string;
   trade_wants: string | null;
   type: string;
 };
-
-function firstRelated<T>(value: Related<T>) {
-  return Array.isArray(value) ? value[0] ?? null : value;
-}
 
 function typeLabel(type: string) {
   return {
@@ -133,18 +135,15 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
     let request = supabase
       .from("listings")
       .select(
-        "id, description, type, status, price, trade_wants, location_city, location_country, profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!inner(condition, cards!inner(official_name, image_large, set_name, rarity, number))"
+        "id, title, description, type, status, price, trade_wants, location_city, location_country, profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number))"
       )
       .eq("moderation_status", "approved")
       .eq("status", "active")
       .order("approved_at", { ascending: false })
-      .limit(48);
+      .limit(96);
 
-    if (query) request = request.ilike("products.cards.official_name", `%${query}%`);
     if (type) request = request.eq("type", type);
     if (condition) request = request.eq("products.condition", condition);
-    if (set) request = request.ilike("products.cards.set_name", `%${set}%`);
-    if (rarity) request = request.eq("products.cards.rarity", rarity);
     if (hasMinPrice) request = request.gte("price", minPrice);
     if (hasMaxPrice) request = request.lte("price", maxPrice);
     if (location) {
@@ -155,6 +154,25 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
 
     const result = await request;
     rows = (result.data ?? []) as ListingRow[];
+  }
+
+  if (query || set || rarity) {
+    const normalizedQuery = query.toLowerCase();
+    const normalizedSet = set.toLowerCase();
+
+    rows = rows.filter((row) => {
+      const product = firstRelated(row.products);
+      const card = firstRelated(product?.cards ?? null);
+      const matchesQuery =
+        !normalizedQuery ||
+        [row.title, product?.title, card?.official_name, product?.sealed_type, product?.accessory_type]
+          .filter(Boolean)
+          .some((value) => value!.toLowerCase().includes(normalizedQuery));
+      const matchesSet = !normalizedSet || card?.set_name.toLowerCase().includes(normalizedSet);
+      const matchesRarity = !rarity || card?.rarity === rarity;
+
+      return matchesQuery && matchesSet && matchesRarity;
+    });
   }
 
   rows = rows.sort((left, right) => {
@@ -186,18 +204,17 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
 
   const listings: Listing[] = rows.flatMap((row) => {
     const product = firstRelated(row.products);
-    const card = firstRelated(product?.cards ?? null);
     const profile = firstRelated(row.profiles);
 
-    if (!card) return [];
+    if (!product) return [];
 
     return [{
-      cardMeta: `${card.set_name} | ${card.rarity ?? "Rareza no informada"} | #${card.number ?? "N/D"}`,
+      cardMeta: productMeta(product),
       description:
         row.description ??
         (row.type === "trade" ? `Busca: ${row.trade_wants ?? "propuestas"}` : ""),
       id: row.id,
-      image: card.image_large,
+      image: productImage(product),
       location:
         [row.location_city, row.location_country].filter(Boolean).join(", ") ||
         "Ubicación no informada",
@@ -206,7 +223,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
       sellerId: profile?.id,
       sellerRating: Number(profile?.reputation_average ?? 0).toFixed(1),
       status: "Activa",
-      title: card.official_name,
+      title: productTitle(product, row.title),
       type: typeLabel(row.type),
       verified: profile?.is_verified ?? false
     }];

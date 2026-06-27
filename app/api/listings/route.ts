@@ -6,7 +6,8 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const listingSchema = z
   .object({
-    cardId: z.string().min(1).max(120),
+    accessoryType: z.string().trim().max(80).nullable().optional(),
+    cardId: z.string().min(1).max(120).nullable().optional(),
     condition: z.enum([
       "Mint",
       "Near Mint",
@@ -19,10 +20,45 @@ const listingSchema = z
     locationCity: z.string().trim().min(2).max(100),
     locationCountry: z.string().trim().min(2).max(100),
     price: z.number().positive().max(999999999).nullable(),
+    productCategory: z.enum(["card", "sealed", "accessory"]).default("card"),
+    productTitle: z.string().trim().max(140).nullable().optional(),
+    sealedType: z.string().trim().max(80).nullable().optional(),
     tradeWants: z.string().trim().max(1000).nullable(),
     type: z.enum(["sale", "trade", "free"])
   })
   .superRefine((value, context) => {
+    if (value.productCategory === "card" && !value.cardId) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Selecciona una carta oficial antes de publicar.",
+        path: ["cardId"]
+      });
+    }
+
+    if (value.productCategory !== "card" && !value.productTitle) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Indica el nombre del producto.",
+        path: ["productTitle"]
+      });
+    }
+
+    if (value.productCategory === "sealed" && !value.sealedType) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Selecciona el tipo de producto sellado.",
+        path: ["sealedType"]
+      });
+    }
+
+    if (value.productCategory === "accessory" && !value.accessoryType) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Selecciona el tipo de accesorio.",
+        path: ["accessoryType"]
+      });
+    }
+
     if (value.type === "sale" && value.price === null) {
       context.addIssue({
         code: z.ZodIssueCode.custom,
@@ -71,50 +107,58 @@ export async function POST(request: Request) {
   }
 
   try {
-    const officialCard = await getCardById(parsed.data.cardId);
-    const { data: existingCard } = await supabase
-      .from("cards")
-      .select("id")
-      .eq("pokemon_tcg_id", officialCard.id)
-      .maybeSingle();
+    let databaseCardId: string | null = null;
+    let productTitle = parsed.data.productTitle ?? "";
+    let listingTitle = parsed.data.productTitle ?? "";
 
-    let databaseCardId = existingCard?.id;
-
-    if (!databaseCardId) {
-      const { data: insertedCard, error: cardError } = await supabase
+    if (parsed.data.productCategory === "card") {
+      const officialCard = await getCardById(parsed.data.cardId!);
+      const { data: existingCard } = await supabase
         .from("cards")
-        .insert({
-          image_large: officialCard.images.large,
-          image_small: officialCard.images.small,
-          number: officialCard.number ?? null,
-          official_name: officialCard.name,
-          official_payload: officialCard,
-          pokemon_tcg_id: officialCard.id,
-          rarity: officialCard.rarity ?? null,
-          set_id: officialCard.set.id,
-          set_name: officialCard.set.name
-        })
         .select("id")
-        .single();
+        .eq("pokemon_tcg_id", officialCard.id)
+        .maybeSingle();
 
-      if (cardError) {
-        if (cardError.code !== "23505") {
-          throw cardError;
-        }
+      databaseCardId = existingCard?.id ?? null;
+      productTitle = officialCard.name;
+      listingTitle = `${officialCard.name} - ${officialCard.set.name}`;
 
-        const { data: concurrentCard, error: concurrentCardError } = await supabase
+      if (!databaseCardId) {
+        const { data: insertedCard, error: cardError } = await supabase
           .from("cards")
+          .insert({
+            image_large: officialCard.images.large,
+            image_small: officialCard.images.small,
+            number: officialCard.number ?? null,
+            official_name: officialCard.name,
+            official_payload: officialCard,
+            pokemon_tcg_id: officialCard.id,
+            rarity: officialCard.rarity ?? null,
+            set_id: officialCard.set.id,
+            set_name: officialCard.set.name
+          })
           .select("id")
-          .eq("pokemon_tcg_id", officialCard.id)
           .single();
 
-        if (concurrentCardError) {
-          throw concurrentCardError;
-        }
+        if (cardError) {
+          if (cardError.code !== "23505") {
+            throw cardError;
+          }
 
-        databaseCardId = concurrentCard.id;
-      } else {
-        databaseCardId = insertedCard.id;
+          const { data: concurrentCard, error: concurrentCardError } = await supabase
+            .from("cards")
+            .select("id")
+            .eq("pokemon_tcg_id", officialCard.id)
+            .single();
+
+          if (concurrentCardError) {
+            throw concurrentCardError;
+          }
+
+          databaseCardId = concurrentCard.id;
+        } else {
+          databaseCardId = insertedCard.id;
+        }
       }
     }
 
@@ -122,11 +166,14 @@ export async function POST(request: Request) {
       .from("products")
       .insert({
         card_id: databaseCardId,
-        category: "card",
+        category: parsed.data.productCategory,
         condition: parsed.data.condition,
         description: parsed.data.description,
+        accessory_type:
+          parsed.data.productCategory === "accessory" ? parsed.data.accessoryType : null,
         owner_id: user.id,
-        title: officialCard.name
+        sealed_type: parsed.data.productCategory === "sealed" ? parsed.data.sealedType : null,
+        title: productTitle
       })
       .select("id")
       .single();
@@ -146,7 +193,7 @@ export async function POST(request: Request) {
         product_id: product.id,
         seller_id: user.id,
         status: "pending",
-        title: `${officialCard.name} - ${officialCard.set.name}`,
+        title: listingTitle,
         trade_wants: parsed.data.type === "trade" ? parsed.data.tradeWants : null,
         type: parsed.data.type
       })

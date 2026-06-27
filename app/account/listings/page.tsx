@@ -19,6 +19,7 @@ import { ListingStatusControl } from "@/components/listing-status-control";
 import { ShareListingButton } from "@/components/share-listing-button";
 import { SiteMenu } from "@/components/site-menu";
 import { ButtonLink } from "@/components/ui/button-link";
+import { firstRelated, productImage, productMeta, productTitle } from "@/lib/product-display";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -39,7 +40,11 @@ type ListingRow = {
   title: string;
   type: string;
   products: Related<{
+    accessory_type: string | null;
+    category: string | null;
     condition: string;
+    sealed_type: string | null;
+    title: string | null;
     cards: Related<{
       image_large: string;
       official_name: string;
@@ -53,10 +58,6 @@ type MessageRow = {
   recipient_id: string;
   sender_id: string;
 };
-
-function firstRelated<T>(value: Related<T>) {
-  return Array.isArray(value) ? value[0] ?? null : value;
-}
 
 function moderationMeta(status: string) {
   if (status === "approved") {
@@ -171,7 +172,7 @@ export default async function MyListingsPage({
   const { data } = await supabase
     .from("listings")
     .select(
-      "id, title, type, status, moderation_status, rejection_reason, price, created_at, products!listings_product_id_fkey(condition, cards!products_card_id_fkey(official_name, image_large, set_name))"
+      "id, title, type, status, moderation_status, rejection_reason, price, created_at, products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name))"
     )
     .eq("seller_id", user.id)
     .order("created_at", { ascending: false });
@@ -303,7 +304,9 @@ export default async function MyListingsPage({
           <div className="space-y-4">
             {listings.map((listing) => {
               const product = firstRelated(listing.products);
-              const card = firstRelated(product?.cards ?? null);
+              const displayTitle = productTitle(product, listing.title);
+              const displayImage = productImage(product);
+              const displayMeta = productMeta(product);
               const status = moderationMeta(listing.moderation_status);
               const StatusIcon = status.icon;
               const saleCommission = commissionLabel(listing.price);
@@ -314,13 +317,13 @@ export default async function MyListingsPage({
                   key={listing.id}
                 >
                   <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-blue-50">
-                    {card?.image_large ? (
+                    {displayImage ? (
                       <Image
-                        alt={card.official_name}
+                        alt={displayTitle}
                         className="object-contain p-2"
                         fill
                         sizes="120px"
-                        src={card.image_large}
+                        src={displayImage}
                       />
                     ) : (
                       <Store className="absolute inset-0 m-auto h-8 w-8 text-blue-300" />
@@ -345,10 +348,10 @@ export default async function MyListingsPage({
                       ) : null}
                     </div>
                     <h2 className="mt-3 truncate text-xl font-black text-blue-950">
-                      {card?.official_name ?? listing.title}
+                      {displayTitle}
                     </h2>
                     <p className="mt-1 text-sm text-slate-500">
-                      {[card?.set_name, product?.condition].filter(Boolean).join(" | ")}
+                      {displayMeta}
                     </p>
                     <p className="mt-2 font-black text-red-500">{priceLabel(listing)}</p>
                     <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
@@ -391,7 +394,7 @@ export default async function MyListingsPage({
                       <div className="w-full sm:max-w-52">
                         <ShareListingButton
                           className="mt-0 px-4 py-2 text-sm"
-                          title={card?.official_name ?? listing.title}
+                          title={displayTitle}
                           url={`/listings/${listing.id}`}
                         />
                       </div>
@@ -413,7 +416,7 @@ export default async function MyListingsPage({
                     ) : null}
                     <DeleteListingButton
                       listingId={listing.id}
-                      title={card?.official_name ?? listing.title}
+                      title={displayTitle}
                     />
                   </div>
                 </article>

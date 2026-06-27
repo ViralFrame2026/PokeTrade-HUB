@@ -6,8 +6,10 @@ import {
   Camera,
   CheckCircle2,
   ImageOff,
+  Layers,
   Loader2,
   MapPin,
+  Package,
   Search,
   ShieldCheck,
   Store,
@@ -35,20 +37,79 @@ const DESCRIPTION_MAX_LENGTH = 2000;
 const TRADE_WANTS_MAX_LENGTH = 1000;
 const PUBLISH_DRAFT_KEY = "poketrade-publish-draft";
 
+type ProductCategory = "card" | "sealed" | "accessory";
+
+const productCategories = [
+  {
+    description: "Carta individual validada con Pokemon TCG API.",
+    icon: Search,
+    label: "Carta individual",
+    value: "card"
+  },
+  {
+    description: "ETB, booster box, sobres, tins, blisters o productos cerrados.",
+    icon: Package,
+    label: "Producto sellado",
+    value: "sealed"
+  },
+  {
+    description: "Binders, sleeves, deck boxes, playmats y otros accesorios.",
+    icon: Layers,
+    label: "Accesorio TCG",
+    value: "accessory"
+  }
+] satisfies Array<{
+  description: string;
+  icon: typeof Search;
+  label: string;
+  value: ProductCategory;
+}>;
+
+const sealedTypes = [
+  "Elite Trainer Box",
+  "Booster Box",
+  "Booster Pack",
+  "Blister",
+  "Tin",
+  "Collection Box",
+  "Build & Battle",
+  "Lote sellado",
+  "Otro producto sellado"
+];
+
+const accessoryTypes = [
+  "Binder",
+  "Sleeves",
+  "Deck Box",
+  "Playmat",
+  "Toploader / proteccion",
+  "Album",
+  "Lote de accesorios",
+  "Otro accesorio"
+];
+
 type PublishDraft = {
+  accessoryType: string;
   condition: string;
   description: string;
   listingType: "sale" | "trade" | "free";
   locationCity: string;
   locationCountry: string;
   price: string;
+  productCategory: ProductCategory;
+  productTitle: string;
   query: string;
   selectedCard: PokemonTcgCard | null;
+  sealedType: string;
   tradeWants: string;
 };
 
 export function PublishForm() {
   const [query, setQuery] = useState("");
+  const [productCategory, setProductCategory] = useState<ProductCategory>("card");
+  const [productTitle, setProductTitle] = useState("");
+  const [sealedType, setSealedType] = useState(sealedTypes[0]);
+  const [accessoryType, setAccessoryType] = useState(accessoryTypes[0]);
   const [cards, setCards] = useState<PokemonTcgCard[]>([]);
   const [selectedCard, setSelectedCard] = useState<PokemonTcgCard | null>(null);
   const [listingType, setListingType] = useState<"sale" | "trade" | "free">("sale");
@@ -69,6 +130,11 @@ export function PublishForm() {
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
   const descriptionRemaining = DESCRIPTION_MAX_LENGTH - description.length;
   const tradeWantsRemaining = TRADE_WANTS_MAX_LENGTH - tradeWants.length;
+  const isCardProduct = productCategory === "card";
+  const isReadyToSubmit =
+    (isCardProduct && selectedCard) ||
+    (productCategory === "sealed" && productTitle.trim().length >= 3 && sealedType) ||
+    (productCategory === "accessory" && productTitle.trim().length >= 3 && accessoryType);
 
   useEffect(() => {
     const previews = photos.map((photo) => URL.createObjectURL(photo));
@@ -85,6 +151,10 @@ export function PublishForm() {
       if (!storedDraft) return;
 
       const draft = JSON.parse(storedDraft) as Partial<PublishDraft>;
+      setProductCategory(draft.productCategory ?? "card");
+      setProductTitle(draft.productTitle ?? "");
+      setSealedType(draft.sealedType ?? sealedTypes[0]);
+      setAccessoryType(draft.accessoryType ?? accessoryTypes[0]);
       setQuery(draft.query ?? "");
       setSelectedCard(draft.selectedCard ?? null);
       setListingType(draft.listingType ?? "sale");
@@ -97,6 +167,7 @@ export function PublishForm() {
 
       if (
         draft.selectedCard ||
+        draft.productTitle ||
         draft.description ||
         draft.price ||
         draft.tradeWants ||
@@ -116,19 +187,24 @@ export function PublishForm() {
     if (!isDraftReady) return;
 
     const draft: PublishDraft = {
+      accessoryType,
       condition,
       description,
       listingType,
       locationCity,
       locationCountry,
       price,
+      productCategory,
+      productTitle,
       query,
       selectedCard,
+      sealedType,
       tradeWants
     };
 
     window.localStorage.setItem(PUBLISH_DRAFT_KEY, JSON.stringify(draft));
   }, [
+    accessoryType,
     condition,
     description,
     isDraftReady,
@@ -136,8 +212,11 @@ export function PublishForm() {
     locationCity,
     locationCountry,
     price,
+    productCategory,
+    productTitle,
     query,
     selectedCard,
+    sealedType,
     tradeWants
   ]);
 
@@ -149,6 +228,7 @@ export function PublishForm() {
   function resetForm() {
     setCards([]);
     setSelectedCard(null);
+    setProductTitle("");
     setQuery("");
     setDescription("");
     setPrice("");
@@ -182,6 +262,8 @@ export function PublishForm() {
   }
 
   async function handleSearch() {
+    if (!isCardProduct) return;
+
     const trimmedQuery = query.trim();
 
     if (trimmedQuery.length < 2) {
@@ -220,8 +302,13 @@ export function PublishForm() {
   }
 
   async function handleSubmit() {
-    if (!selectedCard) {
+    if (isCardProduct && !selectedCard) {
       setError("Selecciona una carta oficial antes de públicar.");
+      return;
+    }
+
+    if (!isCardProduct && productTitle.trim().length < 3) {
+      setError("Escribe el nombre del producto antes de públicar.");
       return;
     }
 
@@ -232,12 +319,16 @@ export function PublishForm() {
     try {
       const response = await fetch("/api/listings", {
         body: JSON.stringify({
-          cardId: selectedCard.id,
+          accessoryType: productCategory === "accessory" ? accessoryType : null,
+          cardId: selectedCard?.id ?? null,
           condition,
           description,
           locationCity,
           locationCountry,
           price: listingType === "sale" && price ? Number(price) : null,
+          productCategory,
+          productTitle: isCardProduct ? null : productTitle.trim(),
+          sealedType: productCategory === "sealed" ? sealedType : null,
           tradeWants: listingType === "trade" ? tradeWants : null,
           type: listingType
         }),
@@ -293,7 +384,9 @@ export function PublishForm() {
           uploadedPaths.push(storagePath);
 
           const { error: imageError } = await supabase.from("listing_images").insert({
-            alt_text: `Foto real ${index + 1} de ${selectedCard.name}`,
+            alt_text: `Foto real ${index + 1} de ${
+              selectedCard?.name ?? productTitle.trim()
+            }`,
             listing_id: listingId,
             sort_order: index,
             storage_path: storagePath
@@ -337,6 +430,102 @@ export function PublishForm() {
         handleSubmit();
       }}
     >
+      <section className="mb-5">
+        <p className="text-sm font-bold text-slate-200">Tipo de producto</p>
+        <div className="mt-3 grid gap-3 md:grid-cols-3">
+          {productCategories.map((category) => {
+            const Icon = category.icon;
+            const active = productCategory === category.value;
+
+            return (
+              <button
+                className={cn(
+                  "rounded-lg border p-4 text-left transition",
+                  active
+                    ? "border-pokemonYellow bg-pokemonYellow/10 text-white"
+                    : "border-white/10 bg-white/[0.04] text-slate-300 hover:border-pokemonYellow/50"
+                )}
+                key={category.value}
+                onClick={() => {
+                  setProductCategory(category.value);
+                  setError(null);
+                  if (category.value !== "card") {
+                    setCards([]);
+                    setSelectedCard(null);
+                  }
+                }}
+                type="button"
+              >
+                <Icon className="h-5 w-5 text-pokemonYellow" />
+                <span className="mt-3 block font-black">{category.label}</span>
+                <span className="mt-2 block text-xs leading-5 text-slate-400">
+                  {category.description}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      {!isCardProduct ? (
+        <section className="mb-5 grid gap-4 rounded-lg border border-white/10 bg-slate-950/45 p-4 sm:grid-cols-2">
+          <label className="text-sm font-bold text-slate-200 sm:col-span-2">
+            Nombre del producto
+            <input
+              className="mt-2 w-full rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3 text-white outline-none focus:border-pokemonYellow/60"
+              maxLength={140}
+              onChange={(event) => setProductTitle(event.target.value)}
+              placeholder={
+                productCategory === "sealed"
+                  ? "Ej: ETB Chaos Rising, Booster Box, Tin Charizard"
+                  : "Ej: Binder 9 bolsillos, sleeves, deck box"
+              }
+              required
+              value={productTitle}
+            />
+          </label>
+          {productCategory === "sealed" ? (
+            <label className="text-sm font-bold text-slate-200">
+              Tipo de sellado
+              <select
+                className="mt-2 w-full rounded-lg border border-white/10 bg-slate-950 px-3 py-3 text-white outline-none focus:border-pokemonYellow/60"
+                onChange={(event) => setSealedType(event.target.value)}
+                value={sealedType}
+              >
+                {sealedTypes.map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
+          {productCategory === "accessory" ? (
+            <label className="text-sm font-bold text-slate-200">
+              Tipo de accesorio
+              <select
+                className="mt-2 w-full rounded-lg border border-white/10 bg-slate-950 px-3 py-3 text-white outline-none focus:border-pokemonYellow/60"
+                onChange={(event) => setAccessoryType(event.target.value)}
+                value={accessoryType}
+              >
+                {accessoryTypes.map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
+          <div className="rounded-lg border border-dashed border-pokemonYellow/30 bg-pokemonYellow/5 p-4 text-sm leading-6 text-slate-300 sm:col-span-2">
+            <CheckCircle2 className="mb-2 h-5 w-5 text-pokemonYellow" />
+            Estos productos no necesitan carta oficial. El equipo los revisa por fotos,
+            descripcion, tipo de producto y coherencia del precio.
+          </div>
+        </section>
+      ) : null}
+
+      {isCardProduct ? (
+        <>
       <label className="text-sm font-bold text-slate-200" htmlFor="card-search">
         Carta oficial
       </label>
@@ -391,6 +580,8 @@ export function PublishForm() {
           </span>
         )}
       </div>
+        </>
+      ) : null}
 
       {error ? (
         <div className="mt-4 rounded-lg border border-red-400/30 bg-red-500/10 p-4 text-sm font-semibold text-red-100">
@@ -415,7 +606,7 @@ export function PublishForm() {
         </div>
       ) : null}
 
-      {cards.length > 0 ? (
+      {isCardProduct && cards.length > 0 ? (
         <div className="mt-4 grid max-h-[460px] gap-3 overflow-y-auto pr-1">
           {cards.map((card) => (
             <button
@@ -466,7 +657,7 @@ export function PublishForm() {
         </div>
       ) : null}
 
-      {selectedCard ? (
+      {isCardProduct && selectedCard ? (
         <section className="mt-6 rounded-lg border border-white/10 bg-slate-950/45 p-4">
           <p className="text-xs font-black uppercase tracking-[0.2em] text-pokemonYellow">
             Datos bloqueados desde Pokémon TCG API
@@ -706,14 +897,14 @@ export function PublishForm() {
           {success}
         </div>
       ) : null}
-      {!selectedCard ? (
+      {!isReadyToSubmit ? (
         <p className="mt-4 text-center text-sm font-semibold text-slate-400">
           Primero selecciona una carta oficial para habilitar el envío.
         </p>
       ) : null}
       <button
         className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-pokemonYellow px-5 py-3 font-black text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
-        disabled={!selectedCard || isSubmitting}
+        disabled={!isReadyToSubmit || isSubmitting}
         type="submit"
       >
         {isSubmitting ? (

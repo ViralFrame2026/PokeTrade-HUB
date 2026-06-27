@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ListingCard } from "@/components/listing-card";
 import { ButtonLink } from "@/components/ui/button-link";
+import { firstRelated, productImage, productMeta, productTitle } from "@/lib/product-display";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { Listing } from "@/lib/types";
 
@@ -22,6 +23,7 @@ type FavoriteRow = {
     location_country: string | null;
     price: number | null;
     status: string;
+    title: string;
     trade_wants: string | null;
     type: string;
     profiles: Related<{
@@ -31,6 +33,11 @@ type FavoriteRow = {
       reputation_average: number;
     }>;
     products: Related<{
+      accessory_type: string | null;
+      category: string | null;
+      condition: string | null;
+      sealed_type: string | null;
+      title: string | null;
       cards: Related<{
         image_large: string;
         number: string | null;
@@ -41,10 +48,6 @@ type FavoriteRow = {
     }>;
   }>;
 };
-
-function firstRelated<T>(value: Related<T>) {
-  return Array.isArray(value) ? value[0] ?? null : value;
-}
 
 function typeLabel(type: string) {
   return { free: "Gratis", sale: "Venta", trade: "Intercambio" }[type] ?? type;
@@ -72,7 +75,7 @@ export default async function FavoritesPage() {
   const { data } = await supabase
     .from("favorites")
     .select(
-      "listings!favorites_listing_id_fkey(id, description, type, status, price, trade_wants, location_city, location_country, profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!listings_product_id_fkey(cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number)))"
+      "listings!favorites_listing_id_fkey(id, title, description, type, status, price, trade_wants, location_city, location_country, profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number)))"
     )
     .eq("user_id", user.id)
     .not("listing_id", "is", null)
@@ -81,18 +84,17 @@ export default async function FavoritesPage() {
   const listings: Listing[] = ((data ?? []) as FavoriteRow[]).flatMap((favorite) => {
     const listing = firstRelated(favorite.listings);
     const product = firstRelated(listing?.products ?? null);
-    const card = firstRelated(product?.cards ?? null);
     const seller = firstRelated(listing?.profiles ?? null);
 
-    if (!listing || listing.status !== "active" || !card) return [];
+    if (!listing || listing.status !== "active" || !product) return [];
 
     return [{
-      cardMeta: `${card.set_name} | ${card.rarity ?? "Rareza no informada"} | #${card.number ?? "N/D"}`,
+      cardMeta: productMeta(product),
       description:
         listing.description ??
         (listing.type === "trade" ? `Busca: ${listing.trade_wants ?? "propuestas"}` : ""),
       id: listing.id,
-      image: card.image_large,
+      image: productImage(product),
       location:
         [listing.location_city, listing.location_country].filter(Boolean).join(", ") ||
         "Ubicación no informada",
@@ -101,7 +103,7 @@ export default async function FavoritesPage() {
       sellerId: seller?.id,
       sellerRating: Number(seller?.reputation_average ?? 0).toFixed(1),
       status: "Activa",
-      title: card.official_name,
+      title: productTitle(product, listing.title),
       type: typeLabel(listing.type),
       verified: seller?.is_verified ?? false
     }];

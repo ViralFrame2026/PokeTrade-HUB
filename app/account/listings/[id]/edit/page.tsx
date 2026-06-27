@@ -3,6 +3,7 @@ import Link from "next/link";
 import { AlertCircle, ArrowLeft } from "lucide-react";
 import { notFound, redirect } from "next/navigation";
 import { EditListingForm } from "@/components/edit-listing-form";
+import { firstRelated, productImage, productMeta, productTitle } from "@/lib/product-display";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -25,7 +26,11 @@ type EditableListing = {
   trade_wants: string | null;
   type: "sale" | "trade" | "free";
   products: Related<{
+    accessory_type: string | null;
+    category: string | null;
     condition: string;
+    sealed_type: string | null;
+    title: string | null;
     cards: Related<{
       image_large: string;
       official_name: string;
@@ -33,10 +38,6 @@ type EditableListing = {
     }>;
   }>;
 };
-
-function firstRelated<T>(value: Related<T>) {
-  return Array.isArray(value) ? value[0] ?? null : value;
-}
 
 export default async function EditListingPage({
   params
@@ -54,7 +55,7 @@ export default async function EditListingPage({
   const { data } = await supabase
     .from("listings")
     .select(
-      "id, seller_id, type, moderation_status, rejection_reason, description, price, trade_wants, location_city, location_country, products!listings_product_id_fkey(condition, cards!products_card_id_fkey(official_name, image_large, set_name))"
+      "id, seller_id, type, moderation_status, rejection_reason, description, price, trade_wants, location_city, location_country, products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name))"
     )
     .eq("id", id)
     .eq("seller_id", user.id)
@@ -70,9 +71,12 @@ export default async function EditListingPage({
   }
 
   const product = firstRelated(listing.products);
-  const card = firstRelated(product?.cards ?? null);
 
-  if (!product || !card) notFound();
+  if (!product) notFound();
+
+  const displayTitle = productTitle(product, "Producto TCG");
+  const displayImage = productImage(product);
+  const displayMeta = productMeta(product);
 
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-10 text-white">
@@ -88,17 +92,17 @@ export default async function EditListingPage({
         <div className="mt-6 grid gap-6 sm:grid-cols-[150px_1fr] sm:items-center">
           <div className="relative mx-auto aspect-[0.72] w-[150px] overflow-hidden rounded-lg bg-slate-900 sm:mx-0">
             <Image
-              alt={card.official_name}
+              alt={displayTitle}
               className="object-contain"
               fill
               sizes="150px"
-              src={card.image_large}
+              src={displayImage}
             />
           </div>
           <div>
             <p className="text-sm font-black uppercase text-yellow-300">Corregir publicación</p>
-            <h1 className="mt-2 text-4xl font-black">{card.official_name}</h1>
-            <p className="mt-2 text-slate-400">{card.set_name}</p>
+            <h1 className="mt-2 text-4xl font-black">{displayTitle}</h1>
+            <p className="mt-2 text-slate-400">{displayMeta}</p>
             {listing.rejection_reason ? (
               <div className="mt-5 flex gap-3 rounded-lg border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-100">
                 <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
