@@ -6,9 +6,12 @@ import {
   DollarSign,
   FileWarning,
   Gift,
+  Globe,
   Heart,
+  MailCheck,
   MessageCircle,
   Percent,
+  Rocket,
   ShieldCheck,
   Sparkles,
   Store,
@@ -507,6 +510,17 @@ export default async function AdminPage() {
     isSuperAdmin: profile.is_super_admin,
     joinedAt: profile.joined_at
   }));
+  const registeredUsersCount = usersResult.count ?? 0;
+  const activeListingsCount = activeListingsResult.count ?? 0;
+  const activeRafflesCount = activeRafflesResult.count ?? 0;
+  const messagesCount = messagesResult.count ?? 0;
+  const favoritesCount = favoritesResult.count ?? 0;
+  const hasSupabaseConfig = Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
+  const hasInitialContent = activeListingsCount >= 5;
+  const hasLaunchRaffle = activeRafflesCount >= 1;
+  const hasCommunitySignals = messagesCount > 0 || favoritesCount > 0;
 
   const queues = [
     {
@@ -527,7 +541,7 @@ export default async function AdminPage() {
     {
       icon: Users,
       label: "Usuarios registrados",
-      value: String(usersResult.count ?? 0)
+      value: String(registeredUsersCount)
     },
     {
       icon: CheckCircle2,
@@ -539,12 +553,12 @@ export default async function AdminPage() {
     {
       icon: Users,
       label: "Usuarios registrados",
-      value: String(usersResult.count ?? 0)
+      value: String(registeredUsersCount)
     },
     {
       icon: Store,
       label: "Publicaciones activas",
-      value: String(activeListingsResult.count ?? 0)
+      value: String(activeListingsCount)
     },
     {
       icon: CheckCircle2,
@@ -588,21 +602,73 @@ export default async function AdminPage() {
     {
       icon: MessageCircle,
       label: "Mensajes enviados",
-      value: String(messagesResult.count ?? 0)
+      value: String(messagesCount)
     },
     {
       icon: Heart,
       label: "Favoritos guardados",
-      value: String(favoritesResult.count ?? 0)
+      value: String(favoritesCount)
     },
     {
       icon: Gift,
       label: "Sorteos activos",
-      value: String(activeRafflesResult.count ?? 0)
+      value: String(activeRafflesCount)
     }
   ];
 
   const totalPending = listings.length + raffles.length + reports.length;
+  const launchChecks = [
+    {
+      detail: "Variables públicas de Supabase disponibles para que la app conecte con datos reales.",
+      icon: ShieldCheck,
+      label: "Base conectada",
+      ready: hasSupabaseConfig
+    },
+    {
+      detail: "Tu cuenta conserva permisos de administrador principal para gestionar el sitio.",
+      icon: Users,
+      label: "Admin principal",
+      ready: Boolean(currentProfile?.is_super_admin)
+    },
+    {
+      detail: "Publicaciones, sorteos y reportes sin trabajo pendiente antes de abrir tráfico.",
+      icon: CheckCircle2,
+      label: "Moderación al día",
+      ready: totalPending === 0
+    },
+    {
+      detail: "Recomendado: al menos 5 publicaciones activas para que el marketplace no se vea vacío.",
+      icon: Store,
+      label: "Contenido inicial",
+      ready: hasInitialContent
+    },
+    {
+      detail: "Recomendado: un sorteo activo para mostrar movimiento y atraer usuarios nuevos.",
+      icon: Gift,
+      label: "Sorteo de bienvenida",
+      ready: hasLaunchRaffle
+    },
+    {
+      detail: "Mensajes o favoritos indican que usuarios reales ya empezaron a interactuar.",
+      icon: MessageCircle,
+      label: "Señales de comunidad",
+      ready: hasCommunitySignals
+    }
+  ];
+  const externalLaunchItems = [
+    {
+      detail: "Configurar SMTP/dominio de envío en Supabase para que los emails salgan con marca propia.",
+      icon: MailCheck,
+      label: "Email propio"
+    },
+    {
+      detail: "Conectar dominio final en Vercel y actualizar URLs de Auth, sitemap y metadata.",
+      icon: Globe,
+      label: "Dominio final"
+    }
+  ];
+  const launchReadyCount = launchChecks.filter((check) => check.ready).length;
+  const launchProgress = Math.round((launchReadyCount / launchChecks.length) * 100);
 
   return (
     <main className="min-h-screen bg-[#071535] text-white">
@@ -694,6 +760,7 @@ export default async function AdminPage() {
             ["#reportes", "Reportes"],
             ["#sorteos", "Sorteos"],
             ["#publicaciones", "Publicaciones"],
+            ["#lanzamiento", "Lanzamiento"],
             ["#actividad", "Actividad"],
             currentProfile?.is_super_admin ? ["#permisos", "Permisos"] : null
           ]
@@ -710,8 +777,83 @@ export default async function AdminPage() {
                   {label}
                 </Link>
               );
-            })}
+          })}
         </nav>
+      </section>
+      <section className="glass mt-8 scroll-mt-24 rounded-lg p-5" id="lanzamiento">
+        <div className="flex flex-col justify-between gap-5 border-b border-white/10 pb-5 lg:flex-row lg:items-end">
+          <div>
+            <p className="inline-flex items-center gap-2 rounded-full border border-yellow-300/40 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-yellow-300">
+              <Rocket className="h-4 w-4" />
+              Preparación de lanzamiento
+            </p>
+            <h2 className="mt-3 text-2xl font-black text-white">Checklist para abrir la página</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+              Este bloque resume lo que todavía conviene revisar antes de invitar usuarios reales.
+              Los puntos externos requieren entrar a Vercel, Supabase o al proveedor del dominio.
+            </p>
+          </div>
+          <div className="min-w-[180px] rounded-lg border border-white/10 bg-white/[0.05] p-4 text-center">
+            <p className="text-4xl font-black text-white">{launchProgress}%</p>
+            <p className="mt-1 text-xs font-black uppercase tracking-[0.14em] text-blue-100">
+              listo en app
+            </p>
+          </div>
+        </div>
+        <div className="mt-5 grid gap-4 lg:grid-cols-2">
+          {launchChecks.map((check) => (
+            <article
+              className={[
+                "rounded-lg border p-4",
+                check.ready
+                  ? "border-emerald-300/30 bg-emerald-500/10"
+                  : "border-yellow-300/30 bg-yellow-400/10"
+              ].join(" ")}
+              key={check.label}
+            >
+              <div className="flex items-start gap-3">
+                <span
+                  className={[
+                    "grid h-10 w-10 shrink-0 place-items-center rounded-lg",
+                    check.ready ? "bg-emerald-400 text-emerald-950" : "bg-yellow-400 text-slate-950"
+                  ].join(" ")}
+                >
+                  <check.icon className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="font-black text-white">{check.label}</p>
+                  <p className="mt-1 text-sm leading-6 text-slate-300">{check.detail}</p>
+                  <p
+                    className={[
+                      "mt-3 text-xs font-black uppercase tracking-[0.14em]",
+                      check.ready ? "text-emerald-200" : "text-yellow-200"
+                    ].join(" ")}
+                  >
+                    {check.ready ? "Listo" : "Pendiente"}
+                  </p>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+        <div className="mt-5 rounded-lg border border-blue-300/20 bg-blue-500/10 p-4">
+          <p className="text-sm font-black uppercase tracking-[0.16em] text-blue-100">
+            Pendientes externos
+          </p>
+          <div className="mt-4 grid gap-4 md:grid-cols-2">
+            {externalLaunchItems.map((item) => (
+              <article className="flex items-start gap-3 rounded-lg border border-white/10 bg-slate-950/30 p-4" key={item.label}>
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-blue-400 text-blue-950">
+                  <item.icon className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="font-black text-white">{item.label}</p>
+                  <p className="mt-1 text-sm leading-6 text-slate-300">{item.detail}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
       </section>
       {totalPending > 0 ? (
         <section className="mt-8 grid gap-4 lg:grid-cols-3">
