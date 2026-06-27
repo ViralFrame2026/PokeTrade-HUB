@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { invalidJsonResponse, readJsonBody } from "@/lib/api";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const moderationSchema = z
@@ -43,7 +44,12 @@ export async function PATCH(request: Request, context: RouteContext) {
     return NextResponse.json({ data: null, error: "Acceso de administrador requerido." }, { status: 403 });
   }
 
-  const parsed = moderationSchema.safeParse(await request.json());
+  const body = await readJsonBody(request);
+  if (!body) {
+    return invalidJsonResponse("Accion invalida.");
+  }
+
+  const parsed = moderationSchema.safeParse(body);
 
   if (!parsed.success) {
     return NextResponse.json(

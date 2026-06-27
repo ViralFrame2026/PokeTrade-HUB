@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { invalidJsonResponse, readJsonBody } from "@/lib/api";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const updateListingSchema = z
@@ -51,7 +52,12 @@ export async function PATCH(
     return NextResponse.json({ error: "Debes iniciar sesion." }, { status: 401 });
   }
 
-  const parsed = updateListingSchema.safeParse(await request.json());
+  const body = await readJsonBody(request);
+  if (!body) {
+    return invalidJsonResponse("Datos invalidos.");
+  }
+
+  const parsed = updateListingSchema.safeParse(body);
 
   if (!parsed.success) {
     return NextResponse.json(

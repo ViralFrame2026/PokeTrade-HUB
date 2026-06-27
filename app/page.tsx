@@ -28,6 +28,15 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { latestListings as demoListings, topUsers as demoTopUsers } from "@/lib/demo-data";
 import type { Listing } from "@/lib/types";
 
+export const metadata = {
+  alternates: {
+    canonical: "/"
+  },
+  description:
+    "Marketplace argentino para comprar, vender, intercambiar y sortear cartas oficiales de Pokémon TCG con moderación, reputación y catálogo oficial.",
+  title: "Marketplace Pokémon TCG Argentina"
+};
+
 export const dynamic = "force-dynamic";
 
 type Related<T> = T | T[] | null;
@@ -302,6 +311,7 @@ export default async function HomePage() {
             </div>
             <h1 className="max-w-4xl text-5xl font-black leading-[0.98] tracking-normal text-white sm:text-6xl lg:text-[68px]">
               El hub argentino para comprar, vender e intercambiar
+              {" "}
               <span className="block text-yellow-300">cartas Pokémon TCG</span>
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-blue-100">

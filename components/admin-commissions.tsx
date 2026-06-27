@@ -80,7 +80,7 @@ export function AdminCommissions({
       const payload = (await response.json()) as { error: string | null };
 
       if (!response.ok || payload.error) {
-        throw new Error(payload.error ?? "No pudimos actualizar la comision.");
+        throw new Error(payload.error ?? "No pudimos actualizar la comisión.");
       }
 
       setCommissions((current) =>
@@ -90,7 +90,7 @@ export function AdminCommissions({
       setError(
         statusError instanceof Error
           ? statusError.message
-          : "No pudimos actualizar la comision."
+          : "No pudimos actualizar la comisión."
       );
     } finally {
       setBusyId(null);
@@ -101,7 +101,7 @@ export function AdminCommissions({
   if (commissions.length === 0) {
     return (
       <div className="mt-4 rounded-lg border border-white/10 bg-white/[0.04] p-4 text-sm font-semibold text-slate-400">
-        Todavia no hay ventas cerradas para calcular comisiones.
+        Todavía no hay ventas cerradas para calcular comisiones.
       </div>
     );
   }
@@ -115,7 +115,7 @@ export function AdminCommissions({
       ) : null}
       {!ledgerEnabled ? (
         <div className="mb-4 rounded-lg border border-yellow-300/30 bg-yellow-400/10 p-4 text-sm font-semibold text-yellow-100">
-          Estas filas son estimadas. Pega la migracion de comisiones en Supabase para activar
+          Estas filas son estimadas. Pega la migración de comisiones en Supabase para activar
           estados reales.
         </div>
       ) : null}
@@ -128,9 +128,9 @@ export function AdminCommissions({
               <th className="px-4 py-3">Estado</th>
               <th className="px-4 py-3">Fecha</th>
               <th className="px-4 py-3 text-right">Venta</th>
-              <th className="px-4 py-3 text-right">Comision</th>
+              <th className="px-4 py-3 text-right">Comisión</th>
               <th className="px-4 py-3 text-right">Neto vendedor</th>
-              <th className="px-4 py-3 text-right">Accion</th>
+              <th className="px-4 py-3 text-right">Acción</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/10">
@@ -213,12 +213,12 @@ export function AdminCommissions({
       </div>
       {pendingAction ? (
         <ConfirmActionModal
-          body={`Vas a marcar esta comision como ${pendingAction.label}.`}
-          confirmLabel="Si, actualizar"
+          body={`Vas a marcar esta comisión como ${pendingAction.label}.`}
+          confirmLabel="Sí, actualizar"
           isBusy={busyId === pendingAction.commission.id}
           onCancel={() => setPendingAction(null)}
           onConfirm={() => updateStatus(pendingAction.commission, pendingAction.status)}
-          title="Actualizar comision"
+          title="Actualizar comisión"
         />
       ) : null}
     </div>

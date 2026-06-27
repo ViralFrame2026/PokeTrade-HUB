@@ -12,17 +12,17 @@ type AuthFormProps = {
 
 function friendlyAuthError(error: unknown) {
   if (!(error instanceof Error)) {
-    return "No pudimos completar la autenticacion.";
+    return "No pudimos completar la autenticación.";
   }
 
   const message = error.message.toLowerCase();
 
   if (message.includes("invalid login credentials")) {
-    return "Email o contrasena incorrectos.";
+    return "Email o contraseña incorrectos.";
   }
 
   if (message.includes("email not confirmed")) {
-    return "Todavia falta confirmar tu email antes de ingresar.";
+    return "Todavía falta confirmar tu email antes de ingresar.";
   }
 
   if (message.includes("user already registered") || message.includes("already registered")) {
@@ -30,7 +30,7 @@ function friendlyAuthError(error: unknown) {
   }
 
   if (message.includes("password should be at least") || message.includes("weak password")) {
-    return "La contrasena es demasiado debil. Usa al menos 6 caracteres, letras y numeros.";
+    return "La contraseña es demasiado débil. Usá al menos 6 caracteres, letras y números.";
   }
 
   if (message.includes("rate limit") || message.includes("too many")) {
@@ -38,10 +38,10 @@ function friendlyAuthError(error: unknown) {
   }
 
   if (message.includes("network") || message.includes("fetch")) {
-    return "No pudimos conectar con el servidor. Revisa tu conexion e intenta de nuevo.";
+    return "No pudimos conectar con el servidor. Revisá tu conexión e intentá de nuevo.";
   }
 
-  return error.message || "No pudimos completar la autenticacion.";
+  return error.message || "No pudimos completar la autenticación.";
 }
 
 export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
@@ -54,13 +54,13 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
   const [message, setMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const passwordChecks = [
-    { label: "6 caracteres minimo", valid: password.length >= 6 },
+    { label: "6 caracteres mínimo", valid: password.length >= 6 },
     { label: "Incluye una letra", valid: /[a-zA-Z]/.test(password) },
-    { label: "Incluye un numero", valid: /\d/.test(password) }
+    { label: "Incluye un número", valid: /\d/.test(password) }
   ];
   const passwordScore = passwordChecks.filter((check) => check.valid).length;
   const passwordStrength =
-    passwordScore === 3 ? "Fuerte" : passwordScore === 2 ? "Correcta" : "Basica";
+    passwordScore === 3 ? "Fuerte" : passwordScore === 2 ? "Correcta" : "Básica";
 
   function changeMode(nextMode: "login" | "register" | "reset") {
     setMode(nextMode);
@@ -81,12 +81,12 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
     try {
       if (mode === "register") {
         if (displayName.trim().length < 2) {
-          setError("El nombre publico debe tener al menos 2 caracteres.");
+          setError("El nombre público debe tener al menos 2 caracteres.");
           return;
         }
 
         if (passwordScore < 2) {
-          setError("Usa una contrasena un poco mas fuerte antes de crear la cuenta.");
+          setError("Usá una contraseña un poco más fuerte antes de crear la cuenta.");
           return;
         }
 
@@ -125,7 +125,7 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
 
         if (resetError) throw resetError;
 
-        setMessage("Te enviamos un enlace para cambiar tu contrasena.");
+        setMessage("Te enviamos un enlace para cambiar tu contraseña.");
         return;
       }
 
@@ -187,7 +187,7 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
               </div>
             </label>
             <p className="mt-2 text-xs leading-5 text-slate-400">
-              Este nombre se vera en tus publicaciones, mensajes y sorteos.
+              Este nombre se verá en tus publicaciones, mensajes y sorteos.
             </p>
           </>
         ) : null}
@@ -210,7 +210,7 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
 
         {mode !== "reset" ? (
           <label className="mt-4 block text-sm font-bold text-slate-200">
-            Contrasena
+            Contraseña
             <div className="relative mt-2">
               <LockKeyhole className="pointer-events-none absolute left-3 top-3 h-5 w-5 text-slate-500" />
               <input
@@ -218,13 +218,13 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
                 className="w-full rounded-lg border border-white/10 bg-slate-950/70 py-3 pl-10 pr-12 text-white outline-none focus:border-pokemonYellow/60"
                 minLength={6}
                 onChange={(event) => setPassword(event.target.value)}
-                placeholder="Minimo 6 caracteres"
+                placeholder="Mínimo 6 caracteres"
                 required
                 type={showPassword ? "text" : "password"}
                 value={password}
               />
               <button
-                aria-label={showPassword ? "Ocultar contrasena" : "Mostrar contrasena"}
+                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                 className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-md text-slate-400 transition hover:bg-white/10 hover:text-pokemonYellow"
                 onClick={() => setShowPassword((current) => !current)}
                 type="button"
@@ -272,7 +272,7 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
           </label>
         ) : (
           <p className="mt-4 rounded-lg border border-white/10 bg-white/5 p-3 text-sm leading-6 text-slate-300">
-            Ingresa tu email y te enviaremos un enlace para crear una nueva contrasena.
+            Ingresa tu email y te enviaremos un enlace para crear una nueva contraseña.
           </p>
         )}
 
@@ -330,7 +330,7 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
             onClick={() => changeMode("reset")}
             type="button"
           >
-            Olvide mi contrasena
+            Olvidé mi contraseña
           </button>
         ) : mode === "reset" ? (
           <button

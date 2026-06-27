@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { invalidJsonResponse, readJsonBody } from "@/lib/api";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const profileSchema = z
@@ -31,7 +32,12 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "Debes iniciar sesión." }, { status: 401 });
   }
 
-  const parsed = profileSchema.safeParse(await request.json());
+  const body = await readJsonBody(request);
+  if (!body) {
+    return invalidJsonResponse("Datos de perfil invalidos.");
+  }
+
+  const parsed = profileSchema.safeParse(body);
 
   if (!parsed.success) {
     return NextResponse.json(

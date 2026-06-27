@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { invalidJsonResponse, readJsonBody } from "@/lib/api";
 import { getCardById } from "@/lib/pokemon-tcg-api";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -52,7 +53,12 @@ export async function POST(request: Request) {
     );
   }
 
-  const parsed = listingSchema.safeParse(await request.json());
+  const body = await readJsonBody(request);
+  if (!body) {
+    return invalidJsonResponse("Datos de publicacion invalidos.");
+  }
+
+  const parsed = listingSchema.safeParse(body);
 
   if (!parsed.success) {
     return NextResponse.json(

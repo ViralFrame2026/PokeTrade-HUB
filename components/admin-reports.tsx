@@ -30,8 +30,8 @@ const resolutionOptions = [
 ] as const;
 
 const reasonLabels: Record<string, string> = {
-  fake_listing: "Publicacion falsa",
-  misleading_information: "Informacion enganosa",
+  fake_listing: "Publicación falsa",
+  misleading_information: "Información engañosa",
   missing_product: "Producto no disponible",
   scam: "Posible estafa",
   suspicious_behavior: "Comportamiento sospechoso"
@@ -49,7 +49,7 @@ function reportPriority(reason: string) {
 
   return {
     className: "border-yellow-300/30 bg-yellow-400/10 text-yellow-100",
-    label: "Revision normal"
+    label: "Revisión normal"
   };
 }
 
@@ -63,7 +63,7 @@ function reportAgeLabel(createdAt: string) {
   if (hours < 24) return `Hace ${hours} h`;
 
   const days = Math.floor(hours / 24);
-  return `Hace ${days} dia${days === 1 ? "" : "s"}`;
+  return `Hace ${days} día${days === 1 ? "" : "s"}`;
 }
 
 export function AdminReports({ reports: initialReports }: { reports: AdminReport[] }) {
@@ -162,8 +162,8 @@ export function AdminReports({ reports: initialReports }: { reports: AdminReport
                 <div className="flex items-start gap-2">
                   <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
                   <p>
-                    Abri la publicacion, revisa el motivo y resolve solo cuando hayas tomado
-                    accion o confirmado que no hay riesgo.
+                    Abrí la publicación, revisá el motivo y resolvé solo cuando hayas tomado
+                    acción o confirmado que no hay riesgo.
                   </p>
                 </div>
               </div>
@@ -197,7 +197,7 @@ export function AdminReports({ reports: initialReports }: { reports: AdminReport
                       [report.id]: event.target.value
                     }))
                   }
-                  placeholder="Nota opcional para auditoria y notificacion"
+                  placeholder="Nota opcional para auditoría y notificación"
                   value={notes[report.id] ?? ""}
                 />
               </div>
@@ -208,7 +208,7 @@ export function AdminReports({ reports: initialReports }: { reports: AdminReport
                   target="_blank"
                 >
                   <ExternalLink className="h-4 w-4" />
-                  Abrir publicacion
+                  Abrir publicación
                 </Link>
                 <button
                   className="inline-flex items-center gap-2 rounded-md bg-emerald-400 px-3 py-2 text-sm font-black text-emerald-950 disabled:opacity-60"

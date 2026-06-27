@@ -55,16 +55,23 @@ function creatorName(value: RaffleRow["profiles"]) {
 }
 
 export default async function RafflesPage() {
-  const supabase = await createSupabaseServerClient();
-  const { data } = await supabase
-    .from("raffles")
-    .select(
-      "id, title, prize, image_path, closes_at, entry_limit, raffle_entries(count), profiles!raffles_creator_id_fkey(display_name)"
-    )
-    .eq("moderation_status", "approved")
-    .gt("closes_at", new Date().toISOString())
-    .order("closes_at", { ascending: true });
-  const raffles = (data ?? []) as RaffleRow[];
+  const hasSupabaseConfig = Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
+  let raffles: RaffleRow[] = [];
+
+  if (hasSupabaseConfig) {
+    const supabase = await createSupabaseServerClient();
+    const { data } = await supabase
+      .from("raffles")
+      .select(
+        "id, title, prize, image_path, closes_at, entry_limit, raffle_entries(count), profiles!raffles_creator_id_fkey(display_name)"
+      )
+      .eq("moderation_status", "approved")
+      .gt("closes_at", new Date().toISOString())
+      .order("closes_at", { ascending: true });
+    raffles = (data ?? []) as RaffleRow[];
+  }
 
   return (
     <main className="min-h-screen bg-[#071535] text-white">

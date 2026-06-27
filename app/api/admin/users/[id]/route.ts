@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { invalidJsonResponse, readJsonBody } from "@/lib/api";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const roleSchema = z.object({
@@ -33,7 +34,12 @@ export async function PATCH(
     );
   }
 
-  const parsed = roleSchema.safeParse(await request.json());
+  const body = await readJsonBody(request);
+  if (!body) {
+    return invalidJsonResponse("Permiso invalido.");
+  }
+
+  const parsed = roleSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: "Permiso invalido." }, { status: 400 });
   }

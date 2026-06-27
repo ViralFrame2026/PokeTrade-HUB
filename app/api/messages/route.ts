@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { invalidJsonResponse, readJsonBody } from "@/lib/api";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
@@ -11,14 +12,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Debes iniciar sesión." }, { status: 401 });
   }
 
-  const payload = (await request.json()) as {
+  const jsonBody = await readJsonBody(request);
+  if (!jsonBody) {
+    return invalidJsonResponse("Revisa el mensaje enviado.");
+  }
+
+  const payload = jsonBody as {
     body?: string;
     listingId?: string;
     recipientId?: string;
   };
-  const body = payload.body?.trim();
+  const messageBody = payload.body?.trim();
 
-  if (!body || body.length > 1500 || !payload.listingId || !payload.recipientId) {
+  if (!messageBody || messageBody.length > 1500 || !payload.listingId || !payload.recipientId) {
     return NextResponse.json(
       { error: "Revisa el mensaje y la publicación seleccionada." },
       { status: 400 }
@@ -76,7 +82,7 @@ export async function POST(request: Request) {
   }
 
   const { error } = await supabase.from("messages").insert({
-    body,
+    body: messageBody,
     listing_id: payload.listingId,
     recipient_id: payload.recipientId,
     sender_id: user.id

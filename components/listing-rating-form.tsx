@@ -32,7 +32,7 @@ export function ListingRatingForm({ listingId }: { listingId: string }) {
       });
       const payload = (await response.json()) as { error?: string | null };
       if (!response.ok || payload.error) {
-        throw new Error(payload.error ?? "No pudimos guardar tu valoracion.");
+        throw new Error(payload.error ?? "No pudimos guardar tu valoración.");
       }
 
       setSuccess(true);
@@ -42,7 +42,7 @@ export function ListingRatingForm({ listingId }: { listingId: string }) {
       setError(
         ratingError instanceof Error
           ? ratingError.message
-          : "No pudimos guardar tu valoracion."
+          : "No pudimos guardar tu valoración."
       );
     } finally {
       setIsSubmitting(false);
@@ -55,11 +55,11 @@ export function ListingRatingForm({ listingId }: { listingId: string }) {
       onSubmit={submitRating}
     >
       <p className="text-xs font-black uppercase tracking-[0.15em] text-amber-700">
-        Operacion finalizada
+        Operación finalizada
       </p>
-      <h3 className="mt-2 text-lg font-black text-blue-950">Valora al vendedor</h3>
+      <h3 className="mt-2 text-lg font-black text-blue-950">Valorá al vendedor</h3>
       <p className="mt-2 text-sm leading-6 text-amber-900">
-        Tu valoracion queda visible en el perfil publico y ayuda a construir confianza.
+        Tu valoración queda visible en el perfil público y ayuda a construir confianza.
       </p>
       <div className="mt-4 flex gap-1" role="radiogroup" aria-label="Estrellas">
         {[1, 2, 3, 4, 5].map((value) => (
@@ -90,7 +90,7 @@ export function ListingRatingForm({ listingId }: { listingId: string }) {
             setComment(event.target.value);
             setSuccess(false);
           }}
-          placeholder="Cuenta brevemente como fue la operacion"
+          placeholder="Contá brevemente cómo fue la operación"
           value={comment}
         />
         <span className="mt-1 block text-right text-xs font-semibold text-slate-500">
@@ -103,12 +103,12 @@ export function ListingRatingForm({ listingId }: { listingId: string }) {
         type="submit"
       >
         {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Star className="h-4 w-4" />}
-        Publicar valoracion
+        Publicar valoración
       </button>
       {success ? (
         <p className="mt-3 flex items-center gap-2 text-sm font-black text-emerald-700">
           <CheckCircle2 className="h-4 w-4" />
-          Valoracion publicada
+          Valoración publicada
         </p>
       ) : null}
       {error ? <p className="mt-3 text-sm font-semibold text-red-600">{error}</p> : null}

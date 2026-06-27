@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { invalidJsonResponse, readJsonBody } from "@/lib/api";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const reportSchema = z.object({
@@ -24,7 +25,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Debes iniciar sesión." }, { status: 401 });
   }
 
-  const parsed = reportSchema.safeParse(await request.json());
+  const body = await readJsonBody(request);
+  if (!body) {
+    return invalidJsonResponse("Revisa el reporte enviado.");
+  }
+
+  const parsed = reportSchema.safeParse(body);
 
   if (!parsed.success) {
     return NextResponse.json(

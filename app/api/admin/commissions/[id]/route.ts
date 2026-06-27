@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { invalidJsonResponse, readJsonBody } from "@/lib/api";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const commissionSchema = z.object({
@@ -40,7 +41,12 @@ export async function PATCH(
     );
   }
 
-  const parsed = commissionSchema.safeParse(await request.json());
+  const body = await readJsonBody(request);
+  if (!body) {
+    return invalidJsonResponse("Estado de comision invalido.");
+  }
+
+  const parsed = commissionSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: "Estado de comision invalido." }, { status: 400 });
   }
