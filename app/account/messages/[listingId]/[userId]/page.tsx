@@ -10,6 +10,10 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Conversacion"
+};
+
 type MessageRow = {
   body: string;
   created_at: string;

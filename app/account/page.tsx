@@ -24,6 +24,10 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Panel de cuenta"
+};
+
 type ProfileRow = {
   display_name: string;
   is_admin: boolean;

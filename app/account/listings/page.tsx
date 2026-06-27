@@ -23,6 +23,10 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Mis publicaciones"
+};
+
 type Related<T> = T | T[] | null;
 
 type ListingRow = {

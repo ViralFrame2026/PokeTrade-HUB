@@ -20,6 +20,10 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Notificaciones"
+};
+
 type NotificationRow = {
   body: string | null;
   created_at: string;

@@ -20,6 +20,10 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Mis sorteos"
+};
+
 type RaffleRow = {
   closes_at: string;
   created_at: string;

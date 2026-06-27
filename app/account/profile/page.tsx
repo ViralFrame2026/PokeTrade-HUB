@@ -6,6 +6,10 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Mi perfil"
+};
+
 export default async function ProfilePage() {
   const supabase = await createSupabaseServerClient();
   const {

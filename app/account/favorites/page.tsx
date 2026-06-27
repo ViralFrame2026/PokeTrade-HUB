@@ -8,6 +8,10 @@ import type { Listing } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Favoritos"
+};
+
 type Related<T> = T | T[] | null;
 
 type FavoriteRow = {

@@ -6,6 +6,10 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Seguridad de cuenta"
+};
+
 export default async function PasswordPage() {
   const supabase = await createSupabaseServerClient();
   const {
