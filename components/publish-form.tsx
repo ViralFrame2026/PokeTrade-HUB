@@ -133,8 +133,14 @@ export function PublishForm() {
   const isCardProduct = productCategory === "card";
   const isReadyToSubmit =
     (isCardProduct && selectedCard) ||
-    (productCategory === "sealed" && productTitle.trim().length >= 3 && sealedType) ||
-    (productCategory === "accessory" && productTitle.trim().length >= 3 && accessoryType);
+    (productCategory === "sealed" &&
+      productTitle.trim().length >= 3 &&
+      sealedType &&
+      photos.length > 0) ||
+    (productCategory === "accessory" &&
+      productTitle.trim().length >= 3 &&
+      accessoryType &&
+      photos.length > 0);
 
   useEffect(() => {
     const previews = photos.map((photo) => URL.createObjectURL(photo));
@@ -309,6 +315,11 @@ export function PublishForm() {
 
     if (!isCardProduct && productTitle.trim().length < 3) {
       setError("Escribe el nombre del producto antes de públicar.");
+      return;
+    }
+
+    if (!isCardProduct && photos.length === 0) {
+      setError("Sube al menos una foto real para publicar este producto.");
       return;
     }
 

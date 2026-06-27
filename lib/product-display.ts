@@ -18,6 +18,11 @@ export type ProductDisplayInput = {
   title?: string | null;
 };
 
+export type ListingDisplayImage = {
+  sort_order?: number | null;
+  storage_path?: string | null;
+};
+
 export function firstRelated<T>(value: Related<T>) {
   return Array.isArray(value) ? value[0] ?? null : value ?? null;
 }
@@ -50,6 +55,12 @@ export function productImage(product?: ProductDisplayInput | null) {
   if (product?.category === "sealed") return "/assets/chaos-rising-etb.webp";
   if (product?.category === "accessory") return "/assets/pokemon-card-banner.webp";
   return "/assets/mega-charizard-tins.webp";
+}
+
+export function firstListingPhotoPath(images?: ListingDisplayImage[] | null) {
+  return [...(images ?? [])]
+    .sort((left, right) => Number(left.sort_order ?? 0) - Number(right.sort_order ?? 0))
+    .find((image) => image.storage_path)?.storage_path ?? null;
 }
 
 export function productMeta(product?: ProductDisplayInput | null) {

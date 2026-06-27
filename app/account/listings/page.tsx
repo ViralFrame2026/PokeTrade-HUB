@@ -19,7 +19,13 @@ import { ListingStatusControl } from "@/components/listing-status-control";
 import { ShareListingButton } from "@/components/share-listing-button";
 import { SiteMenu } from "@/components/site-menu";
 import { ButtonLink } from "@/components/ui/button-link";
-import { firstRelated, productImage, productMeta, productTitle } from "@/lib/product-display";
+import {
+  firstListingPhotoPath,
+  firstRelated,
+  productImage,
+  productMeta,
+  productTitle
+} from "@/lib/product-display";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -33,6 +39,10 @@ type Related<T> = T | T[] | null;
 type ListingRow = {
   created_at: string;
   id: string;
+  listing_images: Array<{
+    sort_order: number;
+    storage_path: string;
+  }>;
   moderation_status: string;
   price: number | null;
   rejection_reason: string | null;
@@ -172,7 +182,7 @@ export default async function MyListingsPage({
   const { data } = await supabase
     .from("listings")
     .select(
-      "id, title, type, status, moderation_status, rejection_reason, price, created_at, products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name))"
+      "id, title, type, status, moderation_status, rejection_reason, price, created_at, listing_images(storage_path, sort_order), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name))"
     )
     .eq("seller_id", user.id)
     .order("created_at", { ascending: false });
@@ -304,8 +314,12 @@ export default async function MyListingsPage({
           <div className="space-y-4">
             {listings.map((listing) => {
               const product = firstRelated(listing.products);
+              const photoPath = firstListingPhotoPath(listing.listing_images);
+              const photoUrl = photoPath
+                ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing-images/${photoPath}`
+                : null;
               const displayTitle = productTitle(product, listing.title);
-              const displayImage = productImage(product);
+              const displayImage = photoUrl ?? productImage(product);
               const displayMeta = productMeta(product);
               const status = moderationMeta(listing.moderation_status);
               const StatusIcon = status.icon;

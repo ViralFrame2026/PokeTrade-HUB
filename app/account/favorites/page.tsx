@@ -3,7 +3,13 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ListingCard } from "@/components/listing-card";
 import { ButtonLink } from "@/components/ui/button-link";
-import { firstRelated, productImage, productMeta, productTitle } from "@/lib/product-display";
+import {
+  firstListingPhotoPath,
+  firstRelated,
+  productImage,
+  productMeta,
+  productTitle
+} from "@/lib/product-display";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { Listing } from "@/lib/types";
 
@@ -19,6 +25,10 @@ type FavoriteRow = {
   listings: Related<{
     description: string | null;
     id: string;
+    listing_images: Array<{
+      sort_order: number;
+      storage_path: string;
+    }>;
     location_city: string | null;
     location_country: string | null;
     price: number | null;
@@ -75,7 +85,7 @@ export default async function FavoritesPage() {
   const { data } = await supabase
     .from("favorites")
     .select(
-      "listings!favorites_listing_id_fkey(id, title, description, type, status, price, trade_wants, location_city, location_country, profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number)))"
+      "listings!favorites_listing_id_fkey(id, title, description, type, status, price, trade_wants, location_city, location_country, listing_images(storage_path, sort_order), profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number)))"
     )
     .eq("user_id", user.id)
     .not("listing_id", "is", null)
@@ -85,6 +95,10 @@ export default async function FavoritesPage() {
     const listing = firstRelated(favorite.listings);
     const product = firstRelated(listing?.products ?? null);
     const seller = firstRelated(listing?.profiles ?? null);
+    const photoPath = firstListingPhotoPath(listing?.listing_images);
+    const photoUrl = photoPath
+      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing-images/${photoPath}`
+      : null;
 
     if (!listing || listing.status !== "active" || !product) return [];
 
@@ -94,7 +108,7 @@ export default async function FavoritesPage() {
         listing.description ??
         (listing.type === "trade" ? `Busca: ${listing.trade_wants ?? "propuestas"}` : ""),
       id: listing.id,
-      image: productImage(product),
+      image: photoUrl ?? productImage(product),
       location:
         [listing.location_city, listing.location_country].filter(Boolean).join(", ") ||
         "Ubicación no informada",

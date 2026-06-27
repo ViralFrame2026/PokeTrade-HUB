@@ -24,7 +24,13 @@ import { ListingCard } from "@/components/listing-card";
 import { StatCard } from "@/components/stat-card";
 import { SiteMenu } from "@/components/site-menu";
 import { ButtonLink } from "@/components/ui/button-link";
-import { firstRelated, productImage, productMeta, productTitle } from "@/lib/product-display";
+import {
+  firstListingPhotoPath,
+  firstRelated,
+  productImage,
+  productMeta,
+  productTitle
+} from "@/lib/product-display";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { latestListings as demoListings, topUsers as demoTopUsers } from "@/lib/demo-data";
 import type { Listing } from "@/lib/types";
@@ -45,6 +51,10 @@ type Related<T> = T | T[] | null;
 type ListingRow = {
   description: string | null;
   id: string;
+  listing_images: Array<{
+    sort_order: number;
+    storage_path: string;
+  }>;
   location_city: string | null;
   location_country: string | null;
   price: number | null;
@@ -137,7 +147,7 @@ export default async function HomePage() {
         supabase
           .from("listings")
           .select(
-            "id, title, description, type, status, price, trade_wants, location_city, location_country, profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(pokemon_tcg_id, official_name, image_large, set_name, rarity, number))"
+            "id, title, description, type, status, price, trade_wants, location_city, location_country, listing_images(storage_path, sort_order), profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(pokemon_tcg_id, official_name, image_large, set_name, rarity, number))"
           )
           .eq("moderation_status", "approved")
           .eq("status", "active")
@@ -207,6 +217,10 @@ export default async function HomePage() {
   const listings: Listing[] = listingsData.flatMap((row) => {
       const profile = firstRelated(row.profiles);
       const product = firstRelated(row.products);
+      const photoPath = firstListingPhotoPath(row.listing_images);
+      const photoUrl = photoPath
+        ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing-images/${photoPath}`
+        : null;
 
       if (!product) {
         return [];
@@ -218,7 +232,7 @@ export default async function HomePage() {
           row.description ??
           (row.type === "trade" ? `Busca: ${row.trade_wants ?? "propuestas"}` : ""),
         id: row.id,
-        image: productImage(product),
+        image: photoUrl ?? productImage(product),
         location: [row.location_city, row.location_country].filter(Boolean).join(", "),
         price: listingPrice(row),
         seller: profile?.display_name ?? "Entrenador TCG",

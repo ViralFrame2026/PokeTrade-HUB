@@ -13,7 +13,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ListingCard } from "@/components/listing-card";
-import { firstRelated, productImage, productMeta, productTitle } from "@/lib/product-display";
+import {
+  firstListingPhotoPath,
+  firstRelated,
+  productImage,
+  productMeta,
+  productTitle
+} from "@/lib/product-display";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { Listing } from "@/lib/types";
 
@@ -24,6 +30,10 @@ type Related<T> = T | T[] | null;
 type ListingRow = {
   description: string | null;
   id: string;
+  listing_images: Array<{
+    sort_order: number;
+    storage_path: string;
+  }>;
   location_city: string | null;
   location_country: string | null;
   price: number | null;
@@ -165,7 +175,7 @@ export default async function PublicProfilePage({
       supabase
         .from("listings")
         .select(
-          "id, title, description, type, price, trade_wants, location_city, location_country, products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number))"
+          "id, title, description, type, price, trade_wants, location_city, location_country, listing_images(storage_path, sort_order), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number))"
         )
         .eq("seller_id", id)
         .eq("moderation_status", "approved")
@@ -195,6 +205,10 @@ export default async function PublicProfilePage({
 
   const listings: Listing[] = ((listingData ?? []) as ListingRow[]).flatMap((row) => {
     const product = firstRelated(row.products);
+    const photoPath = firstListingPhotoPath(row.listing_images);
+    const photoUrl = photoPath
+      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing-images/${photoPath}`
+      : null;
 
     if (!product) return [];
 
@@ -205,7 +219,7 @@ export default async function PublicProfilePage({
           row.description ??
           (row.type === "trade" ? `Busca: ${row.trade_wants ?? "propuestas"}` : ""),
         id: row.id,
-        image: productImage(product),
+        image: photoUrl ?? productImage(product),
         location:
           [row.location_city, row.location_country].filter(Boolean).join(", ") ||
           "Ubicación no informada",
