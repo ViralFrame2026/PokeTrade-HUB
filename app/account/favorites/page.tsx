@@ -151,7 +151,7 @@ export default async function FavoritesPage() {
           Volver a mi cuenta
         </Link>
         <h1 className="mt-5 text-4xl font-black text-white">Mis favoritos</h1>
-        <p className="mt-2 text-blue-100">Cartas guardadas para revisar más tarde.</p>
+        <p className="mt-2 text-blue-100">Productos guardados para revisar más tarde.</p>
         </div>
       </section>
 
@@ -170,11 +170,11 @@ export default async function FavoritesPage() {
                 Todavía no guardaste publicaciones
               </h2>
               <p className="mt-2 text-blue-100">
-                Usa el botón de favoritos en una carta que te interese.
+                Usa el botón de favoritos en un producto que te interese.
               </p>
               <div className="mt-5">
                 <ButtonLink href="/marketplace" icon={Store}>
-                  Explorar cartas
+                  Explorar productos
                 </ButtonLink>
               </div>
             </div>

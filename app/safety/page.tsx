@@ -11,19 +11,19 @@ import { ButtonLink } from "@/components/ui/button-link";
 export const metadata = {
   title: "Seguridad",
   description:
-    "Buenas practicas para comprar, vender e intercambiar cartas Pokemon TCG en PokeTrade HUB."
+    "Buenas practicas para comprar, vender e intercambiar cartas, sellados y accesorios Pokemon TCG en PokeTrade HUB."
 };
 
 const safeSteps = [
   {
     icon: ShieldCheck,
-    title: "Usa cartas oficiales",
-    copy: "Cada publicacion debe estar enlazada a una carta real del catalogo Pokemon TCG para reducir errores y publicaciones inventadas."
+    title: "Valida el producto",
+    copy: "Las cartas individuales deben enlazarse al catalogo Pokemon TCG. Los sellados y accesorios deben tener fotos reales claras."
   },
   {
     icon: Camera,
     title: "Pide fotos cuando haga falta",
-    copy: "Las fotos reales son opcionales, pero para cartas caras, selladas o sensibles conviene pedir imagenes claras antes de cerrar."
+    copy: "Las fotos reales son obligatorias para sellados y accesorios. Para cartas caras tambien conviene pedir imagenes claras antes de cerrar."
   },
   {
     icon: MessageCircle,
@@ -67,7 +67,7 @@ export default function SafetyPage() {
             Centro de confianza
           </p>
           <h1 className="mt-3 max-w-3xl text-4xl font-black leading-tight sm:text-6xl">
-            Seguridad para operar con cartas Pokemon TCG
+            Seguridad para operar con productos Pokemon TCG
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-blue-100">
             PokeTrade HUB ordena publicaciones, mensajes, reputacion y reportes. Aun asi,

@@ -14,7 +14,7 @@ export function PageLoading({ label = "Cargando PokeTrade" }: PageLoadingProps) 
           {label}
         </div>
         <p className="mt-3 text-sm font-semibold leading-6 text-blue-100">
-          Preparando cartas, perfiles y publicaciones.
+          Preparando productos, perfiles y publicaciones.
         </p>
       </section>
     </main>

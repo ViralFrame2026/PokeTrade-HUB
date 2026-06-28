@@ -5,14 +5,14 @@ import { CheckCircle2, Clock3, FileText, Loader2, XCircle } from "lucide-react";
 import { useState } from "react";
 
 export type AdminCommission = {
-  cardName: string;
+  productName: string;
   commission: number;
   createdAt: string;
   id: string;
   price: number;
   seller: string;
   sellerNet: number;
-  setName: string;
+  productMeta: string;
   status: string;
 };
 
@@ -123,7 +123,7 @@ export function AdminCommissions({
         <table className="w-full min-w-[980px] text-left text-sm">
           <thead className="bg-white/[0.04] text-slate-400">
             <tr>
-              <th className="px-4 py-3">Carta</th>
+              <th className="px-4 py-3">Producto</th>
               <th className="px-4 py-3">Vendedor</th>
               <th className="px-4 py-3">Estado</th>
               <th className="px-4 py-3">Fecha</th>
@@ -137,8 +137,8 @@ export function AdminCommissions({
             {commissions.map((commission) => (
               <tr key={commission.id}>
                 <td className="px-4 py-3">
-                  <p className="font-black text-white">{commission.cardName}</p>
-                  <p className="mt-1 text-xs font-semibold text-slate-500">{commission.setName}</p>
+                  <p className="font-black text-white">{commission.productName}</p>
+                  <p className="mt-1 text-xs font-semibold text-slate-500">{commission.productMeta}</p>
                 </td>
                 <td className="px-4 py-3 font-semibold text-slate-300">{commission.seller}</td>
                 <td className="px-4 py-3">

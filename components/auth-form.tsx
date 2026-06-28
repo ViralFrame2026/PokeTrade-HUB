@@ -290,7 +290,7 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
 
         {mode === "register" ? (
           <div className="mt-4 rounded-lg border border-white/10 bg-white/[0.04] p-3 text-xs leading-5 text-slate-300">
-            Al crear la cuenta vas a poder publicar cartas, guardar favoritos, enviar
+            Al crear la cuenta vas a poder publicar productos, guardar favoritos, enviar
             mensajes, participar en sorteos y construir reputacion.
           </div>
         ) : null}

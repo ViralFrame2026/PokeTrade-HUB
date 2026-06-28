@@ -13,10 +13,10 @@ export const metadata: Metadata = {
     template: "%s | POKETRADE HUB"
   },
   description:
-    "Marketplace argentino para comprar, vender, intercambiar y sortear cartas oficiales de Pokemon TCG con moderacion, reputacion y catalogo oficial.",
+    "Marketplace argentino para comprar, vender, intercambiar y sortear productos Pokemon TCG con moderacion, reputacion y catalogo oficial.",
   keywords: [
     "Pokemon TCG",
-    "cartas Pokemon",
+    "productos Pokemon",
     "marketplace TCG",
     "intercambio Pokemon",
     "sorteos Pokemon",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "POKETRADE HUB - Marketplace Pokemon TCG",
     description:
-      "Compra, vende, intercambia y sortea cartas oficiales de Pokemon TCG con reputacion, moderacion y catalogo oficial.",
+      "Compra, vende, intercambia y sortea productos Pokemon TCG con reputacion, moderacion y catalogo oficial.",
     images: [
       {
         alt: "POKETRADE HUB marketplace Pokemon TCG",
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "POKETRADE HUB - Marketplace Pokemon TCG",
-    description: "Compra, vende, intercambia y sortea cartas oficiales de Pokemon TCG.",
+    description: "Compra, vende, intercambia y sortea productos Pokemon TCG.",
     images: ["/assets/pokemon-card-banner.webp"]
   }
 };

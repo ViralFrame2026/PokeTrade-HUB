@@ -440,14 +440,14 @@ export default async function AdminPage() {
     const card = firstRelated(product?.cards ?? null);
 
     return {
-      cardName: card?.official_name ?? listing?.title ?? "Venta registrada",
+      productName: card?.official_name ?? listing?.title ?? "Venta registrada",
       commission: Number(sale.commission_amount ?? 0),
       createdAt: sale.created_at,
       id: sale.id,
       price: Number(sale.gross_amount ?? 0),
       seller: sellerName(listing?.profiles ?? null),
       sellerNet: Number(sale.seller_net_amount ?? 0),
-      setName: card?.set_name ?? "Set no disponible",
+      productMeta: card?.set_name ?? "Producto TCG",
       status: sale.status
     };
   }) : recentClosedSales.map((sale) => {
@@ -457,14 +457,14 @@ export default async function AdminPage() {
     const commission = price * PLATFORM_COMMISSION_RATE;
 
     return {
-      cardName: card?.official_name ?? sale.title,
+      productName: card?.official_name ?? sale.title,
       commission,
       createdAt: sale.created_at,
       id: sale.id,
       price,
       seller: sellerName(sale.profiles),
       sellerNet: price - commission,
-      setName: card?.set_name ?? "Set no disponible",
+      productMeta: card?.set_name ?? "Producto TCG",
       status: "estimada"
     };
   });
@@ -989,7 +989,7 @@ export default async function AdminPage() {
                 <table className="w-full min-w-[760px] text-left text-sm">
                   <thead className="bg-white/[0.04] text-slate-400">
                     <tr>
-                      <th className="px-4 py-3">Carta</th>
+                      <th className="px-4 py-3">Producto</th>
                       <th className="px-4 py-3">Vendedor</th>
                       <th className="px-4 py-3">Estado</th>
                       <th className="px-4 py-3">Fecha</th>
@@ -1001,8 +1001,8 @@ export default async function AdminPage() {
                     {closedSaleRows.map((sale) => (
                       <tr key={sale.id}>
                         <td className="px-4 py-3">
-                          <p className="font-black text-white">{sale.cardName}</p>
-                          <p className="mt-1 text-xs font-semibold text-slate-500">{sale.setName}</p>
+                          <p className="font-black text-white">{sale.productName}</p>
+                          <p className="mt-1 text-xs font-semibold text-slate-500">{sale.productMeta}</p>
                         </td>
                         <td className="px-4 py-3 font-semibold text-slate-300">{sale.seller}</td>
                         <td className="px-4 py-3">

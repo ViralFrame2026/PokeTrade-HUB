@@ -21,13 +21,13 @@ export const metadata = {
     canonical: "/marketplace"
   },
   description:
-    "Explora cartas Pokemon TCG en venta, intercambio o regalo dentro de PokeTrade HUB, con publicaciones moderadas y perfiles con reputacion.",
+    "Explora cartas, productos sellados y accesorios Pokemon TCG en venta, intercambio o regalo dentro de PokeTrade HUB.",
   openGraph: {
     description:
-      "Cartas Pokemon TCG oficiales para comprar, vender e intercambiar en una comunidad moderada.",
+      "Cartas, sellados y accesorios Pokemon TCG para comprar, vender e intercambiar en una comunidad moderada.",
     images: [
       {
-        alt: "Marketplace PokeTrade HUB de cartas Pokemon TCG",
+        alt: "Marketplace PokeTrade HUB de productos Pokemon TCG",
         height: 720,
         url: "/assets/pokemon-card-banner.webp",
         width: 1880
@@ -41,7 +41,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     description:
-      "Cartas Pokemon TCG oficiales para comprar, vender e intercambiar en una comunidad moderada.",
+      "Cartas, sellados y accesorios Pokemon TCG para comprar, vender e intercambiar en una comunidad moderada.",
     images: ["/assets/pokemon-card-banner.webp"],
     title: "Marketplace Pokemon TCG"
   }
@@ -334,7 +334,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
               {hasFilters
                 ? "No hay publicaciones reales que coincidan con esos filtros. Proba limpiar alguno para ampliar la busqueda."
-                : "Cuando el equipo apruebe las primeras cartas reales de la comunidad, apareceran aca."}
+                : "Cuando el equipo apruebe los primeros productos reales de la comunidad, apareceran aca."}
             </p>
           </div>
         ) : null}
@@ -353,8 +353,8 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
               </h2>
               <p className="mx-auto mt-2 max-w-md text-slate-600">
                 {hasFilters
-                  ? "Prueba con menos filtros o busca otra carta."
-                  : "Las cartas aprobadas aparecerán aquí."}
+                  ? "Prueba con menos filtros o busca otro producto."
+                  : "Los productos aprobados aparecerán aquí."}
               </p>
               {hasFilters ? (
                 <div className="mt-5 flex flex-wrap justify-center gap-2">
@@ -368,7 +368,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
                     className="inline-flex rounded-lg border border-blue-200 px-5 py-3 text-sm font-black text-blue-800"
                     href="/publish"
                   >
-                    Publicar carta
+                    Publicar producto
                   </Link>
                 </div>
               ) : (
@@ -376,7 +376,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
                   className="mt-5 inline-flex rounded-lg bg-yellow-400 px-5 py-3 text-sm font-black text-blue-950"
                   href="/publish"
                 >
-                  Publicar primera carta
+                  Publicar primer producto
                 </Link>
               )}
             </div>

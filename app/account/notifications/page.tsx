@@ -251,12 +251,12 @@ export default async function NotificationsPage() {
               <Bell className="mx-auto h-10 w-10 text-yellow-300" />
               <h2 className="mt-4 text-xl font-black text-white">No tienes notificaciones</h2>
               <p className="mt-2 leading-7 text-blue-100">
-                Cuando publiques cartas, participes en sorteos o recibas actividad en tu
+                Cuando publiques productos, participes en sorteos o recibas actividad en tu
                 cuenta, los avisos importantes apareceran aca.
               </p>
               <div className="mt-6 flex flex-wrap justify-center gap-3">
                 <ButtonLink href="/publish" variant="light">
-                  Publicar carta
+                  Publicar producto
                 </ButtonLink>
                 <ButtonLink href="/raffles" variant="secondary">
                   Ver sorteos

@@ -41,12 +41,12 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             Entrá a una comunidad TCG con reputación visible.
           </h1>
           <p className="mt-5 max-w-xl leading-7 text-blue-100">
-            Publicá cartas, guardá favoritos, recibí mensajes y participá en sorteos
+            Publicá productos, guardá favoritos, recibí mensajes y participá en sorteos
             moderados por la comunidad.
           </p>
           <div className="mt-8 grid gap-3 sm:grid-cols-2">
             {[
-              [Store, "Publicar cartas"],
+              [Store, "Publicar productos"],
               [Gift, "Crear sorteos"],
               [Heart, "Guardar favoritos"],
               [MessageCircle, "Recibir mensajes"],

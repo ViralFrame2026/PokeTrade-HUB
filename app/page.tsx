@@ -40,7 +40,7 @@ export const metadata = {
     canonical: "/"
   },
   description:
-    "Marketplace argentino para comprar, vender, intercambiar y sortear cartas oficiales de Pokémon TCG con moderación, reputación y catálogo oficial.",
+    "Marketplace argentino para comprar, vender, intercambiar y sortear productos Pokémon TCG con moderación, reputación y catálogo oficial.",
   title: "Marketplace Pokémon TCG Argentina"
 };
 
@@ -426,7 +426,7 @@ export default async function HomePage() {
               El marketplace está listo
             </h3>
             <p className="mx-auto mt-2 max-w-lg text-slate-600">
-              Las publicaciones aprobadas aparecerán aquí. Sé el primero en sumar una carta.
+              Las publicaciones aprobadas aparecerán aquí. Sé el primero en sumar un producto.
             </p>
           </div>
         )}

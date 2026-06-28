@@ -10,7 +10,7 @@ function quickMessages(intent: string, listingType: string) {
   if (intent === "trade" || listingType === "trade") {
     return [
       "Hola, sigue disponible para intercambio?",
-      "Tengo cartas para ofrecer, que estas buscando?",
+      "Tengo productos para ofrecer, que estas buscando?",
       "Podes compartir mas fotos reales?",
       "En que zona podriamos coordinar?"
     ];

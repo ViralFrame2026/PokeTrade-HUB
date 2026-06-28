@@ -11,7 +11,7 @@ const rules = [
   {
     icon: Store,
     title: "Publicaciones reales",
-    copy: "No se permiten cartas inventadas, imagenes falsas ni datos que no coincidan con la carta oficial seleccionada."
+    copy: "No se permiten cartas inventadas, imagenes falsas ni datos que no coincidan con la carta oficial, sellado o accesorio publicado."
   },
   {
     icon: BadgeCheck,

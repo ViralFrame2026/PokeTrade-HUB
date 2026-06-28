@@ -94,15 +94,15 @@ function accountNextStep({
     return {
       href: "/publish",
       icon: Store,
-      label: "Publicar primera carta",
-      text: "Todavía no tenés publicaciones. Elegí una carta oficial, agregá precio o intercambio y enviala a revisión."
+      label: "Publicar primer producto",
+      text: "Todavía no tenés publicaciones. Publicá una carta, producto sellado o accesorio y envialo a revisión."
     };
   }
   return {
     href: "/marketplace",
     icon: CheckCircle2,
     label: "Cuenta al día",
-    text: "Tu cuenta no tiene tareas urgentes. Podés explorar cartas, crear un sorteo o publicar una nueva carta."
+    text: "Tu cuenta no tiene tareas urgentes. Podés explorar productos, crear un sorteo o publicar algo nuevo."
   };
 }
 
@@ -289,7 +289,7 @@ export default async function AccountPage() {
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <ButtonLink href="/publish" icon={Store}>
-                  Publicar carta
+                  Publicar producto
                 </ButtonLink>
                 <ButtonLink href="/account/messages" icon={MessagesSquare} variant="secondary">
                   Ver mensajes

@@ -90,7 +90,7 @@ export function ReportListingForm({
               value={reason}
             >
               <option value="misleading_information">Información engañosa</option>
-              <option value="fake_listing">Carta o publicación falsa</option>
+              <option value="fake_listing">Producto o publicación falsa</option>
               <option value="missing_product">Producto no disponible</option>
               <option value="scam">Posible estafa</option>
               <option value="suspicious_behavior">Comportamiento sospechoso</option>

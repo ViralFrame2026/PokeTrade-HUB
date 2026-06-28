@@ -3,14 +3,14 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { PublishForm } from "@/components/publish-form";
 
 export const metadata = {
-  title: "Publicar carta"
+  title: "Publicar producto"
 };
 
 export default function PublishPage() {
   const steps = [
-    { icon: Search, label: "Buscar carta oficial" },
+    { icon: Search, label: "Elegir tipo de producto" },
     { icon: Store, label: "Completar datos comerciales" },
-    { icon: Camera, label: "Agregar fotos reales opcionales" },
+    { icon: Camera, label: "Agregar fotos reales" },
     { icon: ShieldCheck, label: "Enviar a moderación" }
   ];
 
@@ -30,8 +30,8 @@ export default function PublishPage() {
             Crear producto
           </h1>
           <p className="mt-4 max-w-2xl text-lg leading-8 text-blue-100">
-            Selecciona una carta oficial, completa los datos comerciales y envíala
-            a moderación. Las fotos reales ayudan, pero son opcionales.
+            Publicá cartas individuales, productos sellados o accesorios TCG. Las cartas
+            se validan con catálogo oficial; los productos usan fotos reales obligatorias.
           </p>
         </div>
       </section>
@@ -54,10 +54,10 @@ export default function PublishPage() {
               Qué revisamos
             </p>
             <ul className="mt-4 space-y-2 text-sm leading-6 text-blue-100">
-              <li>Carta oficial vinculada al catálogo.</li>
+              <li>Carta oficial vinculada al catálogo cuando aplica.</li>
               <li>Estado, precio y descripción coherentes.</li>
               <li>Datos de ubicación y operación claros.</li>
-              <li>Fotos reales si el vendedor decide agregarlas.</li>
+              <li>Fotos reales obligatorias en sellados y accesorios.</li>
             </ul>
           </div>
         </section>

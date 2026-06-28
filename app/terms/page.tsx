@@ -43,7 +43,7 @@ export default function TermsPage() {
           <h1 className="mt-5 text-4xl font-black sm:text-6xl">Terminos de uso</h1>
           <p className="mt-5 text-lg leading-8 text-blue-100">
             PokeTrade HUB es una plataforma de comunidad para publicar, encontrar y coordinar
-            operaciones de cartas Pokemon TCG entre usuarios.
+            operaciones de productos Pokemon TCG entre usuarios.
           </p>
         </div>
       </section>
