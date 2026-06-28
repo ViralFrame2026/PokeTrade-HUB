@@ -30,6 +30,8 @@ export type AdminListing = {
   location: string;
   moderation_status: string;
   price: number | null;
+  productCategory: string;
+  productType: string;
   rarity: string | null;
   seller: string;
   sellerJoinedAt: string | null;
@@ -47,8 +49,8 @@ type AdminListingsProps = {
 };
 
 const LISTING_REJECTION_PRESETS = [
-  "La descripción no explica el estado real de la carta.",
-  "El producto no coincide con la carta oficial seleccionada.",
+  "La descripción no explica el estado real del producto.",
+  "El producto no coincide con la carta oficial o las fotos cargadas.",
   "Faltan datos claros de precio, intercambio o entrega.",
   "La publicación contiene información engañosa o fuera de reglas."
 ];
@@ -192,8 +194,8 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
       setListings((current) => current.filter((listing) => listing.id !== listingId));
       setNotice(
         action === "approve"
-          ? `Publicación aprobada: ${moderatedListing?.cardName ?? "carta"}`
-          : `Publicación rechazada: ${moderatedListing?.cardName ?? "carta"}`
+          ? `Publicación aprobada: ${moderatedListing?.cardName ?? "producto"}`
+          : `Publicación rechazada: ${moderatedListing?.cardName ?? "producto"}`
       );
     } catch (moderationError) {
       setError(
@@ -262,6 +264,9 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
                 <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-slate-200">
                   {listing.condition}
                 </span>
+                <span className="rounded-full border border-blue-300/30 bg-blue-500/10 px-3 py-1 text-xs font-black text-blue-100">
+                  {listing.productCategory}
+                </span>
                 {listing.rarity ? (
                   <span className="rounded-full bg-blue-400/15 px-3 py-1 text-xs font-bold text-blue-100">
                     {listing.rarity}
@@ -270,6 +275,9 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
               </div>
               <h3 className="mt-3 truncate text-xl font-black text-white">{listing.cardName}</h3>
               <p className="mt-1 text-sm font-semibold text-yellow-300">{listing.setName}</p>
+              <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-blue-200">
+                {listing.productType}
+              </p>
               <p className="mt-3 line-clamp-2 text-sm leading-6 text-slate-300">
                 {listing.description}
               </p>
@@ -334,7 +342,7 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
                   Checklist
                 </p>
                 <ul className="mt-2 space-y-1">
-                  <li>Datos de carta oficial coinciden.</li>
+                  <li>Datos oficiales o fotos reales coinciden.</li>
                   <li>Precio, estado y descripción son claros.</li>
                   <li>No promete productos fuera de reglas.</li>
                 </ul>

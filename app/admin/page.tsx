@@ -25,6 +25,15 @@ import { AdminReports, type AdminReport } from "@/components/admin-reports";
 import { AdminUsers, type AdminUser } from "@/components/admin-users";
 import { SiteMenu } from "@/components/site-menu";
 import { ButtonLink } from "@/components/ui/button-link";
+import {
+  firstListingPhotoPath,
+  firstRelated,
+  productCategoryLabel,
+  productImage,
+  productMeta,
+  productTitle,
+  productTypeDetail
+} from "@/lib/product-display";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const metadata = {
@@ -45,7 +54,7 @@ type ListingRow = {
   id: string;
   location_city: string | null;
   location_country: string | null;
-  listing_images: { id: string }[] | null;
+  listing_images: Array<{ sort_order: number | null; storage_path: string | null }> | null;
   moderation_status: string;
   price: number | null;
   profiles:
@@ -69,7 +78,11 @@ type ListingRow = {
   type: string;
   products:
     | {
+        accessory_type: string | null;
+        category: string | null;
         condition: string;
+        sealed_type: string | null;
+        title: string | null;
         cards:
           | {
               image_large: string;
@@ -86,7 +99,11 @@ type ListingRow = {
           | null;
       }
     | {
+        accessory_type: string | null;
+        category: string | null;
         condition: string;
+        sealed_type: string | null;
+        title: string | null;
         cards:
           | {
               image_large: string;
@@ -254,10 +271,6 @@ function sellerName(profile: { display_name: string } | { display_name: string }
   return profile?.display_name ?? "Usuario";
 }
 
-function firstRelated<T>(value: T | T[] | null) {
-  return Array.isArray(value) ? value[0] ?? null : value;
-}
-
 function moneyLabel(value: number) {
   return new Intl.NumberFormat("es-AR", {
     currency: "ARS",
@@ -322,7 +335,7 @@ export default async function AdminPage() {
   ] = await Promise.all([
     supabase
       .from("listings")
-      .select("id, title, description, type, moderation_status, price, trade_wants, location_city, location_country, created_at, listing_images(id), profiles!listings_seller_id_fkey(display_name, is_verified, reputation_average, reputation_count, joined_at), products!listings_product_id_fkey(condition, cards!products_card_id_fkey(official_name, image_large, set_name, rarity))")
+      .select("id, title, description, type, moderation_status, price, trade_wants, location_city, location_country, created_at, listing_images(storage_path, sort_order), profiles!listings_seller_id_fkey(display_name, is_verified, reputation_average, reputation_count, joined_at), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name, rarity))")
       .eq("moderation_status", "pending")
       .order("created_at", { ascending: true }),
     supabase
@@ -461,10 +474,14 @@ export default async function AdminPage() {
       const product = firstRelated(listing.products);
       const card = firstRelated(product?.cards ?? null);
       const sellerProfile = firstRelated(listing.profiles);
+      const photoPath = firstListingPhotoPath(listing.listing_images);
+      const photoUrl = photoPath
+        ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing-images/${photoPath}`
+        : null;
 
       return {
-        cardImage: card?.image_large ?? null,
-        cardName: card?.official_name ?? listing.title,
+        cardImage: photoUrl ?? productImage(product),
+        cardName: productTitle(product, listing.title),
         condition: product?.condition ?? "Sin condición",
         created_at: listing.created_at,
         description: listing.description,
@@ -474,12 +491,14 @@ export default async function AdminPage() {
         moderation_status: listing.moderation_status,
         price: listing.price,
         rarity: card?.rarity ?? null,
+        productCategory: productCategoryLabel(product?.category),
+        productType: productTypeDetail(product),
         seller: sellerProfile?.display_name ?? "Usuario",
         sellerJoinedAt: sellerProfile?.joined_at ?? null,
         sellerRating: Number(sellerProfile?.reputation_average ?? 0),
         sellerReviews: Number(sellerProfile?.reputation_count ?? 0),
         sellerVerified: Boolean(sellerProfile?.is_verified),
-        setName: card?.set_name ?? "Set no disponible",
+        setName: productMeta(product),
         title: listing.title,
         tradeWants: listing.trade_wants,
         type: listing.type
@@ -727,7 +746,7 @@ export default async function AdminPage() {
                 Elementos esperando revisión
               </p>
               <div className="mt-5 grid grid-cols-3 gap-2 text-center text-xs font-black">
-                <span className="rounded-md bg-white/10 px-2 py-2">{listings.length} cartas</span>
+                <span className="rounded-md bg-white/10 px-2 py-2">{listings.length} productos</span>
                 <span className="rounded-md bg-white/10 px-2 py-2">{raffles.length} sorteos</span>
                 <span className="rounded-md bg-white/10 px-2 py-2">{reports.length} reportes</span>
               </div>
@@ -872,7 +891,7 @@ export default async function AdminPage() {
             </p>
             <h2 className="mt-2 text-xl font-black text-white">Publicaciones pendientes</h2>
             <p className="mt-2 text-sm leading-6 text-slate-300">
-              Validá carta oficial, estado, precio, descripción y que no haya señales engañosas.
+              Validá carta oficial o fotos reales, estado, precio, descripción y que no haya señales engañosas.
             </p>
           </article>
           <article className="rounded-lg border border-blue-300/30 bg-blue-500/10 p-5">
