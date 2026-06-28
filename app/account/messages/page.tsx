@@ -1,8 +1,16 @@
 import { ArrowLeft, Inbox, MessageCircle, MessagesSquare, Store } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SiteMenu } from "@/components/site-menu";
 import { ButtonLink } from "@/components/ui/button-link";
+import {
+  firstListingPhotoPath,
+  firstRelated,
+  productImage,
+  productMeta,
+  productTitle
+} from "@/lib/product-display";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -24,6 +32,31 @@ type ConversationPreview = {
   key: string;
   lastMessage: MessageRow;
   unreadCount: number;
+};
+
+type Related<T> = T | T[] | null;
+
+type ListingPreview = {
+  id: string;
+  listing_images: Array<{
+    sort_order: number;
+    storage_path: string;
+  }>;
+  title: string;
+  products: Related<{
+    accessory_type: string | null;
+    category: string | null;
+    condition: string | null;
+    sealed_type: string | null;
+    title: string | null;
+    cards: Related<{
+      image_large: string | null;
+      number: string | null;
+      official_name: string | null;
+      rarity: string | null;
+      set_name: string | null;
+    }>;
+  }>;
 };
 
 function messageDateLabel(date: string) {
@@ -96,14 +129,19 @@ export default async function MessagesPage() {
       ? supabase.from("profiles").select("id, display_name").in("id", otherIds)
       : Promise.resolve({ data: [] }),
     listingIds.length
-      ? supabase.from("listings").select("id, title").in("id", listingIds)
+      ? supabase
+          .from("listings")
+          .select(
+            "id, title, listing_images(storage_path, sort_order), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number))"
+          )
+          .in("id", listingIds)
       : Promise.resolve({ data: [] })
   ]);
   const profileNames = new Map(
     (profiles ?? []).map((profile) => [profile.id, profile.display_name])
   );
-  const listingTitles = new Map(
-    (listings ?? []).map((listing) => [listing.id, listing.title])
+  const listingPreviews = new Map(
+    ((listings ?? []) as ListingPreview[]).map((listing) => [listing.id, listing])
   );
 
   return (
@@ -149,7 +187,7 @@ export default async function MessagesPage() {
               </p>
               <h1 className="mt-5 text-4xl font-black leading-tight sm:text-6xl">Mensajes</h1>
               <p className="mt-4 max-w-2xl text-lg leading-8 text-blue-100">
-                Conversaciones vinculadas a cartas, ventas e intercambios de la comunidad.
+                Conversaciones vinculadas a productos, ventas e intercambios de la comunidad.
               </p>
             </div>
             <div className="rounded-lg border border-white/15 bg-white/10 p-5 text-center shadow-[0_20px_60px_rgba(0,0,0,.22)]">
@@ -166,6 +204,15 @@ export default async function MessagesPage() {
             {conversations.map((conversation) => {
               const { key, lastMessage, unreadCount } = conversation;
               const [listingId, otherId] = key.split(":");
+              const listing = listingPreviews.get(listingId);
+              const product = firstRelated(listing?.products);
+              const photoPath = firstListingPhotoPath(listing?.listing_images);
+              const photoUrl = photoPath
+                ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing-images/${photoPath}`
+                : null;
+              const displayTitle = productTitle(product, listing?.title ?? "Publicación");
+              const displayImage = photoUrl ?? productImage(product);
+              const displayMeta = productMeta(product);
               const isOwnLastMessage = lastMessage.sender_id === user.id;
 
               return (
@@ -176,8 +223,20 @@ export default async function MessagesPage() {
                   href={`/account/messages/${listingId}/${otherId}`}
                   key={key}
                 >
-                  <div className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-yellow-400 font-black text-blue-950">
-                    {(profileNames.get(otherId) ?? "TC").slice(0, 2).toUpperCase()}
+                  <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-blue-950">
+                    {displayImage ? (
+                      <Image
+                        alt={displayTitle}
+                        className="object-contain p-1"
+                        fill
+                        sizes="56px"
+                        src={displayImage}
+                      />
+                    ) : (
+                      <span className="grid h-full place-items-center bg-yellow-400 font-black text-blue-950">
+                        {(profileNames.get(otherId) ?? "TC").slice(0, 2).toUpperCase()}
+                      </span>
+                    )}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-3">
@@ -191,8 +250,11 @@ export default async function MessagesPage() {
                     <p className="mt-1 inline-flex max-w-full items-center gap-1 truncate text-xs font-bold text-yellow-300">
                       <Store className="h-3.5 w-3.5 shrink-0" />
                       <span className="truncate">
-                        {listingTitles.get(listingId) ?? "Publicación"}
+                        {displayTitle}
                       </span>
+                    </p>
+                    <p className="mt-1 truncate text-xs font-semibold text-blue-200">
+                      {displayMeta}
                     </p>
                     <div className="mt-1 flex items-center gap-3">
                       <p
@@ -223,14 +285,14 @@ export default async function MessagesPage() {
               </h2>
               <p className="mt-2 leading-7 text-blue-100">
                 Explorá el marketplace, abrí una publicación y enviá un mensaje al
-                vendedor para iniciar una conversación vinculada a esa carta.
+                vendedor para iniciar una conversación vinculada a ese producto.
               </p>
               <div className="mt-6 flex flex-wrap justify-center gap-3">
                 <ButtonLink href="/marketplace" icon={Store}>
-                  Explorar cartas
+                  Explorar productos
                 </ButtonLink>
                 <ButtonLink href="/publish" variant="secondary">
-                  Publicar una carta
+                  Publicar producto
                 </ButtonLink>
               </div>
             </div>
