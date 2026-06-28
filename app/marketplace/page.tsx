@@ -51,6 +51,7 @@ type Related<T> = T | T[] | null;
 
 type MarketplacePageProps = {
   searchParams: Promise<{
+    category?: string;
     condition?: string;
     location?: string;
     maxPrice?: string;
@@ -121,6 +122,9 @@ function priceLabel(row: ListingRow) {
 export default async function MarketplacePage({ searchParams }: MarketplacePageProps) {
   const params = await searchParams;
   const query = params.q?.trim() ?? "";
+  const category = ["card", "sealed", "accessory"].includes(params.category ?? "")
+    ? params.category!
+    : "";
   const type = ["sale", "trade", "free"].includes(params.type ?? "") ? params.type! : "";
   const condition = params.condition?.trim() ?? "";
   const location = params.location?.trim() ?? "";
@@ -166,13 +170,14 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
     rows = (result.data ?? []) as ListingRow[];
   }
 
-  if (query || set || rarity) {
+  if (query || category || set || rarity) {
     const normalizedQuery = query.toLowerCase();
     const normalizedSet = set.toLowerCase();
 
     rows = rows.filter((row) => {
       const product = firstRelated(row.products);
       const card = firstRelated(product?.cards ?? null);
+      const matchesCategory = !category || product?.category === category;
       const matchesQuery =
         !normalizedQuery ||
         [row.title, product?.title, card?.official_name, product?.sealed_type, product?.accessory_type]
@@ -181,7 +186,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
       const matchesSet = !normalizedSet || card?.set_name.toLowerCase().includes(normalizedSet);
       const matchesRarity = !rarity || card?.rarity === rarity;
 
-      return matchesQuery && matchesSet && matchesRarity;
+      return matchesCategory && matchesQuery && matchesSet && matchesRarity;
     });
   }
 
@@ -244,7 +249,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
   });
 
   const hasFilters = Boolean(
-    query || type || condition || location || set || rarity || hasMinPrice || hasMaxPrice
+    query || category || type || condition || location || set || rarity || hasMinPrice || hasMaxPrice
   );
   const displayListings = listings;
 
@@ -303,6 +308,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
             </p>
           </div>
           <MarketplaceFilters
+            category={category}
             condition={condition}
             location={location}
             maxPrice={hasMaxPrice ? String(maxPrice) : ""}

@@ -2,6 +2,7 @@ import { RotateCcw, Search } from "lucide-react";
 import Link from "next/link";
 
 type MarketplaceFiltersProps = {
+  category: string;
   condition: string;
   location: string;
   maxPrice: string;
@@ -28,6 +29,7 @@ function filterHref(removeKey: string, filters: Record<string, string>) {
 }
 
 export function MarketplaceFilters({
+  category,
   condition,
   location,
   maxPrice,
@@ -39,6 +41,7 @@ export function MarketplaceFilters({
   type
 }: MarketplaceFiltersProps) {
   const filterValues = {
+    category,
     condition,
     location,
     maxPrice,
@@ -50,7 +53,19 @@ export function MarketplaceFilters({
     type
   };
   const activeFilters = [
-    query ? ["q", `Carta: ${query}`] : null,
+    query ? ["q", `Buscar: ${query}`] : null,
+    category
+      ? [
+          "category",
+          `Categoría: ${
+            category === "card"
+              ? "Cartas"
+              : category === "sealed"
+                ? "Sellados"
+                : "Accesorios"
+          }`
+        ]
+      : null,
     type ? ["type", `Operación: ${type === "sale" ? "Venta" : type === "trade" ? "Intercambio" : "Gratis"}`] : null,
     condition ? ["condition", `Estado: ${condition}`] : null,
     set ? ["set", `Set: ${set}`] : null,
@@ -66,7 +81,7 @@ export function MarketplaceFilters({
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
       <label className="xl:col-span-2">
         <span className="mb-2 block text-xs font-black uppercase tracking-[0.12em] text-yellow-300">
-          Carta
+          Buscar
         </span>
         <input
           className={fieldClass}
@@ -75,6 +90,18 @@ export function MarketplaceFilters({
           placeholder="Ej: Charizard, Greninja..."
           type="search"
         />
+      </label>
+
+      <label>
+        <span className="mb-2 block text-xs font-black uppercase tracking-[0.12em] text-yellow-300">
+          Categoría
+        </span>
+        <select className={fieldClass} defaultValue={category} name="category">
+          <option value="">Todo</option>
+          <option value="card">Cartas</option>
+          <option value="sealed">Sellados</option>
+          <option value="accessory">Accesorios</option>
+        </select>
       </label>
 
       <label>
