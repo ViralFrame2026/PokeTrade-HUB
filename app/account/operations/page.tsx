@@ -13,6 +13,13 @@ import {
 import { redirect } from "next/navigation";
 import { SiteMenu } from "@/components/site-menu";
 import { ButtonLink } from "@/components/ui/button-link";
+import {
+  firstListingPhotoPath,
+  firstRelated,
+  productImage,
+  productMeta,
+  productTitle
+} from "@/lib/product-display";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -28,6 +35,10 @@ type OperationRow = {
   completed_with_id: string | null;
   created_at: string;
   id: string;
+  listing_images: Array<{
+    sort_order: number;
+    storage_path: string;
+  }>;
   location_city: string | null;
   location_country: string | null;
   price: number | null;
@@ -36,7 +47,11 @@ type OperationRow = {
   trade_wants: string | null;
   type: string;
   products: Related<{
+    accessory_type: string | null;
+    category: string | null;
     condition: string;
+    sealed_type: string | null;
+    title: string | null;
     cards: Related<{
       image_large: string;
       number: string | null;
@@ -56,10 +71,6 @@ type OperationRow = {
 type RatingRow = {
   listing_id: string | null;
 };
-
-function firstRelated<T>(value: Related<T>) {
-  return Array.isArray(value) ? value[0] ?? null : value;
-}
 
 function statusLabel(status: string) {
   return {
@@ -113,7 +124,7 @@ export default async function OperationsPage() {
   const { data } = await supabase
     .from("listings")
     .select(
-      "id, seller_id, type, status, price, trade_wants, completed_with_id, approved_at, created_at, location_city, location_country, profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!listings_product_id_fkey(condition, cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number))"
+      "id, seller_id, type, status, price, trade_wants, completed_with_id, approved_at, created_at, location_city, location_country, listing_images(storage_path, sort_order), profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number))"
     )
     .eq("moderation_status", "approved")
     .in("status", ["sold", "traded", "finished"])
@@ -178,12 +189,12 @@ export default async function OperationsPage() {
           <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.18em] text-yellow-300">
-                Historial comprador
+                Historial de operaciones
               </p>
               <h1 className="mt-2 text-4xl font-black text-white">Mis operaciones</h1>
               <p className="mt-3 max-w-2xl leading-7 text-blue-100">
-                Revisa tus compras e intercambios cerrados. Desde aquí puedes volver a
-                la publicación para valorar al vendedor.
+                Revisa tus compras, ventas e intercambios cerrados. Desde aquí puedes volver a
+                la publicación para valorar la experiencia.
               </p>
             </div>
 
@@ -231,11 +242,16 @@ export default async function OperationsPage() {
           <div className="space-y-4">
             {operations.map((operation) => {
               const product = firstRelated(operation.products);
-              const card = firstRelated(product?.cards ?? null);
               const seller = firstRelated(operation.profiles);
+              const photoPath = firstListingPhotoPath(operation.listing_images);
+              const photoUrl = photoPath
+                ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing-images/${photoPath}`
+                : null;
               const isSellerSide = operation.seller_id === user.id;
               const isRated = isSellerSide || ratedIds.has(operation.id);
-              const title = card?.official_name ?? "Carta Pokémon TCG";
+              const title = productTitle(product, "Producto TCG");
+              const image = photoUrl ?? productImage(product);
+              const meta = productMeta(product);
 
               return (
                 <article
@@ -243,13 +259,13 @@ export default async function OperationsPage() {
                   key={operation.id}
                 >
                   <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-blue-50">
-                    {card?.image_large ? (
+                    {image ? (
                       <Image
                         alt={title}
                         className="object-contain p-2"
                         fill
                         sizes="124px"
-                        src={card.image_large}
+                        src={image}
                       />
                     ) : (
                       <Store className="absolute inset-0 m-auto h-8 w-8 text-blue-300" />
@@ -283,9 +299,7 @@ export default async function OperationsPage() {
 
                     <h2 className="mt-3 truncate text-xl font-black text-white">{title}</h2>
                     <p className="mt-1 text-sm text-blue-100">
-                      {[card?.set_name, card?.number ? `#${card.number}` : null, card?.rarity, product?.condition]
-                        .filter(Boolean)
-                        .join(" | ")}
+                      {meta}
                     </p>
 
                     <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-blue-100">

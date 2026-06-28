@@ -6,6 +6,13 @@ import { ListingStatusControl } from "@/components/listing-status-control";
 import { MessageComposer } from "@/components/message-composer";
 import { SiteMenu } from "@/components/site-menu";
 import { ButtonLink } from "@/components/ui/button-link";
+import {
+  firstListingPhotoPath,
+  firstRelated,
+  productImage,
+  productMeta,
+  productTitle
+} from "@/lib/product-display";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -28,6 +35,10 @@ type ListingContext = {
   completed_with_id: string | null;
   id: string;
   moderation_status: string;
+  listing_images: Array<{
+    sort_order: number;
+    storage_path: string;
+  }>;
   price: number | null;
   seller_id: string;
   status: string;
@@ -35,7 +46,11 @@ type ListingContext = {
   trade_wants: string | null;
   type: string;
   products: Related<{
+    accessory_type: string | null;
+    category: string | null;
     condition: string;
+    sealed_type: string | null;
+    title: string | null;
     cards: Related<{
       image_large: string;
       official_name: string;
@@ -43,10 +58,6 @@ type ListingContext = {
     }>;
   }>;
 };
-
-function firstRelated<T>(value: Related<T>) {
-  return Array.isArray(value) ? value[0] ?? null : value;
-}
 
 function typeLabel(type: string) {
   return {
@@ -101,7 +112,7 @@ export default async function ConversationPage({
   const [{ data: listing }, { data: profile }] = await Promise.all([
     supabase
       .from("listings")
-      .select("id, title, seller_id, completed_with_id, moderation_status, type, status, price, trade_wants, products!listings_product_id_fkey(condition, cards!products_card_id_fkey(official_name, image_large, set_name))")
+      .select("id, title, seller_id, completed_with_id, moderation_status, type, status, price, trade_wants, listing_images(storage_path, sort_order), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name))")
       .eq("id", listingId)
       .maybeSingle(),
     supabase.from("profiles").select("id, display_name").eq("id", otherId).maybeSingle()
@@ -119,7 +130,13 @@ export default async function ConversationPage({
 
   const listingContext = listing as ListingContext;
   const product = firstRelated(listingContext.products);
-  const card = firstRelated(product?.cards ?? null);
+  const photoPath = firstListingPhotoPath(listingContext.listing_images);
+  const photoUrl = photoPath
+    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing-images/${photoPath}`
+    : null;
+  const displayTitle = productTitle(product, listingContext.title);
+  const displayImage = photoUrl ?? productImage(product);
+  const displayMeta = productMeta(product);
   const isSeller = listingContext.seller_id === user.id;
   const wasClosedWithCurrentUser = listingContext.completed_with_id === user.id;
   const isClosed = ["sold", "traded", "finished"].includes(listingContext.status);
@@ -163,7 +180,7 @@ export default async function ConversationPage({
               <ArrowLeft className="h-5 w-5 shrink-0" />
               <div className="min-w-0">
                 <p className="truncate font-black">{profile.display_name}</p>
-                <p className="max-w-[220px] truncate text-xs text-blue-100">{listing.title}</p>
+                <p className="max-w-[220px] truncate text-xs text-blue-100">{displayTitle}</p>
               </div>
             </Link>
           </div>
@@ -181,13 +198,13 @@ export default async function ConversationPage({
         <div className="overflow-hidden rounded-lg border border-white/10 bg-white/[0.06] shadow-[0_22px_65px_rgba(0,0,0,0.28)]">
           <div className="grid gap-4 border-b border-white/10 bg-[linear-gradient(135deg,#123cba,#071535)] p-4 sm:grid-cols-[88px_minmax(0,1fr)_auto] sm:items-center">
             <div className="relative h-24 overflow-hidden rounded-lg bg-blue-50">
-              {card?.image_large ? (
+              {displayImage ? (
                 <Image
-                  alt={card.official_name}
+                  alt={displayTitle}
                   className="object-contain p-2"
                   fill
                   sizes="88px"
-                  src={card.image_large}
+                  src={displayImage}
                 />
               ) : (
                 <Store className="absolute inset-0 m-auto h-7 w-7 text-blue-300" />
@@ -203,10 +220,10 @@ export default async function ConversationPage({
                 </span>
               </div>
               <h1 className="mt-2 truncate text-lg font-black text-white">
-                {card?.official_name ?? listingContext.title}
+                {displayTitle}
               </h1>
               <p className="mt-1 truncate text-sm font-semibold text-blue-100">
-                {[card?.set_name, product?.condition].filter(Boolean).join(" | ")}
+                {displayMeta}
               </p>
               <p className="mt-2 text-sm font-black text-yellow-300">
                 {valueLabel(listingContext)}
