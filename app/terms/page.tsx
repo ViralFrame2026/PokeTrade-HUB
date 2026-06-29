@@ -1,4 +1,13 @@
-import { Handshake, Scale, ShieldAlert, Store, UserCog } from "lucide-react";
+import {
+  BadgeDollarSign,
+  Handshake,
+  MegaphoneOff,
+  PackageCheck,
+  Scale,
+  ShieldAlert,
+  Store,
+  UserCog
+} from "lucide-react";
 import { ButtonLink } from "@/components/ui/button-link";
 
 export const metadata = {
@@ -9,24 +18,46 @@ export const metadata = {
 const terms = [
   {
     icon: Store,
+    title: "Uso de la plataforma",
+    copy: "PokeTrade HUB permite publicar, buscar y coordinar operaciones sobre productos Pokemon TCG: cartas individuales, productos sellados, accesorios y sorteos."
+  },
+  {
+    icon: PackageCheck,
     title: "Responsabilidad del usuario",
-    copy: "Cada usuario es responsable de la veracidad de sus publicaciones, fotos, mensajes, sorteos, precios, acuerdos y datos de entrega."
+    copy: "Cada usuario es responsable de la veracidad de sus publicaciones, fotos, estado del producto, precio, mensajes, sorteos, acuerdos y datos de entrega."
   },
   {
     icon: Handshake,
     title: "Operaciones entre usuarios",
-    copy: "PokeTrade HUB facilita contacto, reputacion y organizacion, pero no reemplaza la verificacion personal de estado, pago, envio, entrega o autenticidad."
+    copy: "La plataforma facilita contacto, reputacion, moderacion y organizacion, pero cada comprador y vendedor debe verificar autenticidad, estado, pago, envio y entrega."
+  },
+  {
+    icon: BadgeDollarSign,
+    title: "Comisiones y monetizacion",
+    copy: "PokeTrade HUB puede registrar comisiones por ventas concretadas, mostrar metricas internas y aplicar condiciones comerciales para sostener la plataforma."
   },
   {
     icon: ShieldAlert,
     title: "Contenido y moderacion",
-    copy: "La plataforma puede revisar, rechazar, pausar o eliminar contenido que incumpla reglas, use datos falsos, afecte la confianza o represente riesgo para otros usuarios."
+    copy: "Podemos revisar, rechazar, pausar o eliminar contenido que incumpla reglas, use datos falsos, afecte la confianza o represente riesgo para otros usuarios."
+  },
+  {
+    icon: MegaphoneOff,
+    title: "Conductas prohibidas",
+    copy: "No se permite publicar falsificaciones, productos re-sellados como nuevos, fotos robadas, spam, amenazas, fraude, presion indebida o acuerdos pensados para evadir seguridad."
   },
   {
     icon: UserCog,
     title: "Cuentas administradoras",
     copy: "Las cuentas con permisos de administrador pueden moderar contenido, resolver reportes, gestionar permisos internos y registrar acciones de seguridad dentro del panel."
   }
+];
+
+const importantNotes = [
+  "PokeTrade HUB no fabrica, vende ni garantiza directamente los productos publicados por usuarios.",
+  "Las operaciones de pago, envio o entrega acordadas entre usuarios quedan bajo responsabilidad de quienes participan.",
+  "Los reportes falsos, abusivos o hechos para perjudicar a otro usuario tambien pueden ser moderados.",
+  "Si se integran pagos o planes mas adelante, sus condiciones se comunicaran dentro de la plataforma."
 ];
 
 export default function TermsPage() {
@@ -60,6 +91,18 @@ export default function TermsPage() {
         ))}
 
         <article className="rounded-lg border border-yellow-300/40 bg-yellow-400/10 p-6">
+          <h2 className="text-xl font-black">Puntos importantes</h2>
+          <div className="mt-4 grid gap-3">
+            {importantNotes.map((note) => (
+              <p className="flex gap-2 text-sm font-semibold leading-6 text-blue-100" key={note}>
+                <Scale className="mt-0.5 h-4 w-4 shrink-0 text-yellow-300" />
+                {note}
+              </p>
+            ))}
+          </div>
+        </article>
+
+        <article className="rounded-lg border border-white/10 bg-white/[0.06] p-6">
           <h2 className="text-xl font-black">Cambios y continuidad</h2>
           <p className="mt-3 leading-7 text-blue-100">
             Estas condiciones pueden actualizarse a medida que la plataforma crece, suma
