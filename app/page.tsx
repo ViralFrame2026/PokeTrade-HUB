@@ -40,8 +40,8 @@ export const metadata = {
     canonical: "/"
   },
   description:
-    "Marketplace argentino para comprar, vender, intercambiar y sortear productos Pokémon TCG con moderación, reputación y catálogo oficial.",
-  title: "Marketplace Pokémon TCG Argentina"
+    "Marketplace argentino para comprar, vender, intercambiar y sortear productos Pokemon TCG con moderacion, reputacion y catalogo oficial.",
+  title: "Marketplace Pokemon TCG Argentina"
 };
 
 export const dynamic = "force-dynamic";
@@ -103,7 +103,6 @@ function typeLabel(type: string) {
     trade: "Intercambio"
   }[type] ?? type;
 }
-
 function listingPrice(listing: ListingRow) {
   if (listing.type === "trade") {
     return "Intercambio";
@@ -268,8 +267,8 @@ export default async function HomePage() {
   const trustHighlights = [
     {
       icon: ShieldCheck,
-      label: "Cartas revisadas",
-      text: "Cada publicacion aprobada queda vinculada a datos oficiales de Pokemon TCG."
+      label: "Productos revisados",
+      text: "Cada publicacion aprobada se revisa con datos oficiales o fotos reales del producto."
     },
     {
       icon: Star,
@@ -322,16 +321,16 @@ export default async function HomePage() {
           <div className="flex w-[calc(100vw-2rem)] min-w-0 max-w-full flex-col justify-center lg:w-auto">
             <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border-2 border-yellow-300 bg-blue-950/45 px-4 py-2 text-sm font-bold text-yellow-200 shadow-sm backdrop-blur">
               <Sparkles className="h-4 w-4 text-yellow-300" />
-              Cartas oficiales, comunidad real
+              Productos oficiales, comunidad real
             </div>
             <h1 className="max-w-4xl text-5xl font-black leading-[0.98] tracking-normal text-white sm:text-6xl lg:text-[68px]">
               El hub argentino para comprar, vender e intercambiar
               {" "}
-              <span className="block text-yellow-300">cartas Pokémon TCG</span>
+              <span className="block text-yellow-300">productos Pokemon TCG</span>
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-blue-100">
-              Publicaciones moderadas, reputación visible, sorteos de la comunidad y
-              operaciones más seguras.
+              Publicaciones moderadas, reputacion visible, sorteos de la comunidad y
+              operaciones mas seguras.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href="/marketplace" icon={Search}>
@@ -359,7 +358,7 @@ export default async function HomePage() {
             label="Publicaciones aprobadas"
             value={String(listingsTotal)}
           />
-          <StatCard icon={ShieldCheck} label="Moderación" value="100%" />
+          <StatCard icon={ShieldCheck} label="Moderacion" value="100%" />
           <StatCard icon={Trophy} label="Sorteos activos" value={String(rafflesTotal)} />
         </div>
       </section>
@@ -368,21 +367,21 @@ export default async function HomePage() {
         <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
           <div>
             <p className="text-sm font-black uppercase tracking-[0.22em] text-yellow-300">
-              Cómo funciona
+              Como funciona
             </p>
             <h2 className="mt-2 text-3xl font-black text-white sm:text-4xl">
-              Publicá, validá y conectá con coleccionistas reales
+              Publica, valida y conecta con coleccionistas reales
             </h2>
             <p className="mt-4 max-w-xl leading-7 text-slate-300">
-              PokeTrade ordena la experiencia para que cada carta tenga datos oficiales,
-              revisión previa y un vendedor con perfil visible.
+              PokeTrade ordena la experiencia para que cada producto tenga validacion,
+              revision previa y un vendedor con perfil visible.
             </p>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             {[
-              ["1", "Publicás tu carta", "Buscás la carta oficial, cargás precio, estado y condiciones."],
-              ["2", "El equipo revisa", "La publicación pasa por moderación antes de aparecer."],
-              ["3", "Conectás seguro", "Usás mensajes, favoritos y reputación para operar con más confianza."]
+              ["1", "Publicas tu producto", "Elegis carta oficial, sellado o accesorio, y cargas precio, estado y condiciones."],
+              ["2", "El equipo revisa", "La publicacion pasa por moderacion antes de aparecer."],
+              ["3", "Conectas seguro", "Usas mensajes, favoritos y reputacion para operar con mas confianza."]
             ].map(([step, title, copy]) => (
               <article className="rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-foil" key={step}>
                 <div className="grid h-10 w-10 place-items-center rounded-full bg-yellow-400 font-black text-blue-950">
@@ -406,11 +405,11 @@ export default async function HomePage() {
               Publicaciones reales
             </p>
             <h2 className="mt-2 text-3xl font-black text-white sm:text-4xl">
-              Recién aprobadas
+              Recien aprobadas
             </h2>
           </div>
           <ButtonLink href="/publish" icon={Store} variant="blue">
-            Publicar una carta
+            Publicar producto
           </ButtonLink>
         </div>
         {displayListings.length > 0 ? (
@@ -423,10 +422,10 @@ export default async function HomePage() {
           <div className="rounded-lg border-2 border-dashed border-blue-200 bg-white px-6 py-14 text-center">
             <Store className="mx-auto h-10 w-10 text-blue-500" />
             <h3 className="mt-4 text-xl font-black text-blue-950">
-              El marketplace está listo
+              El marketplace esta listo
             </h3>
             <p className="mx-auto mt-2 max-w-lg text-slate-600">
-              Las publicaciones aprobadas aparecerán aquí. Sé el primero en sumar un producto.
+              Las publicaciones aprobadas apareceran aqui. Se el primero en sumar un producto.
             </p>
           </div>
         )}
@@ -441,7 +440,7 @@ export default async function HomePage() {
                 Atajos del marketplace
               </p>
               <h2 className="mt-2 text-3xl font-black text-white sm:text-4xl">
-                Encontrá más rápido lo que querés hacer
+                Encontra mas rapido lo que queres hacer
               </h2>
             </div>
             <ButtonLink href="/marketplace" icon={Search} variant="light">
@@ -451,13 +450,13 @@ export default async function HomePage() {
 
           <div className="grid gap-5 lg:grid-cols-2">
             <MarketLane
-              emptyText="Cuando haya cartas en venta aprobadas, aparecerán acá."
+              emptyText="Cuando haya productos en venta aprobados, apareceran aca."
               href="/marketplace?type=sale"
               listings={saleHighlights}
-              title="Comprar cartas"
+              title="Comprar productos"
             />
             <MarketLane
-              emptyText="Cuando haya intercambios aprobados, aparecerán acá."
+              emptyText="Cuando haya intercambios aprobados, apareceran aca."
               href="/marketplace?type=trade"
               listings={tradeHighlights}
               title="Intercambios activos"
@@ -487,11 +486,11 @@ export default async function HomePage() {
               Comunidad
             </p>
             <h2 className="mt-2 text-3xl font-black text-white">
-              La confianza también se colecciona
+              La confianza tambien se colecciona
             </h2>
             <p className="mt-4 max-w-xl leading-7 text-blue-100">
-              Cada operación ayuda a construir reputación. Los perfiles muestran
-              valoraciones, actividad y verificación.
+              Cada operacion ayuda a construir reputacion. Los perfiles muestran
+              valoraciones, actividad y verificacion.
             </p>
             <div className="mt-8 flex gap-3" aria-hidden="true">
               <span className="energy-dot bg-yellow-400 text-blue-950">
@@ -534,7 +533,7 @@ export default async function HomePage() {
             </div>
           ) : (
             <div className="relative z-10 rounded-lg border border-yellow-300 bg-white p-8 text-slate-600 shadow-sm">
-              Los coleccionistas destacados aparecerán cuando reciban sus primeras valoraciones.
+              Los coleccionistas destacados apareceran cuando reciban sus primeras valoraciones.
             </div>
           )}
         </div>
@@ -544,15 +543,15 @@ export default async function HomePage() {
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mb-8 max-w-2xl">
           <p className="text-sm font-black uppercase tracking-[0.22em] text-red-500">Seguridad</p>
-          <h2 className="mt-2 text-3xl font-black text-blue-950">Un intercambio más tranquilo</h2>
+          <h2 className="mt-2 text-3xl font-black text-blue-950">Un intercambio mas tranquilo</h2>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
           {[
             {
               color: "bg-blue-600",
-              copy: "Toda publicación se revisa antes de aparecer en el marketplace.",
+              copy: "Toda publicacion se revisa antes de aparecer en el marketplace.",
               icon: ShieldCheck,
-              title: "Moderación obligatoria"
+              title: "Moderacion obligatoria"
             },
             {
               color: "bg-red-500",
@@ -562,7 +561,7 @@ export default async function HomePage() {
             },
             {
               color: "bg-yellow-400",
-              copy: "Avisos de aprobación, rechazo, ventas, reservas y comentarios.",
+              copy: "Avisos de aprobacion, rechazo, ventas, reservas y comentarios.",
               icon: Bell,
               title: "Notificaciones claras"
             }
@@ -596,7 +595,7 @@ export default async function HomePage() {
             <span className="pokeball h-9 w-9 shrink-0" aria-hidden="true" />
             <div>
               <p className="font-black tracking-[0.18em] text-yellow-300">POKETRADE</p>
-              <p className="text-xs text-blue-200">Marketplace de comunidad Pokémon TCG</p>
+              <p className="text-xs text-blue-200">Marketplace de comunidad Pokemon TCG</p>
             </div>
           </div>
           <nav className="flex flex-wrap gap-x-5 gap-y-2 font-bold" aria-label="Enlaces legales">
@@ -610,7 +609,7 @@ export default async function HomePage() {
               Privacidad
             </Link>
             <Link className="hover:text-yellow-300" href="/terms">
-              Términos
+              Terminos
             </Link>
           </nav>
         </div>
@@ -638,7 +637,7 @@ function MarketLane({
           className="rounded-full border border-yellow-300/40 px-3 py-1 text-xs font-black text-yellow-200 transition hover:bg-yellow-300 hover:text-blue-950"
           href={href}
         >
-          Ver más
+          Ver mas
         </Link>
       </div>
       {listings.length > 0 ? (

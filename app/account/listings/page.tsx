@@ -97,10 +97,9 @@ function moderationMeta(status: string) {
   return {
     className: "bg-blue-100 text-blue-700",
     icon: Clock3,
-    label: "En revisión"
+    label: "En revision"
   };
 }
-
 function typeLabel(type: string) {
   return {
     free: "Gratis",
@@ -150,7 +149,7 @@ function availabilityLabel(status: string) {
 
 function nextActionLabel(listing: ListingRow) {
   if (listing.moderation_status === "approved" && listing.status === "active") {
-    return "Tu carta ya esta visible en el marketplace. Compartila o cambia el estado cuando cierres la operacion.";
+    return "Tu producto ya esta visible en el marketplace. Compartilo o cambia el estado cuando cierres la operacion.";
   }
 
   if (listing.moderation_status === "approved") {
@@ -289,14 +288,14 @@ export default async function MyListingsPage({
           </Link>
           <h1 className="mt-5 text-4xl font-black text-white">Mis publicaciones</h1>
           <p className="mt-2 text-blue-100">
-            Sigue el estado de las cartas que enviaste a moderación.
+            Sigue el estado de los productos que enviaste a moderacion.
           </p>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-3">
             <SummaryCard label="Total enviadas" value={listings.length} />
-            <SummaryCard label="En revisión" value={pending} variant="blue" />
+            <SummaryCard label="En revision" value={pending} variant="blue" />
             <SummaryCard
-              label={needsAttention > 0 ? "Necesitan atención" : "Aprobadas"}
+              label={needsAttention > 0 ? "Necesitan atencion" : "Aprobadas"}
               value={needsAttention > 0 ? needsAttention : approved}
               variant={needsAttention > 0 ? "red" : "green"}
             />
@@ -307,7 +306,7 @@ export default async function MyListingsPage({
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         {params.resubmitted === "1" ? (
           <div className="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4 font-bold text-emerald-800">
-            Los cambios se guardaron y la publicación volvió a moderación.
+            Los cambios se guardaron y la publicacion volvio a moderacion.
           </div>
         ) : null}
         {listings.length > 0 ? (
@@ -373,14 +372,14 @@ export default async function MyListingsPage({
                     </p>
                     {listing.type === "sale" && listing.status === "sold" ? (
                       <p className="mt-2 rounded-lg border border-yellow-200 bg-yellow-50 px-3 py-2 text-xs font-bold text-yellow-900">
-                        Comisión estimada PokeTrade: {saleCommission.commission} | Neto vendedor:{" "}
+                        Comision estimada PokeTrade: {saleCommission.commission} | Neto vendedor:{" "}
                         {saleCommission.sellerNet}
                       </p>
                     ) : null}
 
                     {listing.rejection_reason ? (
                       <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
-                        <strong>Revisión:</strong> {listing.rejection_reason}
+                        <strong>Revision:</strong> {listing.rejection_reason}
                       </div>
                     ) : null}
                   </div>
@@ -442,14 +441,14 @@ export default async function MyListingsPage({
             <div>
               <Store className="mx-auto h-10 w-10 text-blue-500" />
               <h2 className="mt-4 text-xl font-black text-blue-950">
-                Todavía no publicaste cartas
+                Todavia no publicaste productos
               </h2>
               <p className="mt-2 text-slate-600">
-                Selecciona una carta oficial y envíala a revisión.
+                Publica una carta, producto sellado o accesorio y envialo a revision.
               </p>
               <div className="mt-5">
                 <ButtonLink href="/publish" icon={Plus}>
-                  Crear publicación
+                  Crear publicacion
                 </ButtonLink>
               </div>
             </div>
