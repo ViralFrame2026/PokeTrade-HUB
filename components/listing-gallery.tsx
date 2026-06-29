@@ -11,7 +11,17 @@ type GalleryImage = {
   type: "real" | "official";
 };
 
-export function ListingGallery({ images }: { images: GalleryImage[] }) {
+export function ListingGallery({
+  images,
+  inspectionCopy = "bordes, esquinas, brillo y reverso antes de operar",
+  referenceBadgeLabel = "Imagen oficial",
+  referenceCountLabel = "imagen oficial de referencia"
+}: {
+  images: GalleryImage[];
+  inspectionCopy?: string;
+  referenceBadgeLabel?: string;
+  referenceCountLabel?: string;
+}) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const selectedImage = images[selectedIndex] ?? images[0];
   const realPhotoCount = images.filter((image) => image.type === "real").length;
@@ -30,7 +40,7 @@ export function ListingGallery({ images }: { images: GalleryImage[] }) {
           ) : (
             <Database className="h-4 w-4 text-sky-300" />
           )}
-          {selectedImage.type === "real" ? "Foto real" : "Imagen oficial"}
+          {selectedImage.type === "real" ? "Foto real" : referenceBadgeLabel}
         </span>
         <Image
           alt={selectedImage.alt}
@@ -75,7 +85,7 @@ export function ListingGallery({ images }: { images: GalleryImage[] }) {
                 image.type === "real" ? "bg-blue-700" : "bg-slate-700"
               )}
             >
-              {image.type === "real" ? `Real ${index + 1}` : "Oficial"}
+              {image.type === "real" ? `Real ${index + 1}` : referenceBadgeLabel}
             </span>
           </button>
         ))}
@@ -84,15 +94,17 @@ export function ListingGallery({ images }: { images: GalleryImage[] }) {
       <div className="mt-4 grid gap-3 rounded-lg border border-white/10 bg-white/[0.06] p-4 text-sm text-blue-100 sm:grid-cols-3">
         <div>
           <p className="font-black text-yellow-300">{realPhotoCount}</p>
-          <p className="mt-1 font-semibold">foto{realPhotoCount === 1 ? "" : "s"} real{realPhotoCount === 1 ? "" : "es"} del vendedor</p>
+          <p className="mt-1 font-semibold">
+            foto{realPhotoCount === 1 ? "" : "s"} real{realPhotoCount === 1 ? "" : "es"} del vendedor
+          </p>
         </div>
         <div>
           <p className="font-black text-yellow-300">{officialImageCount}</p>
-          <p className="mt-1 font-semibold">imagen oficial de referencia</p>
+          <p className="mt-1 font-semibold">{referenceCountLabel}</p>
         </div>
         <div>
-          <p className="font-black text-yellow-300">Revisá</p>
-          <p className="mt-1 font-semibold">bordes, esquinas, brillo y reverso antes de operar</p>
+          <p className="font-black text-yellow-300">Revisa</p>
+          <p className="mt-1 font-semibold">{inspectionCopy}</p>
         </div>
       </div>
     </section>

@@ -342,7 +342,9 @@ export default async function ListingDetailPage({
   );
   const riskSignals = [
     !hasRealPhotos
-      ? "Pedile fotos reales de frente, dorso, esquinas y detalle de superficie."
+      ? cardProduct
+        ? "Pedile fotos reales de frente, dorso, esquinas y detalle de superficie."
+        : "Este producto deberia tener fotos reales claras antes de cerrar cualquier acuerdo."
       : null,
     seller.reputation_count === 0
       ? "Este vendedor todavia no tiene valoraciones: avanza con mas verificacion."
@@ -357,6 +359,56 @@ export default async function ListingDetailPage({
       ? "Monto alto: usa entrega segura, comprobantes y confirmacion por mensaje."
       : null
   ].filter(Boolean) as string[];
+  const visualReviewTitle = cardProduct
+    ? "Revision visual recomendada"
+    : "Revision del producto recomendada";
+  const visualReviewItems = cardProduct
+    ? [
+        "Compara la carta real con la imagen oficial.",
+        "Pedi fotos de frente, dorso y esquinas.",
+        "Confirma estado, precio y forma de entrega.",
+        "Mantene el acuerdo registrado por mensaje."
+      ]
+    : product.category === "sealed"
+      ? [
+          "Revisa sellos, envoltorio, golpes y posibles aperturas.",
+          "Pedi fotos reales de todos los lados del empaque.",
+          "Confirma idioma, expansion, contenido y precio.",
+          "Mantene entrega, pago y condiciones por mensaje."
+        ]
+      : [
+          "Revisa desgaste, medidas, capacidad y compatibilidad.",
+          "Pedi fotos reales de frente, reverso e interior si aplica.",
+          "Confirma estado, piezas incluidas y forma de entrega.",
+          "Mantene el acuerdo registrado por mensaje."
+        ];
+  const verificationTitle = cardProduct
+    ? "Carta verificada"
+    : product.category === "sealed"
+      ? "Sellado revisado"
+      : "Accesorio revisado";
+  const verificationCopy = cardProduct
+    ? "La carta esta vinculada al catalogo oficial de Pokemon TCG y fue aprobada por moderacion."
+    : "El producto fue revisado por moderacion usando fotos reales, descripcion, tipo y coherencia comercial.";
+  const photoStatusTitle = hasRealPhotos
+    ? "Incluye fotos reales"
+    : cardProduct
+      ? "Solo imagen oficial"
+      : "Faltan fotos reales";
+  const photoStatusCopy = hasRealPhotos
+    ? cardProduct
+      ? "Revisa las fotos subidas por el vendedor ademas de la imagen oficial."
+      : "Revisa las fotos subidas por el vendedor antes de avanzar con la operacion."
+    : cardProduct
+      ? "Pedi fotos reales al vendedor antes de cerrar una operacion importante."
+      : "No cierres la operacion sin fotos reales claras del producto.";
+  const galleryReferenceBadge = cardProduct ? "Imagen oficial" : "Referencia";
+  const galleryReferenceCount = cardProduct
+    ? "imagen oficial de referencia"
+    : "imagen de referencia del producto";
+  const galleryInspectionCopy = cardProduct
+    ? "bordes, esquinas, brillo y reverso antes de operar"
+    : "sellos, empaque, desgaste, piezas incluidas y estado real";
   const listingUrl = siteUrl(`/listings/${listing.id}`);
   const jsonLd = {
     "@context": "https://schema.org",
@@ -427,21 +479,24 @@ export default async function ListingDetailPage({
 
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(340px,0.92fr)] lg:px-8">
         <section>
-          <ListingGallery images={galleryImages} />
+          <ListingGallery
+            images={galleryImages}
+            inspectionCopy={galleryInspectionCopy}
+            referenceBadgeLabel={galleryReferenceBadge}
+            referenceCountLabel={galleryReferenceCount}
+          />
 
           <div className="mt-5 rounded-lg border border-yellow-300/30 bg-yellow-400/10 p-5 text-blue-100">
             <p className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.14em] text-yellow-300">
               <ShieldCheck className="h-4 w-4" />
-              Revisión visual recomendada
+              {visualReviewTitle}
             </p>
             <ul className="mt-4 grid gap-2 text-sm font-semibold leading-6 sm:grid-cols-2">
-              <li>Compará la carta real con la imagen oficial.</li>
-              <li>Pedí fotos de frente, dorso y esquinas.</li>
-              <li>Confirmá estado, precio y forma de entrega.</li>
-              <li>Mantené el acuerdo registrado por mensaje.</li>
+              {visualReviewItems.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
             </ul>
           </div>
-
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             <InfoItem
               label={cardProduct ? "Set" : "Categoria"}
@@ -489,28 +544,18 @@ export default async function ListingDetailPage({
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
                 <div>
-                  <p className="font-black">Publicación revisada</p>
-                  <p className="mt-1 leading-6 text-blue-800">
-                    La carta está vinculada al catálogo oficial de Pokémon TCG y fue
-                    aprobada por moderación.
-                  </p>
+                  <p className="font-black">{verificationTitle}</p>
+                  <p className="mt-1 leading-6 text-blue-800">{verificationCopy}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-blue-700" />
                 <div>
-                  <p className="font-black">
-                    {hasRealPhotos ? "Incluye fotos reales" : "Solo imagen oficial"}
-                  </p>
-                  <p className="mt-1 leading-6 text-blue-800">
-                    {hasRealPhotos
-                      ? "Revisá las fotos subidas por el vendedor además de la imagen oficial."
-                      : "Pedí fotos reales al vendedor antes de cerrar una operación importante."}
-                  </p>
+                  <p className="font-black">{photoStatusTitle}</p>
+                  <p className="mt-1 leading-6 text-blue-800">{photoStatusCopy}</p>
                 </div>
               </div>
             </div>
-
             <div className="mt-6">
               <h2 className="text-sm font-black uppercase tracking-[0.16em] text-blue-800">
                 Descripción
