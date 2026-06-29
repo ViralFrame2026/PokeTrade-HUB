@@ -4,6 +4,7 @@ import {
   CheckCircle2,
   Handshake,
   MessageCircle,
+  PackageSearch,
   ShieldCheck
 } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button-link";
@@ -22,8 +23,13 @@ const safeSteps = [
   },
   {
     icon: Camera,
-    title: "Pide fotos cuando haga falta",
-    copy: "Las fotos reales son obligatorias para sellados y accesorios. Para cartas caras tambien conviene pedir imagenes claras antes de cerrar."
+    title: "Revisa fotos reales",
+    copy: "Para sellados y accesorios, las fotos son obligatorias. Para cartas de alto valor, pide frente, reverso, bordes y detalles de estado."
+  },
+  {
+    icon: PackageSearch,
+    title: "Comprueba el contenido",
+    copy: "En ETB, boosters, latas, binders o accesorios, confirma idioma, expansion, cantidad, estado del empaque y piezas incluidas."
   },
   {
     icon: MessageCircle,
@@ -39,20 +45,24 @@ const safeSteps = [
     icon: Handshake,
     title: "Confirma antes de cerrar",
     copy: "Marca una operacion como vendida, intercambiada o finalizada solo cuando realmente haya sido concretada."
-  },
-  {
-    icon: AlertTriangle,
-    title: "Reporta riesgos",
-    copy: "Si ves datos falsos, presion sospechosa, fotos enganadoras o intentos de estafa, reporta la publicacion."
   }
 ];
 
 const redFlags = [
   "Precio demasiado bajo sin explicacion clara.",
-  "Presion para salir de la plataforma de inmediato.",
+  "Fotos borrosas, recortadas o iguales a imagenes de internet.",
   "Negativa a mostrar fotos reales cuando el producto lo amerita.",
+  "Sellados con dudas de apertura, re-sellado o contenido incompleto.",
+  "Presion para salir de la plataforma de inmediato.",
   "Cambios de precio o condiciones despues de acordar.",
   "Perfiles nuevos con comportamiento insistente o datos inconsistentes."
+];
+
+const checklist = [
+  "Compara nombre, expansion, numero y rareza en cartas individuales.",
+  "Pide fotos con buena luz y algun detalle que confirme que el producto esta en mano.",
+  "No entregues productos o dinero si las condiciones cambiaron a ultimo momento.",
+  "Usa reportes si ves falsificaciones, datos manipulados o actividad sospechosa."
 ];
 
 export default function SafetyPage() {
@@ -108,12 +118,15 @@ export default function SafetyPage() {
           </div>
 
           <div className="rounded-lg border border-yellow-300/40 bg-yellow-400/10 p-6">
-            <h2 className="text-xl font-black">Moderacion y control</h2>
-            <p className="mt-3 leading-7 text-blue-100">
-              Puedes eliminar tus publicaciones cuando ya no esten disponibles. Si un reporte
-              muestra informacion falsa, fotos enganadoras o actividad sospechosa, el equipo puede
-              intervenir para proteger la confianza del marketplace.
-            </p>
+            <h2 className="text-xl font-black">Checklist antes de cerrar</h2>
+            <div className="mt-4 space-y-3">
+              {checklist.map((item) => (
+                <p className="flex gap-2 text-sm font-semibold leading-6 text-blue-100" key={item}>
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-yellow-300" />
+                  {item}
+                </p>
+              ))}
+            </div>
             <div className="mt-5 flex flex-wrap gap-3">
               <ButtonLink href="/rules" variant="light">
                 Ver reglas
@@ -123,6 +136,15 @@ export default function SafetyPage() {
               </ButtonLink>
             </div>
           </div>
+        </div>
+
+        <div className="mt-8 rounded-lg border border-white/10 bg-white/[0.06] p-6">
+          <h2 className="text-xl font-black">Moderacion y control</h2>
+          <p className="mt-3 max-w-3xl leading-7 text-blue-100">
+            Puedes eliminar tus publicaciones cuando ya no esten disponibles. Si un reporte
+            muestra informacion falsa, fotos enganadoras, productos re-sellados o actividad
+            sospechosa, el equipo puede intervenir para proteger la confianza del marketplace.
+          </p>
         </div>
       </section>
     </main>

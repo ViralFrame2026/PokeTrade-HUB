@@ -1,4 +1,13 @@
-import { BadgeCheck, Ban, Gift, ShieldCheck, Store, Trash2 } from "lucide-react";
+import {
+  BadgeCheck,
+  Ban,
+  Camera,
+  Gift,
+  PackageCheck,
+  ShieldCheck,
+  Store,
+  Trash2
+} from "lucide-react";
 import { ButtonLink } from "@/components/ui/button-link";
 
 export const metadata = {
@@ -10,13 +19,23 @@ export const metadata = {
 const rules = [
   {
     icon: Store,
-    title: "Publicaciones reales",
-    copy: "No se permiten cartas inventadas, imagenes falsas ni datos que no coincidan con la carta oficial, sellado o accesorio publicado."
+    title: "Productos reales",
+    copy: "Solo se pueden publicar productos Pokemon TCG reales: cartas individuales, productos sellados oficiales y accesorios relacionados al coleccionismo."
   },
   {
     icon: BadgeCheck,
-    title: "Datos comerciales claros",
-    copy: "El estado, precio, ubicacion, metodo de entrega y condiciones deben ser entendibles antes de contactar al vendedor."
+    title: "Cartas verificadas",
+    copy: "Las cartas individuales deben seleccionarse desde el catalogo oficial. No se permiten cartas inventadas, proxies, falsificaciones ni datos alterados."
+  },
+  {
+    icon: Camera,
+    title: "Fotos reales obligatorias",
+    copy: "Los sellados y accesorios deben incluir fotos reales tomadas por el vendedor. No se aceptan imagenes de internet como unica referencia."
+  },
+  {
+    icon: PackageCheck,
+    title: "Descripcion completa",
+    copy: "Cada publicacion debe aclarar estado, contenido, defectos visibles, precio, ubicacion, entrega y condiciones de venta o intercambio."
   },
   {
     icon: Gift,
@@ -35,8 +54,30 @@ const rules = [
   },
   {
     icon: Ban,
-    title: "Sin engaños",
-    copy: "No se permite simular stock, ocultar danos importantes, usar fotos robadas ni presionar a otros usuarios para aceptar acuerdos inseguros."
+    title: "Sin enganos",
+    copy: "No se permite simular stock, ocultar danos importantes, vender productos re-sellados como nuevos, usar fotos robadas ni presionar por acuerdos inseguros."
+  }
+];
+
+const allowedProducts = [
+  "Cartas individuales oficiales enlazadas al catalogo Pokemon TCG.",
+  "Productos sellados oficiales: ETB, booster box, booster packs, latas, colecciones, bundles y similares.",
+  "Accesorios TCG: binders, sleeves, deck boxes, playmats, toploaders, cajas y organizadores.",
+  "Sorteos de productos Pokemon TCG con premio, cierre y condiciones claras."
+];
+
+const requiredByType = [
+  {
+    title: "Carta individual",
+    copy: "Seleccion obligatoria desde la API oficial. Las fotos reales ayudan a vender mejor, pero pueden ser opcionales."
+  },
+  {
+    title: "Sellado",
+    copy: "Fotos reales obligatorias, estado del empaque, idioma, expansion, contenido incluido y cualquier golpe, apertura o detalle visible."
+  },
+  {
+    title: "Accesorio",
+    copy: "Fotos reales obligatorias, marca o modelo si aplica, medidas/capacidad, estado, desgaste y compatibilidad con cartas Pokemon TCG."
   }
 ];
 
@@ -77,6 +118,34 @@ export default function RulesPage() {
               <p className="mt-3 leading-7 text-blue-100">{rule.copy}</p>
             </article>
           ))}
+        </div>
+
+        <div className="mt-8 grid gap-5 lg:grid-cols-[0.95fr_1.05fr]">
+          <div className="rounded-lg border border-yellow-300/40 bg-yellow-400/10 p-6">
+            <h2 className="text-xl font-black">Que se puede publicar</h2>
+            <div className="mt-4 space-y-3">
+              {allowedProducts.map((item) => (
+                <p className="flex gap-2 text-sm font-semibold leading-6 text-blue-100" key={item}>
+                  <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-yellow-300" />
+                  {item}
+                </p>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-white/10 bg-white/[0.06] p-6">
+            <h2 className="text-xl font-black">Requisitos por tipo de producto</h2>
+            <div className="mt-4 grid gap-3">
+              {requiredByType.map((item) => (
+                <div className="rounded-lg border border-white/10 bg-blue-950/35 p-4" key={item.title}>
+                  <h3 className="text-sm font-black uppercase tracking-[0.14em] text-yellow-300">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-blue-100">{item.copy}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className="mt-8 rounded-lg border border-white/10 bg-white/[0.06] p-6">
