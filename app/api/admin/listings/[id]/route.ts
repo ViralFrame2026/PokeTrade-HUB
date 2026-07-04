@@ -61,7 +61,9 @@ export async function PATCH(request: Request, context: RouteContext) {
   const { id } = await context.params;
   const { data: currentListing, error: listingReadError } = await supabase
     .from("listings")
-    .select("id, seller_id, title, moderation_status")
+    .select(
+      "id, seller_id, title, moderation_status, listing_images(storage_path), products!listings_product_id_fkey(category)"
+    )
     .eq("id", id)
     .single();
 
@@ -77,6 +79,22 @@ export async function PATCH(request: Request, context: RouteContext) {
   }
 
   const approved = parsed.data.action === "approve";
+  const product = Array.isArray(currentListing.products)
+    ? currentListing.products[0]
+    : currentListing.products;
+  const requiresRealPhotos = product?.category !== "card";
+  const hasRealPhotos = Boolean(currentListing.listing_images?.length);
+
+  if (approved && requiresRealPhotos && !hasRealPhotos) {
+    return NextResponse.json(
+      {
+        data: null,
+        error: "No puedes aprobar sellados o accesorios sin fotos reales."
+      },
+      { status: 400 }
+    );
+  }
+
   const { data: updatedListing, error: updateError } = await supabase
     .from("listings")
     .update({
