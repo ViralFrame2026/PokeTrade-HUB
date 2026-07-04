@@ -58,6 +58,7 @@ type MarketplacePageProps = {
     minPrice?: string;
     q?: string;
     rarity?: string;
+    realPhotos?: string;
     sort?: string;
     set?: string;
     type?: string;
@@ -134,6 +135,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
   const maxPrice = Number(params.maxPrice ?? "");
   const hasMinPrice = Number.isFinite(minPrice) && minPrice > 0;
   const hasMaxPrice = Number.isFinite(maxPrice) && maxPrice > 0;
+  const realPhotos = params.realPhotos === "1" ? "1" : "";
   const sort = ["recent", "price_asc", "price_desc", "seller_rating"].includes(
     params.sort ?? ""
   )
@@ -154,7 +156,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
       .eq("moderation_status", "approved")
       .eq("status", "active")
       .order("approved_at", { ascending: false })
-      .limit(96);
+      .limit(180);
 
     if (type) request = request.eq("type", type);
     if (condition) request = request.eq("products.condition", condition);
@@ -170,14 +172,16 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
     rows = (result.data ?? []) as ListingRow[];
   }
 
-  if (query || category || set || rarity) {
+  if (query || category || set || rarity || realPhotos) {
     const normalizedQuery = query.toLowerCase();
     const normalizedSet = set.toLowerCase();
 
     rows = rows.filter((row) => {
       const product = firstRelated(row.products);
       const card = firstRelated(product?.cards ?? null);
+      const hasPhotos = row.listing_images.length > 0;
       const matchesCategory = !category || product?.category === category;
+      const matchesPhotos = !realPhotos || hasPhotos;
       const matchesQuery =
         !normalizedQuery ||
         [row.title, product?.title, card?.official_name, product?.sealed_type, product?.accessory_type]
@@ -186,7 +190,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
       const matchesSet = !normalizedSet || card?.set_name.toLowerCase().includes(normalizedSet);
       const matchesRarity = !rarity || card?.rarity === rarity;
 
-      return matchesCategory && matchesQuery && matchesSet && matchesRarity;
+      return matchesCategory && matchesPhotos && matchesQuery && matchesSet && matchesRarity;
     });
   }
 
@@ -236,7 +240,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
       image: photoUrl ?? productImage(product),
       location:
         [row.location_city, row.location_country].filter(Boolean).join(", ") ||
-        "Ubicación no informada",
+        "Ubicacion no informada",
       price: priceLabel(row),
       seller: profile?.display_name ?? "Entrenador TCG",
       sellerId: profile?.id,
@@ -249,7 +253,16 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
   });
 
   const hasFilters = Boolean(
-    query || category || type || condition || location || set || rarity || hasMinPrice || hasMaxPrice
+    query ||
+      category ||
+      type ||
+      condition ||
+      location ||
+      set ||
+      rarity ||
+      realPhotos ||
+      hasMinPrice ||
+      hasMaxPrice
   );
   const displayListings = listings;
 
@@ -297,7 +310,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
           </Link>
           <div className="mt-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
-              <p className="text-sm font-black uppercase text-red-500">Catálogo de la comunidad</p>
+              <p className="text-sm font-black uppercase text-red-500">Catalogo de la comunidad</p>
               <h1 className="mt-2 text-4xl font-black text-white">Explorar marketplace</h1>
               <p className="mt-2 text-blue-100">
                 Publicaciones aprobadas de venta, intercambio y regalo.
@@ -314,6 +327,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
             maxPrice={hasMaxPrice ? String(maxPrice) : ""}
             minPrice={hasMinPrice ? String(minPrice) : ""}
             query={query}
+            realPhotos={realPhotos}
             rarity={rarity}
             sort={sort}
             set={set}
@@ -329,7 +343,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
               {hasFilters ? "Sin coincidencias reales" : "Marketplace listo"}
             </p>
             <h2 className="mt-2 text-2xl font-black text-white">
-              {hasFilters ? "Probá con menos filtros" : "Todavía no hay publicaciones aprobadas"}
+              {hasFilters ? "Proba con menos filtros" : "Todavia no hay publicaciones aprobadas"}
             </h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
               {hasFilters
@@ -349,12 +363,12 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
             <div>
               <Search className="mx-auto h-10 w-10 text-blue-500" />
               <h2 className="mt-4 text-xl font-black text-blue-950">
-                {hasFilters ? "No encontramos coincidencias" : "Todavía no hay publicaciones"}
+                {hasFilters ? "No encontramos coincidencias" : "Todavia no hay publicaciones"}
               </h2>
               <p className="mx-auto mt-2 max-w-md text-slate-600">
                 {hasFilters
                   ? "Prueba con menos filtros o busca otro producto."
-                  : "Los productos aprobados aparecerán aquí."}
+                  : "Los productos aprobados apareceran aqui."}
               </p>
               {hasFilters ? (
                 <div className="mt-5 flex flex-wrap justify-center gap-2">
