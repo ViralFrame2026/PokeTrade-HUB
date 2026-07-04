@@ -141,6 +141,26 @@ export function PublishForm() {
       productTitle.trim().length >= 3 &&
       accessoryType &&
       photos.length > 0);
+  const moderationChecklist = isCardProduct
+    ? [
+        "La carta oficial seleccionada debe coincidir con el producto real.",
+        "El estado debe ser honesto: Mint, Near Mint, Played, etc.",
+        "La descripcion debe aclarar detalles, entrega y observaciones.",
+        "Si es venta, el precio debe ser el acordado para publicar."
+      ]
+    : productCategory === "sealed"
+      ? [
+          "El producto sellado debe verse cerrado y autentico en las fotos.",
+          "El tipo elegido debe coincidir: ETB, booster, blister, tin u otro.",
+          "La descripcion debe aclarar idioma, edicion, estado del empaque y entrega.",
+          "Si es venta, el precio debe ser el acordado para publicar."
+        ]
+      : [
+          "El accesorio debe verse claramente en las fotos reales.",
+          "El tipo elegido debe coincidir: binder, sleeves, deck box, playmat u otro.",
+          "La descripcion debe aclarar capacidad, estado, medidas y forma de entrega.",
+          "Si es venta, el precio debe ser el acordado para publicar."
+        ];
 
   useEffect(() => {
     const previews = photos.map((photo) => URL.createObjectURL(photo));
@@ -907,11 +927,15 @@ export function PublishForm() {
           <CheckCircle2 className="h-5 w-5 text-pokemonYellow" />
           Antes de enviar a moderación
         </p>
+        <p className="mt-2 text-xs leading-5 text-blue-100/80">
+          {isCardProduct
+            ? "Vamos a revisar que la carta coincida con el catalogo oficial y que los datos comerciales sean claros."
+            : "Vamos a revisar las fotos reales, el tipo de producto, la descripcion y la coherencia del precio."}
+        </p>
         <ul className="mt-3 grid gap-2 text-xs leading-5 text-blue-100 sm:grid-cols-2">
-          <li>La carta seleccionada debe coincidir con tu producto real.</li>
-          <li>El estado debe ser honesto: Mint, Near Mint, Played, etc.</li>
-          <li>La descripción debe aclarar detalles, entrega y observaciones.</li>
-          <li>Si es venta, el precio debe ser el acordado para publicar.</li>
+          {moderationChecklist.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
         </ul>
       </section>
       {success ? (
