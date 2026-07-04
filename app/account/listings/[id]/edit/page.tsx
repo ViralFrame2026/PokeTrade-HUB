@@ -25,6 +25,10 @@ type EditableListing = {
   seller_id: string;
   trade_wants: string | null;
   type: "sale" | "trade" | "free";
+  listing_images: Array<{
+    sort_order: number;
+    storage_path: string;
+  }>;
   products: Related<{
     accessory_type: string | null;
     category: string | null;
@@ -55,7 +59,7 @@ export default async function EditListingPage({
   const { data } = await supabase
     .from("listings")
     .select(
-      "id, seller_id, type, moderation_status, rejection_reason, description, price, trade_wants, location_city, location_country, products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name))"
+      "id, seller_id, type, moderation_status, rejection_reason, description, price, trade_wants, location_city, location_country, listing_images(storage_path, sort_order), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name))"
     )
     .eq("id", id)
     .eq("seller_id", user.id)
@@ -119,9 +123,12 @@ export default async function EditListingPage({
             initial={{
               condition: product.condition,
               description: listing.description ?? "",
+              existingPhotoCount: listing.listing_images?.length ?? 0,
               locationCity: listing.location_city ?? "",
               locationCountry: listing.location_country ?? "",
               price: listing.price,
+              productCategory: product.category ?? "card",
+              productTitle: displayTitle,
               tradeWants: listing.trade_wants ?? "",
               type: listing.type
             }}
