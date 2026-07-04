@@ -380,7 +380,7 @@ export default async function HomePage() {
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             {[
-              ["1", "Publicas tu producto", "Elegis carta oficial, sellado o accesorio, y cargas precio, estado y condiciones."],
+              ["1", "Publicas tu producto", "Elegis carta oficial, sellado o accesorio, y cargas precio, idioma, estado y condiciones."],
               ["2", "El equipo revisa", "La publicacion pasa por moderacion antes de aparecer."],
               ["3", "Conectas seguro", "Usas mensajes, favoritos y reputacion para operar con mas confianza."]
             ].map(([step, title, copy]) => (

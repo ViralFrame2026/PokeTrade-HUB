@@ -336,12 +336,12 @@ export function PublishForm() {
 
   async function handleSubmit() {
     if (isCardProduct && !selectedCard) {
-      setError("Selecciona una carta oficial antes de públicar.");
+      setError("Selecciona una carta oficial antes de publicar.");
       return;
     }
 
     if (!isCardProduct && productTitle.trim().length < 3) {
-      setError("Escribe el nombre del producto antes de públicar.");
+      setError("Escribe el nombre del producto antes de publicar.");
       return;
     }
 
@@ -379,13 +379,13 @@ export function PublishForm() {
       const payload = (await response.json()) as CreateListingResponse;
 
       if (!response.ok || payload.error) {
-        throw new Error(payload.error ?? "No pudimos crear la públicación.");
+        throw new Error(payload.error ?? "No pudimos crear la publicacion.");
       }
 
       const listingId = payload.data?.id;
 
       if (!listingId) {
-        throw new Error("No recibimos el identificador de la públicación.");
+        throw new Error("No recibimos el identificador de la publicacion.");
       }
 
       const uploadedPaths: string[] = [];
@@ -454,7 +454,7 @@ export function PublishForm() {
       setError(
         submitError instanceof Error
           ? submitError.message
-          : "No pudimos crear la públicación."
+          : "No pudimos crear la publicacion."
       );
     } finally {
       setIsSubmitting(false);
@@ -615,7 +615,7 @@ export function PublishForm() {
           </div>
         ) : (
           <span>
-            Busca una carta oficial. La públicación no puede continuar con cartas inventadas.
+            Busca una carta oficial. La publicacion no puede continuar con cartas inventadas.
           </span>
         )}
       </div>
