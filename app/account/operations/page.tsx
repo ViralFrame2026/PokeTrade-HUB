@@ -50,6 +50,7 @@ type OperationRow = {
     accessory_type: string | null;
     category: string | null;
     condition: string;
+    language: string | null;
     sealed_type: string | null;
     title: string | null;
     cards: Related<{
@@ -124,7 +125,7 @@ export default async function OperationsPage() {
   const { data } = await supabase
     .from("listings")
     .select(
-      "id, seller_id, type, status, price, trade_wants, completed_with_id, approved_at, created_at, location_city, location_country, listing_images(storage_path, sort_order), profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number))"
+      "id, seller_id, type, status, price, trade_wants, completed_with_id, approved_at, created_at, location_city, location_country, listing_images(storage_path, sort_order), profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!listings_product_id_fkey(category, title, condition, language, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number))"
     )
     .eq("moderation_status", "approved")
     .in("status", ["sold", "traded", "finished"])

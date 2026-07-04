@@ -68,6 +68,7 @@ type ListingRow = {
     accessory_type: string | null;
     category: string | null;
     condition: string | null;
+    language: string | null;
     sealed_type: string | null;
     title: string | null;
     cards: Related<{
@@ -146,7 +147,7 @@ export default async function HomePage() {
         supabase
           .from("listings")
           .select(
-            "id, title, description, type, status, price, trade_wants, location_city, location_country, listing_images(storage_path, sort_order), profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(pokemon_tcg_id, official_name, image_large, set_name, rarity, number))"
+            "id, title, description, type, status, price, trade_wants, location_city, location_country, listing_images(storage_path, sort_order), profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!listings_product_id_fkey(category, title, condition, language, sealed_type, accessory_type, cards!products_card_id_fkey(pokemon_tcg_id, official_name, image_large, set_name, rarity, number))"
           )
           .eq("moderation_status", "approved")
           .eq("status", "active")

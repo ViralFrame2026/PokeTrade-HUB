@@ -1,9 +1,11 @@
 import { RotateCcw, Search } from "lucide-react";
 import Link from "next/link";
+import { PRODUCT_LANGUAGES } from "@/lib/product-language";
 
 type MarketplaceFiltersProps = {
   category: string;
   condition: string;
+  language: string;
   location: string;
   maxPrice: string;
   minPrice: string;
@@ -44,6 +46,7 @@ function quickCategoryHref(category: string, filters: Record<string, string>) {
 export function MarketplaceFilters({
   category,
   condition,
+  language,
   location,
   maxPrice,
   minPrice,
@@ -57,6 +60,7 @@ export function MarketplaceFilters({
   const filterValues = {
     category,
     condition,
+    language,
     location,
     maxPrice,
     minPrice,
@@ -90,6 +94,7 @@ export function MarketplaceFilters({
         ]
       : null,
     condition ? ["condition", `Estado: ${condition}`] : null,
+    language ? ["language", `Idioma: ${language}`] : null,
     set ? ["set", `Set: ${set}`] : null,
     rarity ? ["rarity", `Rareza: ${rarity}`] : null,
     location ? ["location", `Ubicacion: ${location}`] : null,
@@ -177,6 +182,20 @@ export function MarketplaceFilters({
             <option value="Moderately Played">Moderately Played</option>
             <option value="Heavily Played">Heavily Played</option>
             <option value="Damaged">Damaged</option>
+          </select>
+        </label>
+
+        <label>
+          <span className="mb-2 block text-xs font-black uppercase tracking-[0.12em] text-yellow-300">
+            Idioma
+          </span>
+          <select className={fieldClass} defaultValue={language} name="language">
+            <option value="">Todos</option>
+            {PRODUCT_LANGUAGES.map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
           </select>
         </label>
 

@@ -21,6 +21,7 @@ const listingSchema = z
     locationCountry: z.string().trim().min(2).max(100),
     price: z.number().positive().max(999999999).nullable(),
     productCategory: z.enum(["card", "sealed", "accessory"]).default("card"),
+    productLanguage: z.string().trim().min(2).max(40),
     productTitle: z.string().trim().max(140).nullable().optional(),
     sealedType: z.string().trim().max(80).nullable().optional(),
     tradeWants: z.string().trim().max(1000).nullable(),
@@ -169,6 +170,7 @@ export async function POST(request: Request) {
         category: parsed.data.productCategory,
         condition: parsed.data.condition,
         description: parsed.data.description,
+        language: parsed.data.productLanguage,
         accessory_type:
           parsed.data.productCategory === "accessory" ? parsed.data.accessoryType : null,
         owner_id: user.id,

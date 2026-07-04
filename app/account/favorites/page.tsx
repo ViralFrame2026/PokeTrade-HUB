@@ -46,6 +46,7 @@ type FavoriteRow = {
       accessory_type: string | null;
       category: string | null;
       condition: string | null;
+      language: string | null;
       sealed_type: string | null;
       title: string | null;
       cards: Related<{
@@ -85,7 +86,7 @@ export default async function FavoritesPage() {
   const { data } = await supabase
     .from("favorites")
     .select(
-      "listings!favorites_listing_id_fkey(id, title, description, type, status, price, trade_wants, location_city, location_country, listing_images(storage_path, sort_order), profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number)))"
+      "listings!favorites_listing_id_fkey(id, title, description, type, status, price, trade_wants, location_city, location_country, listing_images(storage_path, sort_order), profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!listings_product_id_fkey(category, title, condition, language, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number)))"
     )
     .eq("user_id", user.id)
     .not("listing_id", "is", null)

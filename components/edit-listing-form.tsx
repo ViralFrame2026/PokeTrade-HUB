@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Camera, Loader2, Save, Trash2, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { PRODUCT_LANGUAGES } from "@/lib/product-language";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 type ListingType = "sale" | "trade" | "free";
@@ -13,6 +14,7 @@ type EditListingFormProps = {
     condition: string;
     description: string;
     existingPhotoCount: number;
+    language: string;
     locationCity: string;
     locationCountry: string;
     price: number | null;
@@ -33,6 +35,7 @@ export function EditListingForm({ initial, listingId }: EditListingFormProps) {
   const router = useRouter();
   const [listingType, setListingType] = useState<ListingType>(initial.type);
   const [condition, setCondition] = useState(initial.condition);
+  const [productLanguage, setProductLanguage] = useState(initial.language);
   const [price, setPrice] = useState(initial.price ? String(initial.price) : "");
   const [tradeWants, setTradeWants] = useState(initial.tradeWants);
   const [description, setDescription] = useState(initial.description);
@@ -155,6 +158,7 @@ export function EditListingForm({ initial, listingId }: EditListingFormProps) {
           locationCity,
           locationCountry,
           price: listingType === "sale" && price ? Number(price) : null,
+          productLanguage,
           tradeWants: listingType === "trade" ? tradeWants : null,
           type: listingType
         }),
@@ -217,6 +221,22 @@ export function EditListingForm({ initial, listingId }: EditListingFormProps) {
               "Heavily Played",
               "Damaged"
             ].map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="text-sm font-bold text-slate-200">
+          Idioma
+          <select
+            className={inputClass}
+            onChange={(event) => setProductLanguage(event.target.value)}
+            required
+            value={productLanguage}
+          >
+            {PRODUCT_LANGUAGES.map((value) => (
               <option key={value} value={value}>
                 {value}
               </option>

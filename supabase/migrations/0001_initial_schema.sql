@@ -61,6 +61,7 @@ create table public.products (
   category public.product_category not null,
   title text not null,
   condition text not null,
+  language text not null default 'Espanol',
   description text,
   sealed_type text,
   accessory_type text,

@@ -47,6 +47,7 @@ type ListingPreview = {
     accessory_type: string | null;
     category: string | null;
     condition: string | null;
+    language: string | null;
     sealed_type: string | null;
     title: string | null;
     cards: Related<{
@@ -132,7 +133,7 @@ export default async function MessagesPage() {
       ? supabase
           .from("listings")
           .select(
-            "id, title, listing_images(storage_path, sort_order), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number))"
+            "id, title, listing_images(storage_path, sort_order), products!listings_product_id_fkey(category, title, condition, language, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number))"
           )
           .in("id", listingIds)
       : Promise.resolve({ data: [] })

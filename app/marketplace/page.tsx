@@ -53,6 +53,7 @@ type MarketplacePageProps = {
   searchParams: Promise<{
     category?: string;
     condition?: string;
+    language?: string;
     location?: string;
     maxPrice?: string;
     minPrice?: string;
@@ -85,6 +86,7 @@ type ListingRow = {
     accessory_type: string | null;
     category: string | null;
     condition: string;
+    language: string | null;
     sealed_type: string | null;
     title: string | null;
     cards: Related<{
@@ -128,6 +130,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
     : "";
   const type = ["sale", "trade", "free"].includes(params.type ?? "") ? params.type! : "";
   const condition = params.condition?.trim() ?? "";
+  const language = params.language?.trim() ?? "";
   const location = params.location?.trim() ?? "";
   const set = params.set?.trim() ?? "";
   const rarity = params.rarity?.trim() ?? "";
@@ -151,7 +154,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
     let request = supabase
       .from("listings")
       .select(
-        "id, title, description, type, status, price, trade_wants, location_city, location_country, listing_images(storage_path, sort_order), profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number))"
+        "id, title, description, type, status, price, trade_wants, location_city, location_country, listing_images(storage_path, sort_order), profiles!listings_seller_id_fkey(id, display_name, is_verified, reputation_average), products!listings_product_id_fkey(category, title, condition, language, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name, rarity, number))"
       )
       .eq("moderation_status", "approved")
       .eq("status", "active")
@@ -160,6 +163,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
 
     if (type) request = request.eq("type", type);
     if (condition) request = request.eq("products.condition", condition);
+    if (language) request = request.eq("products.language", language);
     if (hasMinPrice) request = request.gte("price", minPrice);
     if (hasMaxPrice) request = request.lte("price", maxPrice);
     if (location) {
@@ -172,7 +176,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
     rows = (result.data ?? []) as ListingRow[];
   }
 
-  if (query || category || set || rarity || realPhotos) {
+  if (query || category || set || rarity || realPhotos || language) {
     const normalizedQuery = query.toLowerCase();
     const normalizedSet = set.toLowerCase();
 
@@ -182,15 +186,16 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
       const hasPhotos = row.listing_images.length > 0;
       const matchesCategory = !category || product?.category === category;
       const matchesPhotos = !realPhotos || hasPhotos;
+      const matchesLanguage = !language || product?.language === language;
       const matchesQuery =
         !normalizedQuery ||
-        [row.title, product?.title, card?.official_name, product?.sealed_type, product?.accessory_type]
+        [row.title, product?.title, card?.official_name, product?.sealed_type, product?.accessory_type, product?.language]
           .filter(Boolean)
           .some((value) => value!.toLowerCase().includes(normalizedQuery));
       const matchesSet = !normalizedSet || card?.set_name.toLowerCase().includes(normalizedSet);
       const matchesRarity = !rarity || card?.rarity === rarity;
 
-      return matchesCategory && matchesPhotos && matchesQuery && matchesSet && matchesRarity;
+      return matchesCategory && matchesPhotos && matchesLanguage && matchesQuery && matchesSet && matchesRarity;
     });
   }
 
@@ -257,6 +262,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
       category ||
       type ||
       condition ||
+      language ||
       location ||
       set ||
       rarity ||
@@ -323,6 +329,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
           <MarketplaceFilters
             category={category}
             condition={condition}
+            language={language}
             location={location}
             maxPrice={hasMaxPrice ? String(maxPrice) : ""}
             minPrice={hasMinPrice ? String(minPrice) : ""}

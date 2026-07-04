@@ -17,6 +17,7 @@ import {
   Upload
 } from "lucide-react";
 import type { PokemonTcgCard } from "@/lib/pokemon-tcg-api";
+import { DEFAULT_PRODUCT_LANGUAGE, PRODUCT_LANGUAGES } from "@/lib/product-language";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
@@ -97,6 +98,7 @@ type PublishDraft = {
   locationCountry: string;
   price: string;
   productCategory: ProductCategory;
+  productLanguage: string;
   productTitle: string;
   query: string;
   selectedCard: PokemonTcgCard | null;
@@ -119,6 +121,7 @@ export function PublishForm() {
   const [description, setDescription] = useState("");
   const [locationCity, setLocationCity] = useState("");
   const [locationCountry, setLocationCountry] = useState("");
+  const [productLanguage, setProductLanguage] = useState(DEFAULT_PRODUCT_LANGUAGE);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState(false);
@@ -144,21 +147,21 @@ export function PublishForm() {
   const moderationChecklist = isCardProduct
     ? [
         "La carta oficial seleccionada debe coincidir con el producto real.",
+        "El idioma elegido debe coincidir con la carta real.",
         "El estado debe ser honesto: Mint, Near Mint, Played, etc.",
-        "La descripcion debe aclarar detalles, entrega y observaciones.",
-        "Si es venta, el precio debe ser el acordado para publicar."
+        "La descripcion debe aclarar detalles, entrega y observaciones."
       ]
     : productCategory === "sealed"
       ? [
           "El producto sellado debe verse cerrado y autentico en las fotos.",
           "El tipo elegido debe coincidir: ETB, booster, blister, tin u otro.",
-          "La descripcion debe aclarar idioma, edicion, estado del empaque y entrega.",
+          "El idioma elegido debe coincidir con el producto o contenido principal.",
           "Si es venta, el precio debe ser el acordado para publicar."
         ]
       : [
           "El accesorio debe verse claramente en las fotos reales.",
           "El tipo elegido debe coincidir: binder, sleeves, deck box, playmat u otro.",
-          "La descripcion debe aclarar capacidad, estado, medidas y forma de entrega.",
+          "El idioma aplica si el accesorio tiene texto, packaging o producto asociado.",
           "Si es venta, el precio debe ser el acordado para publicar."
         ];
 
@@ -190,6 +193,7 @@ export function PublishForm() {
       setDescription(draft.description ?? "");
       setLocationCity(draft.locationCity ?? "");
       setLocationCountry(draft.locationCountry ?? "");
+      setProductLanguage(draft.productLanguage ?? DEFAULT_PRODUCT_LANGUAGE);
 
       if (
         draft.selectedCard ||
@@ -221,6 +225,7 @@ export function PublishForm() {
       locationCountry,
       price,
       productCategory,
+      productLanguage,
       productTitle,
       query,
       selectedCard,
@@ -239,6 +244,7 @@ export function PublishForm() {
     locationCountry,
     price,
     productCategory,
+    productLanguage,
     productTitle,
     query,
     selectedCard,
@@ -259,6 +265,7 @@ export function PublishForm() {
     setDescription("");
     setPrice("");
     setTradeWants("");
+    setProductLanguage(DEFAULT_PRODUCT_LANGUAGE);
     setPhotos([]);
     clearDraft();
   }
@@ -358,6 +365,7 @@ export function PublishForm() {
           locationCountry,
           price: listingType === "sale" && price ? Number(price) : null,
           productCategory,
+          productLanguage,
           productTitle: isCardProduct ? null : productTitle.trim(),
           sealedType: productCategory === "sealed" ? sealedType : null,
           tradeWants: listingType === "trade" ? tradeWants : null,
@@ -759,6 +767,21 @@ export function PublishForm() {
               "Heavily Played",
               "Damaged"
             ].map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="text-sm font-bold text-slate-200">
+          Idioma
+          <select
+            className="mt-2 w-full rounded-lg border border-white/10 bg-slate-950 px-3 py-3 text-white outline-none focus:border-pokemonYellow/60"
+            onChange={(event) => setProductLanguage(event.target.value)}
+            required
+            value={productLanguage}
+          >
+            {PRODUCT_LANGUAGES.map((value) => (
               <option key={value} value={value}>
                 {value}
               </option>

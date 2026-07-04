@@ -49,6 +49,7 @@ type ListingContext = {
     accessory_type: string | null;
     category: string | null;
     condition: string;
+    language: string | null;
     sealed_type: string | null;
     title: string | null;
     cards: Related<{
@@ -112,7 +113,7 @@ export default async function ConversationPage({
   const [{ data: listing }, { data: profile }] = await Promise.all([
     supabase
       .from("listings")
-      .select("id, title, seller_id, completed_with_id, moderation_status, type, status, price, trade_wants, listing_images(storage_path, sort_order), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name))")
+      .select("id, title, seller_id, completed_with_id, moderation_status, type, status, price, trade_wants, listing_images(storage_path, sort_order), products!listings_product_id_fkey(category, title, condition, language, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name))")
       .eq("id", listingId)
       .maybeSingle(),
     supabase.from("profiles").select("id, display_name").eq("id", otherId).maybeSingle()

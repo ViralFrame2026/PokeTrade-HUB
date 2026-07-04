@@ -17,6 +17,7 @@ const updateListingSchema = z
     locationCity: z.string().trim().min(2).max(100),
     locationCountry: z.string().trim().min(2).max(100),
     price: z.number().positive().max(999999999).nullable(),
+    productLanguage: z.string().trim().min(2).max(40),
     tradeWants: z.string().trim().max(1000).nullable(),
     type: z.enum(["sale", "trade", "free"])
   })
@@ -109,7 +110,8 @@ export async function PATCH(
     .from("products")
     .update({
       condition: parsed.data.condition,
-      description: parsed.data.description
+      description: parsed.data.description,
+      language: parsed.data.productLanguage
     })
     .eq("id", listing.product_id)
     .eq("owner_id", user.id);

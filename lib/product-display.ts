@@ -14,6 +14,7 @@ export type ProductDisplayInput = {
   cards?: Related<ProductDisplayCard>;
   category?: string | null;
   condition?: string | null;
+  language?: string | null;
   sealed_type?: string | null;
   title?: string | null;
 };
@@ -67,14 +68,17 @@ export function productMeta(product?: ProductDisplayInput | null) {
   if (!product) return "Producto TCG";
 
   const card = firstRelated(product.cards);
+  const language = product.language || "Idioma no informado";
+
   if (card) {
-    return `${card.set_name ?? "Set no informado"} | ${card.rarity ?? "Rareza no informada"} | #${card.number ?? "N/D"}`;
+    return `${card.set_name ?? "Set no informado"} | ${card.rarity ?? "Rareza no informada"} | #${card.number ?? "N/D"} | ${language}`;
   }
 
   return [
     productCategoryLabel(product.category),
     productTypeDetail(product),
-    product.condition
+    product.condition,
+    language
   ]
     .filter(Boolean)
     .join(" | ");

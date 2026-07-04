@@ -68,6 +68,7 @@ type ListingDetailRow = {
     accessory_type: string | null;
     category: string | null;
     condition: string;
+    language: string | null;
     sealed_type: string | null;
     title: string | null;
     cards: Related<{
@@ -157,7 +158,7 @@ async function getListing(id: string) {
   const { data } = await supabase
     .from("listings")
     .select(
-      "id, seller_id, completed_with_id, title, description, type, status, price, trade_wants, location_city, location_country, approved_at, created_at, listing_images(storage_path, alt_text, sort_order), profiles!listings_seller_id_fkey(id, display_name, city, country, is_verified, joined_at, reputation_average, reputation_count, whatsapp, instagram), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(pokemon_tcg_id, official_name, image_large, set_name, rarity, number))"
+      "id, seller_id, completed_with_id, title, description, type, status, price, trade_wants, location_city, location_country, approved_at, created_at, listing_images(storage_path, alt_text, sort_order), profiles!listings_seller_id_fkey(id, display_name, city, country, is_verified, joined_at, reputation_average, reputation_count, whatsapp, instagram), products!listings_product_id_fkey(category, title, condition, language, sealed_type, accessory_type, cards!products_card_id_fkey(pokemon_tcg_id, official_name, image_large, set_name, rarity, number))"
     )
     .eq("id", id)
     .eq("moderation_status", "approved")

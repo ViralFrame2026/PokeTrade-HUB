@@ -53,6 +53,7 @@ type ListingRow = {
     accessory_type: string | null;
     category: string | null;
     condition: string;
+    language: string | null;
     sealed_type: string | null;
     title: string | null;
     cards: Related<{
@@ -181,7 +182,7 @@ export default async function MyListingsPage({
   const { data } = await supabase
     .from("listings")
     .select(
-      "id, title, type, status, moderation_status, rejection_reason, price, created_at, listing_images(storage_path, sort_order), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name))"
+      "id, title, type, status, moderation_status, rejection_reason, price, created_at, listing_images(storage_path, sort_order), products!listings_product_id_fkey(category, title, condition, language, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name))"
     )
     .eq("seller_id", user.id)
     .order("created_at", { ascending: false });

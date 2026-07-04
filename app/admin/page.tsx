@@ -81,6 +81,7 @@ type ListingRow = {
         accessory_type: string | null;
         category: string | null;
         condition: string;
+        language: string | null;
         sealed_type: string | null;
         title: string | null;
         cards:
@@ -102,6 +103,7 @@ type ListingRow = {
         accessory_type: string | null;
         category: string | null;
         condition: string;
+        language: string | null;
         sealed_type: string | null;
         title: string | null;
         cards:
@@ -335,7 +337,7 @@ export default async function AdminPage() {
   ] = await Promise.all([
     supabase
       .from("listings")
-      .select("id, title, description, type, moderation_status, price, trade_wants, location_city, location_country, created_at, listing_images(storage_path, sort_order), profiles!listings_seller_id_fkey(display_name, is_verified, reputation_average, reputation_count, joined_at), products!listings_product_id_fkey(category, title, condition, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name, rarity))")
+      .select("id, title, description, type, moderation_status, price, trade_wants, location_city, location_country, created_at, listing_images(storage_path, sort_order), profiles!listings_seller_id_fkey(display_name, is_verified, reputation_average, reputation_count, joined_at), products!listings_product_id_fkey(category, title, condition, language, sealed_type, accessory_type, cards!products_card_id_fkey(official_name, image_large, set_name, rarity))")
       .eq("moderation_status", "pending")
       .order("created_at", { ascending: true }),
     supabase
