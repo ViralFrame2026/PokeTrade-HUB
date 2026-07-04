@@ -474,6 +474,7 @@ export default async function AdminPage() {
       const product = firstRelated(listing.products);
       const card = firstRelated(product?.cards ?? null);
       const sellerProfile = firstRelated(listing.profiles);
+      const photoCount = listing.listing_images?.length ?? 0;
       const photoPath = firstListingPhotoPath(listing.listing_images);
       const photoUrl = photoPath
         ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/listing-images/${photoPath}`
@@ -485,13 +486,15 @@ export default async function AdminPage() {
         condition: product?.condition ?? "Sin condición",
         created_at: listing.created_at,
         description: listing.description,
-        hasRealPhotos: Boolean(listing.listing_images?.length),
+        hasRealPhotos: photoCount > 0,
+        photoCount,
         id: listing.id,
         location: [listing.location_city, listing.location_country].filter(Boolean).join(", "),
         moderation_status: listing.moderation_status,
         price: listing.price,
         rarity: card?.rarity ?? null,
         productCategory: productCategoryLabel(product?.category),
+        productCategoryRaw: product?.category ?? null,
         productType: productTypeDetail(product),
         seller: sellerProfile?.display_name ?? "Usuario",
         sellerJoinedAt: sellerProfile?.joined_at ?? null,

@@ -27,10 +27,12 @@ export type AdminListing = {
   description: string;
   id: string;
   hasRealPhotos: boolean;
+  photoCount: number;
   location: string;
   moderation_status: string;
   price: number | null;
   productCategory: string;
+  productCategoryRaw: string | null;
   productType: string;
   rarity: string | null;
   seller: string;
@@ -86,10 +88,15 @@ function daysSince(dateValue: string | null) {
 function reviewSignals(listing: AdminListing) {
   const accountAge = daysSince(listing.sellerJoinedAt);
   const descriptionLength = listing.description.trim().length;
+  const requiresRealPhotos = listing.productCategoryRaw !== "card";
   const signals = [
     {
       icon: Camera,
-      label: listing.hasRealPhotos ? "Fotos reales cargadas" : "Sin fotos reales",
+      label: listing.hasRealPhotos
+        ? `${listing.photoCount} foto(s) real(es)`
+        : requiresRealPhotos
+          ? "Falta foto real obligatoria"
+          : "Sin fotos reales",
       tone: listing.hasRealPhotos ? "good" : "warn"
     },
     {
@@ -101,8 +108,8 @@ function reviewSignals(listing: AdminListing) {
       icon: Star,
       label:
         listing.sellerReviews > 0
-          ? `${listing.sellerRating.toFixed(1)} (${listing.sellerReviews} reseñas)`
-          : "Vendedor sin reseñas",
+          ? `${listing.sellerRating.toFixed(1)} (${listing.sellerReviews} resenas)`
+          : "Vendedor sin resenas",
       tone: listing.sellerReviews > 0 ? "good" : "neutral"
     },
     {
@@ -135,9 +142,16 @@ function reviewSignals(listing: AdminListing) {
     });
   }
 
+  if (requiresRealPhotos && !listing.hasRealPhotos) {
+    signals.push({
+      icon: AlertTriangle,
+      label: "No aprobar sin fotos reales",
+      tone: "warn"
+    });
+  }
+
   return signals;
 }
-
 function reviewScore(listing: AdminListing) {
   return reviewSignals(listing).filter((signal) => signal.tone === "warn").length;
 }
@@ -160,6 +174,18 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
     listingId: string,
     action: "approve" | "reject"
   ) {
+    const moderatedListing = listings.find((listing) => listing.id === listingId);
+    const missingRequiredPhotos = Boolean(
+      moderatedListing &&
+        moderatedListing.productCategoryRaw !== "card" &&
+        !moderatedListing.hasRealPhotos
+    );
+
+    if (action === "approve" && missingRequiredPhotos) {
+      setError("No puedes aprobar sellados o accesorios sin fotos reales.");
+      return;
+    }
+
     const reason = rejectionReasons[listingId]?.trim();
 
     if (action === "reject" && (!reason || reason.length < 5)) {
@@ -172,7 +198,6 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
     setNotice(null);
 
     try {
-      const moderatedListing = listings.find((listing) => listing.id === listingId);
       const response = await fetch(`/api/admin/listings/${listingId}`, {
         body: JSON.stringify({
           action,
@@ -237,6 +262,8 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
         {listings.map((listing) => {
           const signals = reviewSignals(listing);
           const warnings = reviewScore(listing);
+          const missingRequiredPhotos =
+            listing.productCategoryRaw !== "card" && !listing.hasRealPhotos;
 
           return (
           <article
@@ -278,6 +305,12 @@ export function AdminListings({ listings: initialListings }: AdminListingsProps)
               <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-blue-200">
                 {listing.productType}
               </p>
+              {missingRequiredPhotos ? (
+                <div className="mt-3 flex items-start gap-2 rounded-lg border border-red-300/30 bg-red-500/10 p-3 text-xs font-bold leading-5 text-red-100">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                  Este producto requiere fotos reales antes de aprobarse.
+                </div>
+              ) : null}
               <p className="mt-3 line-clamp-2 text-sm leading-6 text-slate-300">
                 {listing.description}
               </p>
