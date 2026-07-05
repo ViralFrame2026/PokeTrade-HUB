@@ -54,8 +54,40 @@ export async function POST(
   });
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const responseError = raffleEntryErrorMessage(error.message);
+    return NextResponse.json(
+      { error: responseError.message },
+      { status: responseError.status }
+    );
   }
 
   return NextResponse.json({ error: null });
+}
+
+function raffleEntryErrorMessage(message: string) {
+  if (message.includes("entry limit")) {
+    return {
+      status: 409,
+      message: "El sorteo ya alcanzo el limite de participantes."
+    };
+  }
+
+  if (message.includes("creators cannot enter")) {
+    return {
+      status: 400,
+      message: "El organizador no puede participar en su propio sorteo."
+    };
+  }
+
+  if (message.includes("not accepting entries")) {
+    return {
+      status: 400,
+      message: "Este sorteo no acepta participantes."
+    };
+  }
+
+  return {
+    status: 500,
+    message: "No pudimos registrar tu participacion."
+  };
 }
