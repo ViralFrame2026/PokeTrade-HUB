@@ -6,7 +6,7 @@ import { FormEvent, useEffect, useState } from "react";
 const TITLE_MAX_LENGTH = 100;
 const PRIZE_MAX_LENGTH = 160;
 const REQUIREMENTS_MAX_LENGTH = 1000;
-const RAFFLE_DRAFT_KEY = "poketrade-raffle-draft";
+const RAFFLE_DRAFT_KEY = "nexotcg-raffle-draft";
 
 type RaffleDraft = {
   closesAt: string;

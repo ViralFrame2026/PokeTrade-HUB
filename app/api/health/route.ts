@@ -8,7 +8,7 @@ export function GET() {
   return NextResponse.json(
     {
       ok: configured,
-      service: "poketrade-hub",
+      service: "nexotcg",
       supabase: {
         anonKey: hasSupabaseAnonKey,
         url: hasSupabaseUrl

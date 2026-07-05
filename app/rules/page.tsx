@@ -13,7 +13,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 export const metadata = {
   title: "Reglas de comunidad",
   description:
-    "Reglas básicas para publicar, intercambiar, vender y crear sorteos en PokeTrade HUB."
+    "Reglas básicas para publicar, intercambiar, vender y crear sorteos en NexoTCG."
 };
 
 const rules = [
@@ -99,7 +99,7 @@ export default function RulesPage() {
           <p className="mt-10 text-sm font-black uppercase tracking-[0.24em] text-yellow-300">
             Comunidad
           </p>
-          <h1 className="mt-3 text-4xl font-black sm:text-6xl">Reglas de PokeTrade HUB</h1>
+          <h1 className="mt-3 text-4xl font-black sm:text-6xl">Reglas de NexoTCG</h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-blue-100">
             Reglas simples para mantener el marketplace verificable, útil y seguro para
             coleccionistas, compradores, vendedores y moderadores.

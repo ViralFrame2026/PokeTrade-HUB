@@ -12,7 +12,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 export const metadata = {
   title: "Seguridad",
   description:
-    "Buenas prácticas para comprar, vender e intercambiar cartas, sellados y accesorios Pokemon TCG en PokeTrade HUB."
+    "Buenas prácticas para comprar, vender e intercambiar cartas, sellados y accesorios Pokemon TCG en NexoTCG."
 };
 
 const safeSteps = [
@@ -80,7 +80,7 @@ export default function SafetyPage() {
             Seguridad para operar con productos Pokemon TCG
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-blue-100">
-            PokeTrade HUB ordena publicaciones, mensajes, reputación y reportes. Aún así,
+            NexoTCG ordena publicaciones, mensajes, reputación y reportes. Aún así,
             cada acuerdo entre usuarios requiere criterio, confirmación y cuidado.
           </p>
         </div>

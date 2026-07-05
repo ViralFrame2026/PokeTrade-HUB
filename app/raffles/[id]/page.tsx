@@ -64,7 +64,7 @@ export async function generateMetadata({
   const canonical = `/raffles/${raffle.id}`;
   const creator = raffleCreatorName(raffle.profiles);
   const title = `${raffle.title} - Sorteo Pokemon TCG`;
-  const description = `${raffle.prize}. Sorteo gratuito organizado por ${creator} en PokeTrade HUB.`;
+  const description = `${raffle.prize}. Sorteo gratuito organizado por ${creator} en NexoTCG.`;
   const image = raffle.image_path || "/assets/pokemon-card-banner.webp";
 
   return {
@@ -74,7 +74,7 @@ export async function generateMetadata({
       description,
       images: [
         {
-          alt: `${raffle.title} en PokeTrade HUB`,
+          alt: `${raffle.title} en NexoTCG`,
           url: image
         }
       ],

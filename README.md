@@ -1,4 +1,4 @@
-# POKETRADE HUB
+# NexoTCG
 
 Marketplace profesional para comunidad Pokemon TCG de habla hispana.
 

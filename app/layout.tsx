@@ -4,14 +4,14 @@ import { siteUrlObject } from "@/lib/site-url";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  applicationName: "POKETRADE HUB",
-  authors: [{ name: "POKETRADE HUB" }],
+  applicationName: "NexoTCG",
+  authors: [{ name: "NexoTCG" }],
   category: "marketplace",
-  creator: "POKETRADE HUB",
+  creator: "NexoTCG",
   metadataBase: siteUrlObject(),
   title: {
-    default: "POKETRADE HUB - Marketplace Pokemon TCG",
-    template: "%s | POKETRADE HUB"
+    default: "NexoTCG - Marketplace Pokemon TCG",
+    template: "%s | NexoTCG"
   },
   description:
     "Marketplace argentino para comprar, vender, intercambiar y sortear productos Pokemon TCG con moderacion, reputacion y catalogo oficial.",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     "sorteos Pokemon",
     "cartas coleccionables",
     "TCG Argentina",
-    "PokeTrade HUB"
+    "NexoTCG"
   ],
   alternates: {
     canonical: "/"
@@ -34,23 +34,23 @@ export const metadata: Metadata = {
   },
   manifest: "/site.webmanifest",
   openGraph: {
-    title: "POKETRADE HUB - Marketplace Pokemon TCG",
+    title: "NexoTCG - Marketplace Pokemon TCG",
     description:
       "Compra, vende, intercambia y sortea productos Pokemon TCG con reputacion, moderacion y catalogo oficial.",
     images: [
       {
-        alt: "POKETRADE HUB marketplace Pokemon TCG",
+        alt: "NexoTCG marketplace Pokemon TCG",
         height: 720,
         url: "/assets/pokemon-card-banner.webp",
         width: 1880
       }
     ],
     locale: "es_AR",
-    siteName: "POKETRADE HUB",
+    siteName: "NexoTCG",
     type: "website",
     url: "/"
   },
-  publisher: "POKETRADE HUB",
+  publisher: "NexoTCG",
   robots: {
     follow: true,
     googleBot: {
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "POKETRADE HUB - Marketplace Pokemon TCG",
+    title: "NexoTCG - Marketplace Pokemon TCG",
     description: "Compra, vende, intercambia y sortea productos Pokemon TCG.",
     images: ["/assets/pokemon-card-banner.webp"]
   }

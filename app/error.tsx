@@ -17,8 +17,8 @@ export default function GlobalError({
           <Link className="flex w-fit items-center gap-3" href="/">
             <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
             <div>
-              <p className="text-sm font-black tracking-[0.22em] text-yellow-300">POKETRADE</p>
-              <p className="text-xs font-bold text-blue-100">HUB TCG</p>
+              <p className="text-sm font-black tracking-[0.22em] text-yellow-300">NexoTCG</p>
+              <p className="text-xs font-bold text-blue-100">Marketplace TCG</p>
             </div>
           </Link>
         </div>

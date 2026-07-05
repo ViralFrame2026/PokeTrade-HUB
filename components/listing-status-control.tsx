@@ -55,7 +55,7 @@ export function ListingStatusControl({
     ];
 
     if (listingType === "sale") {
-      effects.push("Se registra la comision interna de PokeTrade.");
+      effects.push("Se registra la comision interna de NexoTCG.");
     }
 
     return effects;
@@ -186,7 +186,7 @@ export function ListingStatusControl({
 
       {closing && changing && listingType === "sale" && listingPrice ? (
         <div className="mt-3 rounded-md border border-yellow-200 bg-yellow-50 p-3 text-xs text-yellow-900">
-          <p className="font-black">Comision estimada PokeTrade: 5%</p>
+          <p className="font-black">Comision estimada NexoTCG: 5%</p>
           <p className="mt-1 font-semibold">
             Comision: {moneyLabel(estimatedCommission)} | Neto vendedor:{" "}
             {moneyLabel(sellerNet)}

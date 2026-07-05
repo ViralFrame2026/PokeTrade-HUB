@@ -248,7 +248,7 @@ export default async function AccountPage() {
               <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
               <div className="min-w-0">
                 <p className="truncate text-sm font-black tracking-[0.2em] text-yellow-300">
-                  POKETRADE
+                  NexoTCG
                 </p>
                 <p className="truncate text-xs font-bold text-blue-100">MI CUENTA</p>
               </div>
@@ -311,7 +311,7 @@ export default async function AccountPage() {
               <div className="mt-5 rounded-lg border border-white/10 bg-blue-950/35 p-4">
                 <p className="text-sm font-bold text-blue-100">
                   {profile.is_verified
-                    ? "Perfil verificado por PokeTrade HUB."
+                    ? "Perfil verificado por NexoTCG."
                     : "Completa tu perfil y cierra operaciones para ganar confianza."}
                 </p>
               </div>

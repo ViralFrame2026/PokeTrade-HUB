@@ -21,13 +21,13 @@ export const metadata = {
     canonical: "/marketplace"
   },
   description:
-    "Explora cartas, productos sellados y accesorios Pokemon TCG en venta, intercambio o regalo dentro de PokeTrade HUB.",
+    "Explora cartas, productos sellados y accesorios Pokemon TCG en venta, intercambio o regalo dentro de NexoTCG.",
   openGraph: {
     description:
       "Cartas, sellados y accesorios Pokemon TCG para comprar, vender e intercambiar en una comunidad moderada.",
     images: [
       {
-        alt: "Marketplace PokeTrade HUB de productos Pokemon TCG",
+        alt: "Marketplace NexoTCG de productos Pokemon TCG",
         height: 720,
         url: "/assets/pokemon-card-banner.webp",
         width: 1880
@@ -304,7 +304,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
               <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
               <div className="min-w-0">
                 <p className="truncate text-sm font-black tracking-[0.2em] text-yellow-300">
-                  POKETRADE
+                  NexoTCG
                 </p>
                 <p className="truncate text-xs font-bold text-blue-100">MARKETPLACE</p>
               </div>

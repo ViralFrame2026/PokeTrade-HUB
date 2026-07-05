@@ -12,7 +12,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 
 export const metadata = {
   title: "Privacidad",
-  description: "Resumen de privacidad para usuarios de PokeTrade HUB."
+  description: "Resumen de privacidad para usuarios de NexoTCG."
 };
 
 const privacyItems = [
@@ -74,7 +74,7 @@ export default function PrivacyPage() {
           </div>
           <h1 className="mt-5 text-4xl font-black sm:text-6xl">Privacidad</h1>
           <p className="mt-5 text-lg leading-8 text-blue-100">
-            Este resumen explica que datos usa PokeTrade HUB para operar la plataforma,
+            Este resumen explica que datos usa NexoTCG para operar la plataforma,
             moderar contenido y mantener funciones de comunidad. No reemplaza asesoramiento
             legal profesional.
           </p>

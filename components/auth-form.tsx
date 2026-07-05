@@ -309,7 +309,7 @@ export function AuthForm({ initialError = null, nextPath }: AuthFormProps) {
         </button>
 
         <p className="mt-4 text-center text-xs leading-5 text-slate-400">
-          Al usar PokeTrade aceptas operar bajo las{" "}
+          Al usar NexoTCG aceptas operar bajo las{" "}
           <Link className="font-bold text-pokemonYellow hover:text-yellow-200" href="/rules">
             reglas de comunidad
           </Link>

@@ -36,7 +36,7 @@ type CreateListingResponse = {
 
 const DESCRIPTION_MAX_LENGTH = 2000;
 const TRADE_WANTS_MAX_LENGTH = 1000;
-const PUBLISH_DRAFT_KEY = "poketrade-publish-draft";
+const PUBLISH_DRAFT_KEY = "nexotcg-publish-draft";
 
 type ProductCategory = "card" | "sealed" | "accessory";
 

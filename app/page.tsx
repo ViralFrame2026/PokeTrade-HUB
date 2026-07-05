@@ -299,8 +299,8 @@ export default async function HomePage() {
             <Link className="flex items-center gap-3" href="/">
               <span className="pokeball h-11 w-11 shrink-0" aria-hidden="true" />
               <div>
-                <p className="text-sm font-black tracking-[0.24em] text-yellow-300">POKETRADE</p>
-                <p className="text-xs font-bold text-blue-100">HUB TCG</p>
+                <p className="text-sm font-black tracking-[0.24em] text-yellow-300">NexoTCG</p>
+                <p className="text-xs font-bold text-blue-100">Marketplace TCG</p>
               </div>
             </Link>
           </div>
@@ -374,7 +374,7 @@ export default async function HomePage() {
               Publicá, validá y conectá con coleccionistas reales
             </h2>
             <p className="mt-4 max-w-xl leading-7 text-slate-300">
-              PokeTrade ordena la experiencia para que cada producto tenga validación,
+              NexoTCG ordena la experiencia para que cada producto tenga validación,
               revisión previa y un vendedor con perfil visible.
             </p>
           </div>
@@ -595,7 +595,7 @@ export default async function HomePage() {
           <div className="flex items-center gap-3">
             <span className="pokeball h-9 w-9 shrink-0" aria-hidden="true" />
             <div>
-              <p className="font-black tracking-[0.18em] text-yellow-300">POKETRADE</p>
+              <p className="font-black tracking-[0.18em] text-yellow-300">NexoTCG</p>
               <p className="text-xs text-blue-200">Marketplace de comunidad Pokemon TCG</p>
             </div>
           </div>

@@ -247,7 +247,7 @@ export default async function MyListingsPage({
               <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
               <div className="min-w-0">
                 <p className="truncate text-sm font-black tracking-[0.2em] text-yellow-300">
-                  POKETRADE
+                  NexoTCG
                 </p>
                 <p className="truncate text-xs font-bold text-blue-100">MI CUENTA</p>
               </div>
@@ -373,7 +373,7 @@ export default async function MyListingsPage({
                     </p>
                     {listing.type === "sale" && listing.status === "sold" ? (
                       <p className="mt-2 rounded-lg border border-yellow-200 bg-yellow-50 px-3 py-2 text-xs font-bold text-yellow-900">
-                        Comision estimada PokeTrade: {saleCommission.commission} | Neto vendedor:{" "}
+                        Comision estimada NexoTCG: {saleCommission.commission} | Neto vendedor:{" "}
                         {saleCommission.sellerNet}
                       </p>
                     ) : null}

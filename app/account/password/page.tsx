@@ -25,7 +25,7 @@ export default async function PasswordPage() {
           <Link className="flex items-center gap-3" href="/account">
             <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
             <div>
-              <p className="text-sm font-black tracking-[0.2em] text-yellow-300">POKETRADE</p>
+              <p className="text-sm font-black tracking-[0.2em] text-yellow-300">NexoTCG</p>
               <p className="text-xs font-bold text-blue-100">SEGURIDAD</p>
             </div>
           </Link>
@@ -51,7 +51,7 @@ export default async function PasswordPage() {
             </p>
             <h1 className="mt-2 text-4xl font-black text-blue-950">Cambiar contraseña</h1>
             <p className="mt-3 leading-7 text-slate-600">
-              Usa una contraseña única y evita compartirla fuera de PokeTrade.
+              Usa una contraseña única y evita compartirla fuera de NexoTCG.
             </p>
           </div>
 

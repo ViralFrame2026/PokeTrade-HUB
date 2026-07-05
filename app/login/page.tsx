@@ -35,7 +35,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             Volver
           </ButtonLink>
           <p className="mt-10 text-sm font-bold uppercase tracking-[0.22em] text-pokemonYellow">
-            Cuenta PokeTrade
+            Cuenta NexoTCG
           </p>
           <h1 className="mt-3 max-w-2xl text-5xl font-black leading-tight">
             Entrá a una comunidad TCG con reputación visible.
@@ -68,7 +68,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             </p>
             <h2 className="mt-2 text-4xl font-black text-white">Ingresar</h2>
             <p className="mt-4 leading-7 text-slate-300">
-              Usá tu cuenta para operar dentro de PokeTrade HUB.
+              Usá tu cuenta para operar dentro de NexoTCG.
             </p>
           </div>
           <AuthForm initialError={initialError} nextPath={nextPath} />

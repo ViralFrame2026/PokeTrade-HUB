@@ -11,13 +11,13 @@ export const metadata = {
     canonical: "/raffles"
   },
   description:
-    "Sorteos gratuitos y moderados de cartas y productos Pokemon TCG creados por la comunidad de PokeTrade HUB.",
+    "Sorteos gratuitos y moderados de cartas y productos Pokemon TCG creados por la comunidad de NexoTCG.",
   openGraph: {
     description:
       "Participa en sorteos gratuitos de cartas y productos Pokemon TCG revisados por moderación.",
     images: [
       {
-        alt: "Sorteos Pokemon TCG en PokeTrade HUB",
+        alt: "Sorteos Pokemon TCG en NexoTCG",
         height: 720,
         url: "/assets/pokemon-card-banner.webp",
         width: 1880
@@ -80,7 +80,7 @@ export default async function RafflesPage() {
           <Link className="flex items-center gap-3" href="/">
             <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
             <div>
-              <p className="text-sm font-black tracking-[0.2em] text-yellow-300">POKETRADE</p>
+              <p className="text-sm font-black tracking-[0.2em] text-yellow-300">NexoTCG</p>
               <p className="text-xs font-bold text-blue-100">SORTEOS</p>
             </div>
           </Link>

@@ -4,7 +4,7 @@ type PageLoadingProps = {
   label?: string;
 };
 
-export function PageLoading({ label = "Cargando PokeTrade" }: PageLoadingProps) {
+export function PageLoading({ label = "Cargando NexoTCG" }: PageLoadingProps) {
   return (
     <main className="grid min-h-screen place-items-center bg-[radial-gradient(circle_at_20%_0%,rgba(250,204,21,0.16),transparent_26rem),linear-gradient(180deg,#172554,#070a12)] px-4 py-12 text-white">
       <section className="w-full max-w-md rounded-lg border border-white/10 bg-white/[0.06] p-6 text-center shadow-[0_24px_80px_rgba(0,0,0,.35)]">

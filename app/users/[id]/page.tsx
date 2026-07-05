@@ -124,11 +124,11 @@ export async function generateMetadata({
   }
 
   const location =
-    [profile.city, profile.country].filter(Boolean).join(", ") || "Comunidad PokeTrade";
-  const title = `${profile.display_name} - Perfil PokeTrade`;
+    [profile.city, profile.country].filter(Boolean).join(", ") || "Comunidad NexoTCG";
+  const title = `${profile.display_name} - Perfil NexoTCG`;
   const description =
     profile.bio?.slice(0, 150) ||
-    `${profile.display_name} en PokeTrade HUB: ${Number(profile.reputation_average ?? 0).toFixed(1)} de reputación, ${profile.reputation_count ?? 0} valoraciones y ubicación ${location}.`;
+    `${profile.display_name} en NexoTCG: ${Number(profile.reputation_average ?? 0).toFixed(1)} de reputación, ${profile.reputation_count ?? 0} valoraciones y ubicación ${location}.`;
   const canonical = `/users/${profile.id}`;
 
   return {
@@ -267,7 +267,7 @@ export default async function PublicProfilePage({
             <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
             <div>
               <p className="text-sm font-black tracking-[0.2em] text-yellow-300">
-                POKETRADE
+                NexoTCG
               </p>
               <p className="text-xs font-bold text-blue-100">PERFIL PÚBLICO</p>
             </div>
@@ -397,7 +397,7 @@ export default async function PublicProfilePage({
             </p>
             <p className="mt-3 leading-7 text-blue-100">
               Revisá las publicaciones activas, pedí fotos reales por mensaje y mantené los
-              acuerdos dentro de PokeTrade HUB para que la reputación pueda reflejar la operación.
+              acuerdos dentro de NexoTCG para que la reputación pueda reflejar la operación.
             </p>
           </div>
         </div>

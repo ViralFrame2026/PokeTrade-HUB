@@ -1,6 +1,6 @@
 {
-  "name": "POKETRADE HUB",
-  "short_name": "POKETRADE",
+  "name": "NexoTCG",
+  "short_name": "NexoTCG",
   "description": "Marketplace Pokemon TCG para comprar, vender, intercambiar y sortear cartas, productos sellados y accesorios.",
   "start_url": "/",
   "scope": "/",

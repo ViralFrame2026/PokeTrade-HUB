@@ -159,7 +159,7 @@ export default async function MessagesPage() {
               <span className="pokeball h-10 w-10 shrink-0" aria-hidden="true" />
               <div className="min-w-0">
                 <p className="truncate text-sm font-black tracking-[0.2em] text-yellow-300">
-                  POKETRADE
+                  NexoTCG
                 </p>
                 <p className="truncate text-xs font-bold text-blue-100">MENSAJES</p>
               </div>

@@ -152,7 +152,7 @@ export function ProfileForm({ initial }: ProfileFormProps) {
 
       <p className="mt-4 text-sm leading-6 text-blue-100">
         WhatsApp e Instagram solo se muestran como opciones de contacto en tus
-        publicaciones. Son opcionales porque PokeTrade también tiene mensajes internos.
+        publicaciones. Son opcionales porque NexoTCG también tiene mensajes internos.
       </p>
 
       <div className="mt-4 rounded-lg border border-yellow-300/30 bg-yellow-400/10 p-4">

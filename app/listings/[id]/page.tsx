@@ -196,7 +196,7 @@ export async function generateMetadata({
       description,
       images: [
         {
-          alt: `${displayTitle} en PokeTrade HUB`,
+          alt: `${displayTitle} en NexoTCG`,
           url: displayImage
         }
       ],
@@ -349,7 +349,7 @@ export default async function ListingDetailPage({
       ? "Este vendedor todavia no tiene valoraciones: avanza con mas verificacion."
       : null,
     sellerOperations === 0
-      ? "No registra operaciones cerradas en PokeTrade por ahora."
+      ? "No registra operaciones cerradas en NexoTCG por ahora."
       : null,
     sellerAgeDays < 14
       ? "La cuenta es reciente: confirma identidad y evita pagos apresurados."
@@ -453,8 +453,8 @@ export default async function ListingDetailPage({
           <Link className="flex items-center gap-3" href="/">
             <span className="pokeball h-11 w-11 shrink-0" aria-hidden="true" />
             <div>
-              <p className="text-sm font-black tracking-[0.24em] text-yellow-300">POKETRADE</p>
-              <p className="text-xs font-bold text-blue-100">HUB TCG</p>
+              <p className="text-sm font-black tracking-[0.24em] text-yellow-300">NexoTCG</p>
+              <p className="text-xs font-bold text-blue-100">Marketplace TCG</p>
             </div>
           </Link>
           <Link
@@ -604,7 +604,7 @@ export default async function ListingDetailPage({
                   </a>
                 ) : (
                   <div className="mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3 text-center text-sm font-semibold text-blue-800">
-                    Este vendedor usa mensajes internos de PokeTrade.
+                    Este vendedor usa mensajes internos de NexoTCG.
                   </div>
                 )}
               </>
@@ -616,7 +616,7 @@ export default async function ListingDetailPage({
                 listingId={listing.id}
               />
             ) : null}
-            <ShareListingButton title={`${displayTitle} en PokeTrade HUB`} />
+            <ShareListingButton title={`${displayTitle} en NexoTCG`} />
             {canDeleteListing ? (
               <div className="mt-3">
                 <DeleteListingButton
@@ -677,7 +677,7 @@ export default async function ListingDetailPage({
                 </p>
                 <p className="mt-3 flex items-center gap-2 text-sm text-blue-200">
                   <Store className="h-4 w-4" />
-                  Vendedor de la comunidad PokeTrade
+                  Vendedor de la comunidad NexoTCG
                 </p>
               </div>
             </div>

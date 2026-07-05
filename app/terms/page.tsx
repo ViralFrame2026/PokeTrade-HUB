@@ -12,14 +12,14 @@ import { ButtonLink } from "@/components/ui/button-link";
 
 export const metadata = {
   title: "Terminos",
-  description: "Condiciones basicas de uso para PokeTrade HUB."
+  description: "Condiciones basicas de uso para NexoTCG."
 };
 
 const terms = [
   {
     icon: Store,
     title: "Uso de la plataforma",
-    copy: "PokeTrade HUB permite publicar, buscar y coordinar operaciones sobre productos Pokemon TCG: cartas individuales, productos sellados, accesorios y sorteos."
+    copy: "NexoTCG permite publicar, buscar y coordinar operaciones sobre productos Pokemon TCG: cartas individuales, productos sellados, accesorios y sorteos."
   },
   {
     icon: PackageCheck,
@@ -34,7 +34,7 @@ const terms = [
   {
     icon: BadgeDollarSign,
     title: "Comisiones y monetizacion",
-    copy: "PokeTrade HUB puede registrar comisiones por ventas concretadas, mostrar metricas internas y aplicar condiciones comerciales para sostener la plataforma."
+    copy: "NexoTCG puede registrar comisiones por ventas concretadas, mostrar metricas internas y aplicar condiciones comerciales para sostener la plataforma."
   },
   {
     icon: ShieldAlert,
@@ -54,7 +54,7 @@ const terms = [
 ];
 
 const importantNotes = [
-  "PokeTrade HUB no fabrica, vende ni garantiza directamente los productos publicados por usuarios.",
+  "NexoTCG no fabrica, vende ni garantiza directamente los productos publicados por usuarios.",
   "Las operaciones de pago, envio o entrega acordadas entre usuarios quedan bajo responsabilidad de quienes participan.",
   "Los reportes falsos, abusivos o hechos para perjudicar a otro usuario tambien pueden ser moderados.",
   "Si se integran pagos o planes mas adelante, sus condiciones se comunicaran dentro de la plataforma."
@@ -73,7 +73,7 @@ export default function TermsPage() {
           </div>
           <h1 className="mt-5 text-4xl font-black sm:text-6xl">Terminos de uso</h1>
           <p className="mt-5 text-lg leading-8 text-blue-100">
-            PokeTrade HUB es una plataforma de comunidad para publicar, encontrar y coordinar
+            NexoTCG es una plataforma de comunidad para publicar, encontrar y coordinar
             operaciones de productos Pokemon TCG entre usuarios.
           </p>
         </div>
