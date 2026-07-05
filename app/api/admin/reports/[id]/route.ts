@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { internalErrorResponse } from "@/lib/api";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const resolveReportSchema = z.object({
@@ -70,7 +71,7 @@ export async function PATCH(
     .is("resolved_at", null);
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return internalErrorResponse("No pudimos resolver el reporte.", error);
   }
 
   await supabase.from("notifications").insert({

@@ -30,7 +30,7 @@ export async function POST(
     };
 
     return NextResponse.json(
-      { error: messages[error.message] ?? error.message },
+      { error: messages[error.message] ?? "No pudimos elegir al ganador." },
       { status: 400 }
     );
   }

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { invalidJsonResponse, readJsonBody } from "@/lib/api";
+import { internalErrorResponse, invalidJsonResponse, readJsonBody } from "@/lib/api";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const schema = z
@@ -84,7 +84,7 @@ export async function PATCH(
     })
     .eq("id", id);
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return internalErrorResponse("No pudimos moderar el sorteo.", error);
   }
 
   await Promise.all([

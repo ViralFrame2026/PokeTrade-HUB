@@ -47,7 +47,7 @@ export async function POST(request: Request) {
       "This operation has already been rated": "Ya valoraste esta operación."
     };
     return NextResponse.json(
-      { error: messages[error.message] ?? error.message },
+      { error: messages[error.message] ?? "No pudimos guardar tu valoración." },
       { status: 400 }
     );
   }

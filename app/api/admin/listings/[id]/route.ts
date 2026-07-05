@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { invalidJsonResponse, readJsonBody } from "@/lib/api";
+import { internalErrorResponse, invalidJsonResponse, readJsonBody } from "@/lib/api";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const moderationSchema = z
@@ -108,7 +108,7 @@ export async function PATCH(request: Request, context: RouteContext) {
     .single();
 
   if (updateError) {
-    return NextResponse.json({ data: null, error: updateError.message }, { status: 500 });
+    return internalErrorResponse("No pudimos moderar la publicación.", updateError);
   }
 
   await Promise.all([

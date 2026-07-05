@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { invalidJsonResponse, readJsonBody } from "@/lib/api";
+import { internalErrorResponse, invalidJsonResponse, readJsonBody } from "@/lib/api";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const updateListingSchema = z
@@ -103,7 +103,7 @@ export async function PATCH(
     .single();
 
   if (listingError) {
-    return NextResponse.json({ error: listingError.message }, { status: 500 });
+    return internalErrorResponse("No pudimos guardar los cambios.", listingError);
   }
 
   const { error: productError } = await supabase
@@ -117,7 +117,7 @@ export async function PATCH(
     .eq("owner_id", user.id);
 
   if (productError) {
-    return NextResponse.json({ error: productError.message }, { status: 500 });
+    return internalErrorResponse("No pudimos actualizar los datos del producto.", productError);
   }
 
   return NextResponse.json({ error: null });

@@ -50,7 +50,19 @@ export async function PATCH(
   });
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 403 });
+    const messages: Record<string, string> = {
+      "Primary administrator access required":
+        "Solo el administrador principal puede gestionar permisos.",
+      "The primary administrator cannot be demoted":
+        "No puedes quitar el rol principal de la cuenta dueña.",
+      "The primary administrator cannot remove their own access":
+        "No puedes quitarte tus propios permisos principales."
+    };
+
+    return NextResponse.json(
+      { error: messages[error.message] ?? "No pudimos actualizar los permisos." },
+      { status: 403 }
+    );
   }
 
   return NextResponse.json({ error: null });

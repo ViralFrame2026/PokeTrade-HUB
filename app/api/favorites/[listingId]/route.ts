@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { internalErrorResponse } from "@/lib/api";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type RouteContext = {
@@ -41,7 +42,7 @@ export async function POST(_request: Request, context: RouteContext) {
   });
 
   if (error && error.code !== "23505") {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return internalErrorResponse("No pudimos guardar este favorito.", error);
   }
 
   return NextResponse.json({ error: null });
@@ -65,7 +66,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
     .eq("listing_id", listingId);
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return internalErrorResponse("No pudimos quitar este favorito.", error);
   }
 
   return NextResponse.json({ error: null });

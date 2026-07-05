@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { invalidJsonResponse, readJsonBody } from "@/lib/api";
+import { internalErrorResponse, invalidJsonResponse, readJsonBody } from "@/lib/api";
 import { getCardById } from "@/lib/pokemon-tcg-api";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -209,16 +209,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ data: listing, error: null });
   } catch (error) {
-    console.error("Create listing error", error);
-    return NextResponse.json(
-      {
-        data: null,
-        error:
-          error instanceof Error
-            ? error.message
-            : "No pudimos crear la publicación. Intentá nuevamente."
-      },
-      { status: 500 }
+    return internalErrorResponse(
+      "No pudimos crear la publicación. Intentá nuevamente.",
+      error
     );
   }
 }

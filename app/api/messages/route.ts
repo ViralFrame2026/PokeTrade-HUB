@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { invalidJsonResponse, readJsonBody } from "@/lib/api";
+import { internalErrorResponse, invalidJsonResponse, readJsonBody } from "@/lib/api";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
@@ -89,7 +89,7 @@ export async function POST(request: Request) {
   });
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return internalErrorResponse("No pudimos enviar el mensaje.", error);
   }
 
   return NextResponse.json({ error: null });
