@@ -18,7 +18,7 @@ export async function POST(_request: Request, context: RouteContext) {
 
   const { data: listing } = await supabase
     .from("listings")
-    .select("id")
+    .select("id, seller_id")
     .eq("id", listingId)
     .eq("moderation_status", "approved")
     .eq("status", "active")
@@ -26,6 +26,13 @@ export async function POST(_request: Request, context: RouteContext) {
 
   if (!listing) {
     return NextResponse.json({ error: "Publicación no disponible." }, { status: 404 });
+  }
+
+  if (listing.seller_id === user.id) {
+    return NextResponse.json(
+      { error: "No puedes guardar tu propia publicacion." },
+      { status: 400 }
+    );
   }
 
   const { error } = await supabase.from("favorites").insert({
