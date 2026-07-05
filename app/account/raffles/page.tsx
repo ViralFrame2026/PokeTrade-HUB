@@ -29,6 +29,7 @@ type RaffleRow = {
   created_at: string;
   drawn_at: string | null;
   id: string;
+  image_path: string | null;
   moderation_status: string;
   prize: string;
   raffle_entries: Array<{ count: number }>;
@@ -108,7 +109,7 @@ export default async function MyRafflesPage() {
   const { data } = await supabase
     .from("raffles")
     .select(
-      "id, title, prize, closes_at, created_at, moderation_status, rejection_reason, winner_id, drawn_at, raffle_entries(count), winner:profiles!raffles_winner_id_fkey(display_name)"
+      "id, title, prize, image_path, closes_at, created_at, moderation_status, rejection_reason, winner_id, drawn_at, raffle_entries(count), winner:profiles!raffles_winner_id_fkey(display_name)"
     )
     .eq("creator_id", user.id)
     .order("created_at", { ascending: false });
@@ -177,9 +178,24 @@ export default async function MyRafflesPage() {
 
               return (
                 <article
-                  className="grid gap-5 rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-[0_18px_45px_rgba(0,0,0,.18)] lg:grid-cols-[1fr_230px] lg:items-center"
+                  className="grid gap-5 rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-[0_18px_45px_rgba(0,0,0,.18)] lg:grid-cols-[170px_1fr_230px] lg:items-center"
                   key={raffle.id}
                 >
+                  <div className="overflow-hidden rounded-lg border border-white/10 bg-slate-950/60">
+                    {raffle.image_path ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        alt={`Premio del sorteo ${raffle.title}`}
+                        className="aspect-[4/3] w-full object-cover"
+                        loading="lazy"
+                        src={raffle.image_path}
+                      />
+                    ) : (
+                      <div className="grid aspect-[4/3] place-items-center p-4 text-center text-xs font-bold text-slate-500">
+                        Sin imagen
+                      </div>
+                    )}
+                  </div>
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <span
