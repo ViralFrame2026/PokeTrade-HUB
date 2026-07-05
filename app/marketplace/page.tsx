@@ -149,6 +149,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
   );
   let rows: ListingRow[] = [];
   let favoriteIds = new Set<string>();
+  let currentUserId: string | null = null;
 
   if (hasSupabaseConfig) {
     const supabase = await createSupabaseServerClient();
@@ -179,6 +180,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
     const {
       data: { user }
     } = await supabase.auth.getUser();
+    currentUserId = user?.id ?? null;
 
     if (user && rows.length > 0) {
       const { data: favorites } = await supabase
@@ -256,6 +258,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
 
     return [{
       cardMeta: productMeta(product),
+      canFavorite: profile?.id !== currentUserId,
       description:
         row.description ??
         (row.type === "trade" ? `Busca: ${row.trade_wants ?? "propuestas"}` : ""),

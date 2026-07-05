@@ -8,6 +8,7 @@ export type FeaturedCard = {
 export type Listing = {
   id: string;
   cardMeta: string;
+  canFavorite?: boolean;
   description: string;
   image: string;
   isFavorite?: boolean;

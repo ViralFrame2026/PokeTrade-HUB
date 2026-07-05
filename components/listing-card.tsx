@@ -11,6 +11,7 @@ type ListingCardProps = {
 export function ListingCard({ listing }: ListingCardProps) {
   const isExample = listing.id.startsWith("demo-") || listing.status === "Ejemplo visual";
   const detailHref = isExample ? "/publish" : `/listings/${listing.id}`;
+  const canFavorite = listing.canFavorite ?? true;
   const sellerContent = (
     <>
       <ShieldCheck className="h-4 w-4 text-blue-600" />
@@ -92,12 +93,14 @@ export function ListingCard({ listing }: ListingCardProps) {
             <ExternalLink className="h-4 w-4" />
             {isExample ? "Publicar similar" : "Ver detalle"}
           </Link>
-          <ListingCardFavoriteButton
-            detailHref={detailHref}
-            initialFavorite={listing.isFavorite}
-            isExample={isExample}
-            listingId={listing.id}
-          />
+          {canFavorite ? (
+            <ListingCardFavoriteButton
+              detailHref={detailHref}
+              initialFavorite={listing.isFavorite}
+              isExample={isExample}
+              listingId={listing.id}
+            />
+          ) : null}
         </div>
       </div>
     </article>
