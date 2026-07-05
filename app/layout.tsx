@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { siteUrlObject } from "@/lib/site-url";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -7,7 +8,7 @@ export const metadata: Metadata = {
   authors: [{ name: "POKETRADE HUB" }],
   category: "marketplace",
   creator: "POKETRADE HUB",
-  metadataBase: new URL("https://poketrade-hub.vercel.app"),
+  metadataBase: siteUrlObject(),
   title: {
     default: "POKETRADE HUB - Marketplace Pokemon TCG",
     template: "%s | POKETRADE HUB"

@@ -31,6 +31,7 @@ import {
   productTypeDetail,
   productTitle
 } from "@/lib/product-display";
+import { siteUrl } from "@/lib/site-url";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -140,10 +141,6 @@ function listingLocation(listing: ListingDetailRow) {
     [listing.location_city, listing.location_country].filter(Boolean).join(", ") ||
     "Ubicacion no informada"
   );
-}
-
-function siteUrl(path: string) {
-  return `https://poketrade-hub.vercel.app${path}`;
 }
 
 async function getListing(id: string) {

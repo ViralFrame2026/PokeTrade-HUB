@@ -1,7 +1,6 @@
 import type { MetadataRoute } from "next";
 import { createClient } from "@supabase/supabase-js";
-
-const baseUrl = "https://poketrade-hub.vercel.app";
+import { siteUrl } from "@/lib/site-url";
 
 type PublicRoute = {
   changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"];
@@ -78,6 +77,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: route.changeFrequency,
     lastModified: route.lastModified ? new Date(route.lastModified) : new Date(),
     priority: route.priority,
-    url: `${baseUrl}${route.path}`
+    url: siteUrl(route.path)
   }));
 }
