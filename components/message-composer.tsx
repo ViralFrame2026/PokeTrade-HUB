@@ -27,7 +27,7 @@ function quickMessages(intent: string, listingType: string) {
 
   return [
     "Hola, sigue disponible?",
-    "Me interesa comprarla, el precio sigue siendo el publicado?",
+    "Me interesa comprar este producto, el precio sigue siendo el publicado?",
     "Podes compartir mas fotos reales?",
     "En que zona entregas?"
   ];
