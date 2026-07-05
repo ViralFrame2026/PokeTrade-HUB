@@ -261,7 +261,8 @@ export default async function ListingDetailPage({
   const ContactIcon = user && instagram && !whatsapp ? Instagram : MessageCircle;
   const isCompleted = ["sold", "traded", "finished"].includes(listing.status);
   const isAvailable = listing.status === "active";
-  const canDeleteListing = Boolean(user?.id === listing.seller_id || currentProfile?.is_admin);
+  const isListingOwner = user?.id === listing.seller_id;
+  const canDeleteListing = Boolean(isListingOwner || currentProfile?.is_admin);
   const [favoriteResult, ratingResult, existingReportResult, reviewsResult, sellerOpsResult] =
     await Promise.all([
       user
@@ -586,7 +587,7 @@ export default async function ListingDetailPage({
               </div>
             ) : null}
 
-            {user?.id !== listing.seller_id && isAvailable ? (
+            {!isListingOwner && isAvailable ? (
               <>
                 <StartConversationButton
                   isAuthenticated={Boolean(user)}
@@ -611,11 +612,13 @@ export default async function ListingDetailPage({
                 )}
               </>
             ) : null}
-            <FavoriteButton
-              initialFavorite={Boolean(favorite)}
-              isAuthenticated={Boolean(user)}
-              listingId={listing.id}
-            />
+            {!isListingOwner && isAvailable ? (
+              <FavoriteButton
+                initialFavorite={Boolean(favorite)}
+                isAuthenticated={Boolean(user)}
+                listingId={listing.id}
+              />
+            ) : null}
             <ShareListingButton title={`${displayTitle} en PokeTrade HUB`} />
             {canDeleteListing ? (
               <div className="mt-3">
@@ -626,11 +629,13 @@ export default async function ListingDetailPage({
                 />
               </div>
             ) : null}
-            <ReportListingForm
-              initialReported={Boolean(existingReport)}
-              isAuthenticated={Boolean(user)}
-              listingId={listing.id}
-            />
+            {!isListingOwner ? (
+              <ReportListingForm
+                initialReported={Boolean(existingReport)}
+                isAuthenticated={Boolean(user)}
+                listingId={listing.id}
+              />
+            ) : null}
             <div className="mt-5 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
               <div className="flex items-start gap-3">
                 <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
