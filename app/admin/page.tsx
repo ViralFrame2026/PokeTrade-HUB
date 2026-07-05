@@ -34,6 +34,7 @@ import {
   productTitle,
   productTypeDetail
 } from "@/lib/product-display";
+import { siteUrl } from "@/lib/site-url";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const metadata = {
@@ -546,6 +547,8 @@ export default async function AdminPage() {
   const hasInitialContent = activeListingsCount >= 5;
   const hasLaunchRaffle = activeRafflesCount >= 1;
   const hasCommunitySignals = messagesCount > 0 || favoritesCount > 0;
+  const publicSiteUrl = siteUrl();
+  const hasExplicitSiteUrl = Boolean(process.env.NEXT_PUBLIC_SITE_URL?.trim());
 
   const queues = [
     {
@@ -678,6 +681,14 @@ export default async function AdminPage() {
       icon: MessageCircle,
       label: "Señales de comunidad",
       ready: hasCommunitySignals
+    },
+    {
+      detail: hasExplicitSiteUrl
+        ? `SEO, sitemap y enlaces públicos usan ${publicSiteUrl}.`
+        : `Usando URL default ${publicSiteUrl}. Configura NEXT_PUBLIC_SITE_URL si conectas dominio propio.`,
+      icon: Globe,
+      label: "URL pública",
+      ready: hasExplicitSiteUrl
     }
   ];
   const externalLaunchItems = [
@@ -687,7 +698,7 @@ export default async function AdminPage() {
       label: "Email propio"
     },
     {
-      detail: "Conectar dominio final en Vercel y actualizar URLs de Auth, sitemap y metadata.",
+      detail: "Conectar dominio final en Vercel cuando tengas el dominio comprado. La app ya centraliza la URL publica.",
       icon: Globe,
       label: "Dominio final"
     }
