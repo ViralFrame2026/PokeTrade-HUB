@@ -13,7 +13,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 export const metadata = {
   title: "Reglas de comunidad",
   description:
-    "Reglas basicas para publicar, intercambiar, vender y crear sorteos en PokeTrade HUB."
+    "Reglas básicas para publicar, intercambiar, vender y crear sorteos en PokeTrade HUB."
 };
 
 const rules = [
@@ -25,42 +25,42 @@ const rules = [
   {
     icon: BadgeCheck,
     title: "Cartas verificadas",
-    copy: "Las cartas individuales deben seleccionarse desde el catalogo oficial. No se permiten cartas inventadas, proxies, falsificaciones ni datos alterados."
+    copy: "Las cartas individuales deben seleccionarse desde el catálogo oficial. No se permiten cartas inventadas, proxies, falsificaciones ni datos alterados."
   },
   {
     icon: Camera,
     title: "Fotos reales obligatorias",
-    copy: "Los sellados y accesorios deben incluir fotos reales tomadas por el vendedor. No se aceptan imagenes de internet como unica referencia."
+    copy: "Los sellados y accesorios deben incluir fotos reales tomadas por el vendedor. No se aceptan imágenes de internet como única referencia."
   },
   {
     icon: PackageCheck,
-    title: "Descripcion completa",
-    copy: "Cada publicacion debe aclarar estado, contenido, defectos visibles, precio, ubicacion, entrega y condiciones de venta o intercambio."
+    title: "Descripción completa",
+    copy: "Cada publicación debe aclarar estado, contenido, defectos visibles, precio, ubicación, entrega y condiciones de venta o intercambio."
   },
   {
     icon: Gift,
     title: "Sorteos transparentes",
-    copy: "Los sorteos deben informar premio, fecha de cierre, condiciones y forma de seleccion del ganador."
+    copy: "Los sorteos deben informar premio, fecha de cierre, condiciones y forma de selección del ganador."
   },
   {
     icon: ShieldCheck,
-    title: "Moderacion activa",
+    title: "Moderación activa",
     copy: "El equipo puede aprobar, rechazar, pausar o eliminar contenido que ponga en riesgo a la comunidad."
   },
   {
     icon: Trash2,
-    title: "Eliminacion libre",
+    title: "Eliminación libre",
     copy: "Cada usuario puede eliminar sus publicaciones y sorteos cuando ya no quiera vender, intercambiar, regalar o mostrar un producto."
   },
   {
     icon: Ban,
-    title: "Sin enganos",
-    copy: "No se permite simular stock, ocultar danos importantes, vender productos re-sellados como nuevos, usar fotos robadas ni presionar por acuerdos inseguros."
+    title: "Sin engaños",
+    copy: "No se permite simular stock, ocultar daños importantes, vender productos re-sellados como nuevos, usar fotos robadas ni presionar por acuerdos inseguros."
   }
 ];
 
 const allowedProducts = [
-  "Cartas individuales oficiales enlazadas al catalogo Pokemon TCG.",
+  "Cartas individuales oficiales enlazadas al catálogo Pokemon TCG.",
   "Productos sellados oficiales: ETB, booster box, booster packs, latas, colecciones, bundles y similares.",
   "Accesorios TCG: binders, sleeves, deck boxes, playmats, toploaders, cajas y organizadores.",
   "Sorteos de productos Pokemon TCG con premio, cierre y condiciones claras."
@@ -69,11 +69,11 @@ const allowedProducts = [
 const requiredByType = [
   {
     title: "Carta individual",
-    copy: "Seleccion obligatoria desde la API oficial. Las fotos reales ayudan a vender mejor, pero pueden ser opcionales."
+    copy: "Selección obligatoria desde la API oficial. Las fotos reales ayudan a vender mejor, pero pueden ser opcionales."
   },
   {
     title: "Sellado",
-    copy: "Fotos reales obligatorias, estado del empaque, idioma, expansion, contenido incluido y cualquier golpe, apertura o detalle visible."
+    copy: "Fotos reales obligatorias, estado del empaque, idioma, expansión, contenido incluido y cualquier golpe, apertura o detalle visible."
   },
   {
     title: "Accesorio",
@@ -82,9 +82,9 @@ const requiredByType = [
 ];
 
 const consequences = [
-  "Correccion o rechazo de publicaciones.",
+  "Corrección o rechazo de publicaciones.",
   "Pausa temporal de contenido reportado.",
-  "Eliminacion de publicaciones, sorteos o reportes falsos.",
+  "Eliminación de publicaciones, sorteos o reportes falsos.",
   "Retiro de permisos especiales si una cuenta administradora abusa de sus funciones."
 ];
 
@@ -101,7 +101,7 @@ export default function RulesPage() {
           </p>
           <h1 className="mt-3 text-4xl font-black sm:text-6xl">Reglas de PokeTrade HUB</h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-blue-100">
-            Reglas simples para mantener el marketplace verificable, util y seguro para
+            Reglas simples para mantener el marketplace verificable, útil y seguro para
             coleccionistas, compradores, vendedores y moderadores.
           </p>
         </div>

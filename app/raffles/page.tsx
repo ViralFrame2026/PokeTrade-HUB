@@ -14,7 +14,7 @@ export const metadata = {
     "Sorteos gratuitos y moderados de cartas y productos Pokemon TCG creados por la comunidad de PokeTrade HUB.",
   openGraph: {
     description:
-      "Participa en sorteos gratuitos de cartas y productos Pokemon TCG revisados por moderacion.",
+      "Participa en sorteos gratuitos de cartas y productos Pokemon TCG revisados por moderación.",
     images: [
       {
         alt: "Sorteos Pokemon TCG en PokeTrade HUB",
@@ -31,7 +31,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     description:
-      "Participa en sorteos gratuitos de cartas y productos Pokemon TCG revisados por moderacion.",
+      "Participa en sorteos gratuitos de cartas y productos Pokemon TCG revisados por moderación.",
     images: ["/assets/pokemon-card-banner.webp"],
     title: "Sorteos Pokemon TCG"
   }

@@ -12,57 +12,57 @@ import { ButtonLink } from "@/components/ui/button-link";
 export const metadata = {
   title: "Seguridad",
   description:
-    "Buenas practicas para comprar, vender e intercambiar cartas, sellados y accesorios Pokemon TCG en PokeTrade HUB."
+    "Buenas prácticas para comprar, vender e intercambiar cartas, sellados y accesorios Pokemon TCG en PokeTrade HUB."
 };
 
 const safeSteps = [
   {
     icon: ShieldCheck,
-    title: "Valida el producto",
-    copy: "Las cartas individuales deben enlazarse al catalogo Pokemon TCG. Los sellados y accesorios deben tener fotos reales claras."
+    title: "Validá el producto",
+    copy: "Las cartas individuales deben enlazarse al catálogo Pokemon TCG. Los sellados y accesorios deben tener fotos reales claras."
   },
   {
     icon: Camera,
-    title: "Revisa fotos reales",
-    copy: "Para sellados y accesorios, las fotos son obligatorias. Para cartas de alto valor, pide frente, reverso, bordes y detalles de estado."
+    title: "Revisá fotos reales",
+    copy: "Para sellados y accesorios, las fotos son obligatorias. Para cartas de alto valor, pedí frente, reverso, bordes y detalles de estado."
   },
   {
     icon: PackageSearch,
     title: "Comprueba el contenido",
-    copy: "En ETB, boosters, latas, binders o accesorios, confirma idioma, expansion, cantidad, estado del empaque y piezas incluidas."
+    copy: "En ETB, boosters, latas, binders o accesorios, confirmá idioma, expansión, cantidad, estado del empaque y piezas incluidas."
   },
   {
     icon: MessageCircle,
-    title: "Deja acuerdos por mensaje",
-    copy: "Coordina precio, estado, zona, entrega, envio y condiciones dentro de la conversacion para mantener un registro."
+    title: "Dejá acuerdos por mensaje",
+    copy: "Coordiná precio, estado, zona, entrega, envío y condiciones dentro de la conversación para mantener un registro."
   },
   {
     icon: CheckCircle2,
-    title: "Revisa reputacion",
-    copy: "Mira perfil, valoraciones, historial y comportamiento antes de comprar, vender, intercambiar o entregar productos."
+    title: "Revisá reputación",
+    copy: "Mirá perfil, valoraciones, historial y comportamiento antes de comprar, vender, intercambiar o entregar productos."
   },
   {
     icon: Handshake,
-    title: "Confirma antes de cerrar",
-    copy: "Marca una operacion como vendida, intercambiada o finalizada solo cuando realmente haya sido concretada."
+    title: "Confirmá antes de cerrar",
+    copy: "Marcá una operación como vendida, intercambiada o finalizada solo cuando realmente haya sido concretada."
   }
 ];
 
 const redFlags = [
-  "Precio demasiado bajo sin explicacion clara.",
-  "Fotos borrosas, recortadas o iguales a imagenes de internet.",
+  "Precio demasiado bajo sin explicación clara.",
+  "Fotos borrosas, recortadas o iguales a imágenes de internet.",
   "Negativa a mostrar fotos reales cuando el producto lo amerita.",
   "Sellados con dudas de apertura, re-sellado o contenido incompleto.",
-  "Presion para salir de la plataforma de inmediato.",
-  "Cambios de precio o condiciones despues de acordar.",
+  "Presión para salir de la plataforma de inmediato.",
+  "Cambios de precio o condiciones después de acordar.",
   "Perfiles nuevos con comportamiento insistente o datos inconsistentes."
 ];
 
 const checklist = [
-  "Compara nombre, expansion, numero y rareza en cartas individuales.",
-  "Pide fotos con buena luz y algun detalle que confirme que el producto esta en mano.",
-  "No entregues productos o dinero si las condiciones cambiaron a ultimo momento.",
-  "Usa reportes si ves falsificaciones, datos manipulados o actividad sospechosa."
+  "Compará nombre, expansión, número y rareza en cartas individuales.",
+  "Pedí fotos con buena luz y algún detalle que confirme que el producto está en mano.",
+  "No entregues productos o dinero si las condiciones cambiaron a último momento.",
+  "Usá reportes si ves falsificaciones, datos manipulados o actividad sospechosa."
 ];
 
 export default function SafetyPage() {
@@ -80,8 +80,8 @@ export default function SafetyPage() {
             Seguridad para operar con productos Pokemon TCG
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-blue-100">
-            PokeTrade HUB ordena publicaciones, mensajes, reputacion y reportes. Aun asi,
-            cada acuerdo entre usuarios requiere criterio, confirmacion y cuidado.
+            PokeTrade HUB ordena publicaciones, mensajes, reputación y reportes. Aún así,
+            cada acuerdo entre usuarios requiere criterio, confirmación y cuidado.
           </p>
         </div>
       </section>
@@ -104,7 +104,7 @@ export default function SafetyPage() {
             <div className="flex items-start gap-3">
               <AlertTriangle className="mt-1 h-5 w-5 shrink-0 text-yellow-300" />
               <div>
-                <h2 className="text-xl font-black">Senales de alerta</h2>
+                <h2 className="text-xl font-black">Señales de alerta</h2>
                 <ul className="mt-4 space-y-3 text-sm font-semibold leading-6 text-blue-100">
                   {redFlags.map((flag) => (
                     <li className="flex gap-2" key={flag}>
@@ -139,10 +139,10 @@ export default function SafetyPage() {
         </div>
 
         <div className="mt-8 rounded-lg border border-white/10 bg-white/[0.06] p-6">
-          <h2 className="text-xl font-black">Moderacion y control</h2>
+          <h2 className="text-xl font-black">Moderación y control</h2>
           <p className="mt-3 max-w-3xl leading-7 text-blue-100">
-            Puedes eliminar tus publicaciones cuando ya no esten disponibles. Si un reporte
-            muestra informacion falsa, fotos enganadoras, productos re-sellados o actividad
+            Podés eliminar tus publicaciones cuando ya no estén disponibles. Si un reporte
+            muestra información falsa, fotos engañadoras, productos re-sellados o actividad
             sospechosa, el equipo puede intervenir para proteger la confianza del marketplace.
           </p>
         </div>

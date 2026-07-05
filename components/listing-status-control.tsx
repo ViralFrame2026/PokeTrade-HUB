@@ -50,8 +50,8 @@ export function ListingStatusControl({
     if (!closing || !changing) return [];
 
     const effects = [
-      "La publicacion deja de aparecer activa en el marketplace.",
-      "La otra persona recibe una notificacion para valorar la operacion."
+      "La publicación deja de aparecer activa en el marketplace.",
+      "La otra persona recibe una notificación para valorar la operación."
     ];
 
     if (listingType === "sale") {
@@ -65,7 +65,7 @@ export function ListingStatusControl({
     if (!changing) return;
 
     if (closing && !counterpartyId) {
-      setError("Selecciona con quien concretaste la operacion.");
+      setError("Selecciona con quién concretaste la operación.");
       return;
     }
 
@@ -105,7 +105,7 @@ export function ListingStatusControl({
     if (!changing) return;
 
     if (closing && !counterpartyId) {
-      setError("Selecciona con quien concretaste la operacion.");
+      setError("Selecciona con quién concretaste la operación.");
       return;
     }
 
@@ -169,7 +169,7 @@ export function ListingStatusControl({
             <div className="mt-3 flex items-start gap-2 rounded-md border border-yellow-200 bg-yellow-50 p-3 text-xs font-semibold leading-5 text-yellow-900">
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
               Primero debes recibir un mensaje de la persona interesada para poder cerrar
-              la operacion con ella.
+              la operación con ella.
             </div>
           ) : (
             <div className="mt-3 space-y-2 text-xs font-semibold leading-5 text-slate-600">
@@ -214,7 +214,7 @@ export function ListingStatusControl({
       </button>
       {isConfirming ? (
         <ConfirmActionModal
-          body={`${closeLabel}: esta accion cierra la publicacion y avisa a ${
+          body={`${closeLabel}: esta acción cierra la publicación y avisa a ${
             selectedCounterparty?.name ?? "la otra persona"
           }.`}
           confirmLabel="Si, confirmar"

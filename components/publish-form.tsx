@@ -204,7 +204,7 @@ export function PublishForm() {
         draft.locationCity ||
         draft.locationCountry
       ) {
-        setDraftNotice("Recuperamos tu borrador de publicacion.");
+        setDraftNotice("Recuperamos tu borrador de publicación.");
       }
     } catch {
       window.localStorage.removeItem(PUBLISH_DRAFT_KEY);
@@ -379,13 +379,13 @@ export function PublishForm() {
       const payload = (await response.json()) as CreateListingResponse;
 
       if (!response.ok || payload.error) {
-        throw new Error(payload.error ?? "No pudimos crear la publicacion.");
+        throw new Error(payload.error ?? "No pudimos crear la publicación.");
       }
 
       const listingId = payload.data?.id;
 
       if (!listingId) {
-        throw new Error("No recibimos el identificador de la publicacion.");
+        throw new Error("No recibimos el identificador de la publicación.");
       }
 
       const uploadedPaths: string[] = [];
@@ -454,7 +454,7 @@ export function PublishForm() {
       setError(
         submitError instanceof Error
           ? submitError.message
-          : "No pudimos crear la publicacion."
+          : "No pudimos crear la publicación."
       );
     } finally {
       setIsSubmitting(false);
@@ -615,7 +615,7 @@ export function PublishForm() {
           </div>
         ) : (
           <span>
-            Busca una carta oficial. La publicacion no puede continuar con cartas inventadas.
+            Busca una carta oficial. La publicación no puede continuar con cartas inventadas.
           </span>
         )}
       </div>
@@ -952,7 +952,7 @@ export function PublishForm() {
         </p>
         <p className="mt-2 text-xs leading-5 text-blue-100/80">
           {isCardProduct
-            ? "Vamos a revisar que la carta coincida con el catalogo oficial y que los datos comerciales sean claros."
+            ? "Vamos a revisar que la carta coincida con el catálogo oficial y que los datos comerciales sean claros."
             : "Vamos a revisar las fotos reales, el tipo de producto, la descripcion y la coherencia del precio."}
         </p>
         <ul className="mt-3 grid gap-2 text-xs leading-5 text-blue-100 sm:grid-cols-2">
