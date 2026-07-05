@@ -104,6 +104,24 @@ export function RaffleForm() {
     event.preventDefault();
     setError(null);
     setSuccess(null);
+
+    const normalizedImageUrl = imageUrl.trim();
+    if (!normalizedImageUrl) {
+      setError("Agrega una imagen publica del premio para poder revisar el sorteo.");
+      return;
+    }
+
+    try {
+      const parsedImageUrl = new URL(normalizedImageUrl);
+      if (!["http:", "https:"].includes(parsedImageUrl.protocol)) {
+        setError("La imagen del premio debe ser una URL publica http o https.");
+        return;
+      }
+    } catch {
+      setError("La imagen del premio debe ser una URL publica valida.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -111,7 +129,7 @@ export function RaffleForm() {
         body: JSON.stringify({
           closesAt,
           entryLimit: entryLimit ? Number(entryLimit) : null,
-          imageUrl: imageUrl.trim() || null,
+          imageUrl: normalizedImageUrl,
           prize,
           requirements,
           title
@@ -193,10 +211,14 @@ export function RaffleForm() {
         <input
           className="field-input mt-2"
           onChange={(event) => setImageUrl(event.target.value)}
-          placeholder="URL pública de la imagen (opcional)"
+          placeholder="URL publica de la imagen del premio"
+          required
           type="url"
           value={imageUrl}
         />
+        <span className="mt-1 block text-xs text-slate-500">
+          Obligatoria: debe mostrar claramente el premio real que se va a entregar.
+        </span>
       </label>
 
       <label className="mt-4 block text-sm font-bold text-slate-200">

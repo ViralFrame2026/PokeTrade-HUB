@@ -6,7 +6,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 const raffleSchema = z.object({
   closesAt: z.string().datetime({ offset: true }).or(z.string().min(16)),
   entryLimit: z.number().int().min(2).max(100000).nullable(),
-  imageUrl: z.string().url().max(1000).nullable(),
+  imageUrl: z.string().trim().url().max(1000),
   prize: z.string().trim().min(5).max(160),
   requirements: z.string().trim().min(10).max(1000),
   title: z.string().trim().min(5).max(100)
@@ -29,8 +29,13 @@ export async function POST(request: Request) {
 
   const parsed = raffleSchema.safeParse(body);
   if (!parsed.success) {
+    const imageIssue = parsed.error.issues.find((issue) => issue.path[0] === "imageUrl");
     return NextResponse.json(
-      { error: parsed.error.issues[0]?.message ?? "Revisa los datos del sorteo." },
+      {
+        error: imageIssue
+          ? "Agrega una URL publica valida para la imagen del premio."
+          : parsed.error.issues[0]?.message ?? "Revisa los datos del sorteo."
+      },
       { status: 400 }
     );
   }
