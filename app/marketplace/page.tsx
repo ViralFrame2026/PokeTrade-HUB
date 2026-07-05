@@ -372,12 +372,12 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
               {hasFilters ? "Sin coincidencias reales" : "Marketplace listo"}
             </p>
             <h2 className="mt-2 text-2xl font-black text-white">
-              {hasFilters ? "Proba con menos filtros" : "Todavia no hay publicaciones aprobadas"}
+              {hasFilters ? "Probá con menos filtros" : "Todavía no hay publicaciones aprobadas"}
             </h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
               {hasFilters
-                ? "No hay publicaciones reales que coincidan con esos filtros. Proba limpiar alguno para ampliar la busqueda."
-                : "Cuando el equipo apruebe los primeros productos reales de la comunidad, apareceran aca."}
+                ? "No hay publicaciones reales que coincidan con esos filtros. Probá limpiar alguno para ampliar la búsqueda."
+                : "Cuando el equipo apruebe los primeros productos reales de la comunidad, aparecerán acá."}
             </p>
           </div>
         ) : null}
@@ -392,12 +392,12 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
             <div>
               <Search className="mx-auto h-10 w-10 text-blue-500" />
               <h2 className="mt-4 text-xl font-black text-blue-950">
-                {hasFilters ? "No encontramos coincidencias" : "Todavia no hay publicaciones"}
+                {hasFilters ? "No encontramos coincidencias" : "Todavía no hay publicaciones"}
               </h2>
               <p className="mx-auto mt-2 max-w-md text-slate-600">
                 {hasFilters
-                  ? "Prueba con menos filtros o busca otro producto."
-                  : "Los productos aprobados apareceran aqui."}
+                  ? "Probá con menos filtros o buscá otro producto."
+                  : "Los productos aprobados aparecerán aquí."}
               </p>
               {hasFilters ? (
                 <div className="mt-5 flex flex-wrap justify-center gap-2">

@@ -192,8 +192,8 @@ export default async function RafflesPage() {
                 Todavía no hay sorteos activos
               </h2>
               <p className="mx-auto mt-2 max-w-xl text-slate-300">
-                Podes crear el primero para la comunidad. Cuando el equipo lo apruebe,
-                aparecera aca para recibir participantes reales.
+                Podés crear el primero para la comunidad. Cuando el equipo lo apruebe,
+                aparecerá acá para recibir participantes reales.
               </p>
               <ButtonLink href="/raffles/new" icon={Plus}>
                 Crear primer sorteo

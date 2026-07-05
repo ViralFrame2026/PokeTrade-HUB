@@ -423,10 +423,10 @@ export default async function HomePage() {
           <div className="rounded-lg border-2 border-dashed border-blue-200 bg-white px-6 py-14 text-center">
             <Store className="mx-auto h-10 w-10 text-blue-500" />
             <h3 className="mt-4 text-xl font-black text-blue-950">
-              El marketplace esta listo
+              El marketplace está listo
             </h3>
             <p className="mx-auto mt-2 max-w-lg text-slate-600">
-              Las publicaciones aprobadas apareceran aqui. Se el primero en sumar un producto.
+              Las publicaciones aprobadas aparecerán aquí. Sé el primero en sumar un producto.
             </p>
           </div>
         )}
@@ -441,7 +441,7 @@ export default async function HomePage() {
                 Atajos del marketplace
               </p>
               <h2 className="mt-2 text-3xl font-black text-white sm:text-4xl">
-                Encontra mas rapido lo que queres hacer
+                Encontrá más rápido lo que querés hacer
               </h2>
             </div>
             <ButtonLink href="/marketplace" icon={Search} variant="light">
@@ -451,13 +451,13 @@ export default async function HomePage() {
 
           <div className="grid gap-5 lg:grid-cols-2">
             <MarketLane
-              emptyText="Cuando haya productos en venta aprobados, apareceran aca."
+              emptyText="Cuando haya productos en venta aprobados, aparecerán acá."
               href="/marketplace?type=sale"
               listings={saleHighlights}
               title="Comprar productos"
             />
             <MarketLane
-              emptyText="Cuando haya intercambios aprobados, apareceran aca."
+              emptyText="Cuando haya intercambios aprobados, aparecerán acá."
               href="/marketplace?type=trade"
               listings={tradeHighlights}
               title="Intercambios activos"
@@ -487,11 +487,11 @@ export default async function HomePage() {
               Comunidad
             </p>
             <h2 className="mt-2 text-3xl font-black text-white">
-              La confianza tambien se colecciona
+              La confianza también se colecciona
             </h2>
             <p className="mt-4 max-w-xl leading-7 text-blue-100">
-              Cada operacion ayuda a construir reputacion. Los perfiles muestran
-              valoraciones, actividad y verificacion.
+              Cada operación ayuda a construir reputación. Los perfiles muestran
+              valoraciones, actividad y verificación.
             </p>
             <div className="mt-8 flex gap-3" aria-hidden="true">
               <span className="energy-dot bg-yellow-400 text-blue-950">
@@ -534,7 +534,7 @@ export default async function HomePage() {
             </div>
           ) : (
             <div className="relative z-10 rounded-lg border border-yellow-300 bg-white p-8 text-slate-600 shadow-sm">
-              Los coleccionistas destacados apareceran cuando reciban sus primeras valoraciones.
+              Los coleccionistas destacados aparecerán cuando reciban sus primeras valoraciones.
             </div>
           )}
         </div>
@@ -544,15 +544,15 @@ export default async function HomePage() {
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mb-8 max-w-2xl">
           <p className="text-sm font-black uppercase tracking-[0.22em] text-red-500">Seguridad</p>
-          <h2 className="mt-2 text-3xl font-black text-blue-950">Un intercambio mas tranquilo</h2>
+          <h2 className="mt-2 text-3xl font-black text-blue-950">Un intercambio más tranquilo</h2>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
           {[
             {
               color: "bg-blue-600",
-              copy: "Toda publicacion se revisa antes de aparecer en el marketplace.",
+              copy: "Toda publicación se revisa antes de aparecer en el marketplace.",
               icon: ShieldCheck,
-              title: "Moderacion obligatoria"
+              title: "Moderación obligatoria"
             },
             {
               color: "bg-red-500",

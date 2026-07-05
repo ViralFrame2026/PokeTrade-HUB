@@ -9,27 +9,27 @@ const MAX_MESSAGE_LENGTH = 1500;
 function quickMessages(intent: string, listingType: string) {
   if (intent === "trade" || listingType === "trade") {
     return [
-      "Hola, sigue disponible para intercambio?",
-      "Tengo productos para ofrecer, que estas buscando?",
-      "Podes compartir mas fotos reales?",
-      "En que zona podriamos coordinar?"
+      "Hola, ¿sigue disponible para intercambio?",
+      "Tengo productos para ofrecer, ¿qué estás buscando?",
+      "¿Podés compartir más fotos reales?",
+      "¿En qué zona podríamos coordinar?"
     ];
   }
 
   if (intent === "free" || listingType === "free") {
     return [
-      "Hola, sigue disponible?",
-      "Como podemos coordinar la entrega?",
-      "Podes compartir mas fotos reales?",
-      "En que zona entregas?"
+      "Hola, ¿sigue disponible?",
+      "¿Cómo podemos coordinar la entrega?",
+      "¿Podés compartir más fotos reales?",
+      "¿En qué zona entregás?"
     ];
   }
 
   return [
-    "Hola, sigue disponible?",
-    "Me interesa comprar este producto, el precio sigue siendo el publicado?",
-    "Podes compartir mas fotos reales?",
-    "En que zona entregas?"
+    "Hola, ¿sigue disponible?",
+    "Me interesa comprar este producto, ¿el precio sigue siendo el publicado?",
+    "¿Podés compartir más fotos reales?",
+    "¿En qué zona entregás?"
   ];
 }
 

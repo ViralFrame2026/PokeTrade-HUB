@@ -1,7 +1,7 @@
 {
   "name": "POKETRADE HUB",
   "short_name": "POKETRADE",
-  "description": "Marketplace Pokemon TCG para comprar, vender, intercambiar y sortear cartas oficiales.",
+  "description": "Marketplace Pokemon TCG para comprar, vender, intercambiar y sortear cartas, productos sellados y accesorios.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
