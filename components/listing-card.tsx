@@ -1,6 +1,7 @@
 import Image from "next/image";
-import { Bookmark, ExternalLink, MapPin, ShieldCheck, Star } from "lucide-react";
+import { ExternalLink, MapPin, ShieldCheck, Star } from "lucide-react";
 import Link from "next/link";
+import { ListingCardFavoriteButton } from "@/components/listing-card-favorite-button";
 import type { Listing } from "@/lib/types";
 
 type ListingCardProps = {
@@ -91,13 +92,12 @@ export function ListingCard({ listing }: ListingCardProps) {
             <ExternalLink className="h-4 w-4" />
             {isExample ? "Publicar similar" : "Ver detalle"}
           </Link>
-          <button
-            aria-label="Guardar publicación"
-            className="grid h-10 w-10 place-items-center rounded-md border border-white/10 text-blue-100 transition hover:border-yellow-300 hover:text-yellow-300"
-            type="button"
-          >
-            <Bookmark className="h-4 w-4" />
-          </button>
+          <ListingCardFavoriteButton
+            detailHref={detailHref}
+            initialFavorite={listing.isFavorite}
+            isExample={isExample}
+            listingId={listing.id}
+          />
         </div>
       </div>
     </article>

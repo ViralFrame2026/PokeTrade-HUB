@@ -10,6 +10,7 @@ export type Listing = {
   cardMeta: string;
   description: string;
   image: string;
+  isFavorite?: boolean;
   location: string;
   price: string;
   seller: string;

@@ -148,6 +148,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
     process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   );
   let rows: ListingRow[] = [];
+  let favoriteIds = new Set<string>();
 
   if (hasSupabaseConfig) {
     const supabase = await createSupabaseServerClient();
@@ -174,6 +175,23 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
 
     const result = await request;
     rows = (result.data ?? []) as ListingRow[];
+
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+
+    if (user && rows.length > 0) {
+      const { data: favorites } = await supabase
+        .from("favorites")
+        .select("listing_id")
+        .eq("user_id", user.id)
+        .in(
+          "listing_id",
+          rows.map((row) => row.id)
+        );
+
+      favoriteIds = new Set((favorites ?? []).map((favorite) => favorite.listing_id));
+    }
   }
 
   if (query || category || set || rarity || realPhotos || language) {
@@ -243,6 +261,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
         (row.type === "trade" ? `Busca: ${row.trade_wants ?? "propuestas"}` : ""),
       id: row.id,
       image: photoUrl ?? productImage(product),
+      isFavorite: favoriteIds.has(row.id),
       location:
         [row.location_city, row.location_country].filter(Boolean).join(", ") ||
         "Ubicacion no informada",

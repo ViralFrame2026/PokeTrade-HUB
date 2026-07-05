@@ -110,6 +110,7 @@ export default async function FavoritesPage() {
         (listing.type === "trade" ? `Busca: ${listing.trade_wants ?? "propuestas"}` : ""),
       id: listing.id,
       image: photoUrl ?? productImage(product),
+      isFavorite: true,
       location:
         [listing.location_city, listing.location_country].filter(Boolean).join(", ") ||
         "Ubicación no informada",
