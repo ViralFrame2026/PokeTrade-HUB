@@ -342,7 +342,7 @@ export default async function AdminPage() {
       .order("created_at", { ascending: true }),
     supabase
       .from("raffles")
-      .select("id, title, prize, closes_at, profiles!raffles_creator_id_fkey(display_name)")
+      .select("id, title, prize, image_path, closes_at, profiles!raffles_creator_id_fkey(display_name)")
       .eq("moderation_status", "pending")
       .order("created_at", { ascending: true }),
     supabase
@@ -524,6 +524,7 @@ export default async function AdminPage() {
     closesAt: raffle.closes_at,
     creator: sellerName(raffle.profiles),
     id: raffle.id,
+    imageUrl: raffle.image_path,
     prize: raffle.prize,
     title: raffle.title
   }));

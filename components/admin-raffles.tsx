@@ -8,6 +8,7 @@ export type AdminRaffle = {
   closesAt: string;
   creator: string;
   id: string;
+  imageUrl: string | null;
   prize: string;
   title: string;
 };
@@ -92,9 +93,24 @@ export function AdminRaffles({ raffles: initialRaffles }: { raffles: AdminRaffle
       <div className="divide-y divide-white/10">
         {raffles.map((raffle) => (
           <article
-            className="grid gap-4 p-5 lg:grid-cols-[1fr_320px] lg:items-center"
+            className="grid gap-4 p-5 lg:grid-cols-[220px_1fr_320px] lg:items-center"
             key={raffle.id}
           >
+            <div className="overflow-hidden rounded-lg border border-white/10 bg-slate-950/60">
+              {raffle.imageUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  alt={`Premio del sorteo ${raffle.title}`}
+                  className="aspect-[4/3] w-full object-cover"
+                  loading="lazy"
+                  src={raffle.imageUrl}
+                />
+              ) : (
+                <div className="grid aspect-[4/3] place-items-center p-4 text-center text-xs font-bold text-slate-500">
+                  Sin imagen cargada
+                </div>
+              )}
+            </div>
             <div>
               <h3 className="font-black text-white">{raffle.title}</h3>
               <p className="mt-1 text-sm font-semibold text-yellow-300">{raffle.prize}</p>
