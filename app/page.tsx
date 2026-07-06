@@ -41,7 +41,7 @@ export const metadata = {
   },
   description:
     "Marketplace argentino para comprar, vender, intercambiar y sortear productos Pokemon TCG con moderación, reputación y catálogo oficial.",
-  title: "Marketplace Pokemon TCG Argentina"
+  title: "NexoTCG - Marketplace Pokemon TCG Argentina"
 };
 
 export const dynamic = "force-dynamic";
@@ -296,11 +296,15 @@ export default async function HomePage() {
               }}
               showAdmin={isAdmin}
             />
-            <Link className="flex items-center gap-3" href="/">
-              <span className="pokeball h-11 w-11 shrink-0" aria-hidden="true" />
+            <Link className="flex items-center gap-3.5" href="/">
+              <span className="pokeball h-12 w-12 shrink-0 sm:h-14 sm:w-14" aria-hidden="true" />
               <div>
-                <p className="text-sm font-black tracking-[0.24em] text-yellow-300">NexoTCG</p>
-                <p className="text-xs font-bold text-blue-100">Marketplace TCG</p>
+                <p className="text-lg font-black leading-none tracking-[0.16em] text-yellow-300 sm:text-xl">
+                  NexoTCG
+                </p>
+                <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-blue-100">
+                  Marketplace TCG
+                </p>
               </div>
             </Link>
           </div>
@@ -324,14 +328,13 @@ export default async function HomePage() {
               <Sparkles className="h-4 w-4 text-yellow-300" />
               Productos oficiales, comunidad real
             </div>
-            <h1 className="max-w-4xl text-5xl font-black leading-[0.98] tracking-normal text-white sm:text-6xl lg:text-[68px]">
-              El hub argentino para comprar, vender e intercambiar
-              {" "}
-              <span className="block text-yellow-300">productos Pokemon TCG</span>
+            <h1 className="max-w-3xl text-5xl font-black leading-[0.96] tracking-normal text-white sm:text-6xl lg:text-[76px]">
+              NexoTCG
+              <span className="mt-2 block text-yellow-300">conecta tu colección</span>
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-blue-100">
-              Publicaciones moderadas, reputación visible, sorteos de la comunidad y
-              operaciones más seguras.
+              Comprá, vendé, intercambiá y sorteá productos Pokémon TCG con publicaciones
+              moderadas, reputación visible y perfiles reales.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href="/marketplace" icon={Search}>
