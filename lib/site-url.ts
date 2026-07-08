@@ -1,4 +1,4 @@
-const DEFAULT_SITE_URL = "https://poketrade-hub.vercel.app";
+const DEFAULT_SITE_URL = "https://nexotcg.vercel.app";
 
 export function siteUrl(path = "") {
   const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_URL).replace(/\/+$/, "");

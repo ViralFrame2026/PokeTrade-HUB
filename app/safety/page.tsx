@@ -3,11 +3,13 @@ import {
   Camera,
   CheckCircle2,
   Handshake,
+  Mail,
   MessageCircle,
   PackageSearch,
   ShieldCheck
 } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button-link";
+import { SUPPORT_EMAIL, SUPPORT_MAILTO } from "@/lib/contact";
 
 export const metadata = {
   title: "Seguridad",
@@ -145,6 +147,15 @@ export default function SafetyPage() {
             muestra información falsa, fotos engañadoras, productos re-sellados o actividad
             sospechosa, el equipo puede intervenir para proteger la confianza del marketplace.
           </p>
+          <div className="mt-5 flex flex-wrap items-center gap-3 rounded-lg border border-yellow-300/30 bg-yellow-400/10 p-4">
+            <Mail className="h-5 w-5 text-yellow-300" />
+            <p className="min-w-0 flex-1 text-sm font-semibold text-blue-100">
+              Para casos sensibles, escribí al soporte temporal: {SUPPORT_EMAIL}
+            </p>
+            <ButtonLink href={SUPPORT_MAILTO} variant="light">
+              Escribir
+            </ButtonLink>
+          </div>
         </div>
       </section>
     </main>

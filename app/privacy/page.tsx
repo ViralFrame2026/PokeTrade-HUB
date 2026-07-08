@@ -4,11 +4,13 @@ import {
   Database,
   Eye,
   LockKeyhole,
+  Mail,
   MessageCircle,
   ShieldCheck,
   UserCheck
 } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button-link";
+import { SUPPORT_EMAIL, SUPPORT_MAILTO } from "@/lib/contact";
 
 export const metadata = {
   title: "Privacidad",
@@ -19,12 +21,12 @@ const privacyItems = [
   {
     icon: UserCheck,
     title: "Datos de cuenta",
-    copy: "Usamos email, nombre visible, avatar, datos de perfil, reputacion y permisos para identificarte dentro de la comunidad y habilitar funciones de cuenta."
+    copy: "Usamos email, nombre visible, avatar, datos de perfil, reputación y permisos para identificarte dentro de la comunidad y habilitar funciones de cuenta."
   },
   {
     icon: Camera,
     title: "Publicaciones y fotos",
-    copy: "Guardamos datos de productos, fotos reales, precios, ubicacion aproximada, estado, descripcion, categorias y estado de moderacion de cada publicacion."
+    copy: "Guardamos datos de productos, fotos reales, precios, ubicación aproximada, estado, descripción, categorías y estado de moderación de cada publicación."
   },
   {
     icon: MessageCircle,
@@ -38,27 +40,28 @@ const privacyItems = [
   },
   {
     icon: Eye,
-    title: "Moderacion y seguridad",
+    title: "Moderación y seguridad",
     copy: "El equipo puede revisar contenido reportado, publicaciones sospechosas y acciones administrativas para aplicar reglas y proteger a los usuarios."
   },
   {
     icon: LockKeyhole,
     title: "Servicios externos",
-    copy: "La autenticacion y base de datos funcionan con Supabase. El despliegue y hosting funcionan con Vercel. Estos servicios procesan datos necesarios para operar la app."
+    copy: "La autenticación y base de datos funcionan con Supabase. El despliegue y hosting funcionan con Vercel. Estos servicios procesan datos necesarios para operar la app."
   }
 ];
 
 const userControls = [
   "Editar datos de perfil visibles en la comunidad.",
-  "Eliminar publicaciones propias cuando ya no esten disponibles.",
-  "Cambiar contrasena y cerrar sesiones desde la cuenta.",
-  "Reportar contenido sospechoso para revision del equipo."
+  "Eliminar publicaciones propias cuando ya no estén disponibles.",
+  "Cambiar contraseña y cerrar sesiones desde la cuenta.",
+  "Reportar contenido sospechoso para revisión del equipo."
 ];
 
 const retentionNotes = [
-  "Algunas acciones pueden mantenerse por seguridad, auditoria, prevencion de fraude o moderacion.",
+  "Algunas acciones pueden mantenerse por seguridad, auditoría, prevención de fraude o moderación.",
   "Los mensajes asociados a reportes u operaciones pueden conservarse para resolver problemas de confianza.",
-  "No publicamos tu email en el marketplace como dato visible para otros usuarios."
+  "No publicamos tu email en el marketplace como dato visible para otros usuarios.",
+  "Las solicitudes manuales sobre datos pueden enviarse al soporte temporal mientras no haya dominio propio."
 ];
 
 export default function PrivacyPage() {
@@ -74,7 +77,7 @@ export default function PrivacyPage() {
           </div>
           <h1 className="mt-5 text-4xl font-black sm:text-6xl">Privacidad</h1>
           <p className="mt-5 text-lg leading-8 text-blue-100">
-            Este resumen explica que datos usa NexoTCG para operar la plataforma,
+            Este resumen explica qué datos usa NexoTCG para operar la plataforma,
             moderar contenido y mantener funciones de comunidad. No reemplaza asesoramiento
             legal profesional.
           </p>
@@ -110,7 +113,7 @@ export default function PrivacyPage() {
         <article className="rounded-lg border border-white/10 bg-white/[0.06] p-6">
           <h2 className="flex items-center gap-2 text-xl font-black">
             <Database className="h-5 w-5 text-yellow-300" />
-            Conservacion de datos
+            Conservación de datos
           </h2>
           <div className="mt-4 grid gap-3">
             {retentionNotes.map((note) => (
@@ -119,6 +122,23 @@ export default function PrivacyPage() {
                 {note}
               </p>
             ))}
+          </div>
+        </article>
+
+        <article className="rounded-lg border border-yellow-300/30 bg-yellow-400/10 p-6">
+          <h2 className="flex items-center gap-2 text-xl font-black">
+            <Mail className="h-5 w-5 text-yellow-300" />
+            Contacto por privacidad
+          </h2>
+          <p className="mt-3 leading-7 text-blue-100">
+            Para consultas sobre privacidad o datos de cuenta, escribí al soporte temporal:
+            {" "}
+            {SUPPORT_EMAIL}
+          </p>
+          <div className="mt-5">
+            <ButtonLink href={SUPPORT_MAILTO} variant="light">
+              Escribir
+            </ButtonLink>
           </div>
         </article>
       </section>

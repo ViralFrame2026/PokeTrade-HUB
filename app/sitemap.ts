@@ -66,6 +66,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/raffles/new", priority: 0.65, changeFrequency: "weekly" },
     { path: "/safety", priority: 0.7, changeFrequency: "monthly" },
     { path: "/rules", priority: 0.7, changeFrequency: "monthly" },
+    { path: "/support", priority: 0.65, changeFrequency: "monthly" },
     { path: "/privacy", priority: 0.45, changeFrequency: "yearly" },
     { path: "/terms", priority: 0.45, changeFrequency: "yearly" }
   ] satisfies PublicRoute[];

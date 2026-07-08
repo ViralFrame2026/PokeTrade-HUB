@@ -6,6 +6,7 @@ import {
   Gift,
   Leaf,
   LogIn,
+  Mail,
   MessageCircle,
   Search,
   ShieldCheck,
@@ -24,6 +25,7 @@ import { ListingCard } from "@/components/listing-card";
 import { StatCard } from "@/components/stat-card";
 import { SiteMenu } from "@/components/site-menu";
 import { ButtonLink } from "@/components/ui/button-link";
+import { SUPPORT_EMAIL, SUPPORT_MAILTO } from "@/lib/contact";
 import {
   firstListingPhotoPath,
   firstRelated,
@@ -565,7 +567,7 @@ export default async function HomePage() {
             },
             {
               color: "bg-yellow-400",
-              copy: "Avisos de aprobacion, rechazo, ventas, reservas y comentarios.",
+              copy: "Avisos de aprobación, rechazo, ventas, reservas y comentarios.",
               icon: Bell,
               title: "Notificaciones claras"
             }
@@ -582,13 +584,18 @@ export default async function HomePage() {
         <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-lg bg-blue-700 p-6 text-white">
           <div className="flex items-center gap-3">
             <MessageCircle className="h-5 w-5 text-yellow-300" />
-            Contacto directo hoy, chat interno preparado para la siguiente etapa.
+            Soporte temporal disponible en {SUPPORT_EMAIL}.
           </div>
-          {isAdmin ? (
-            <ButtonLink href="/admin" icon={ShieldCheck} variant="light">
-              Panel administrador
+          <div className="flex flex-wrap gap-3">
+            <ButtonLink href={SUPPORT_MAILTO} icon={Mail} variant="light">
+              Escribir a soporte
             </ButtonLink>
-          ) : null}
+            {isAdmin ? (
+              <ButtonLink href="/admin" icon={ShieldCheck} variant="light">
+                Panel administrador
+              </ButtonLink>
+            ) : null}
+          </div>
         </div>
         </div>
       </section>
@@ -613,7 +620,10 @@ export default async function HomePage() {
               Privacidad
             </Link>
             <Link className="hover:text-yellow-300" href="/terms">
-              Terminos
+              Términos
+            </Link>
+            <Link className="hover:text-yellow-300" href="/support">
+              Soporte
             </Link>
           </nav>
         </div>

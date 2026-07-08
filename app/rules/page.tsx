@@ -3,12 +3,14 @@ import {
   Ban,
   Camera,
   Gift,
+  Mail,
   PackageCheck,
   ShieldCheck,
   Store,
   Trash2
 } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button-link";
+import { SUPPORT_EMAIL, SUPPORT_MAILTO } from "@/lib/contact";
 
 export const metadata = {
   title: "Reglas de comunidad",
@@ -122,7 +124,7 @@ export default function RulesPage() {
 
         <div className="mt-8 grid gap-5 lg:grid-cols-[0.95fr_1.05fr]">
           <div className="rounded-lg border border-yellow-300/40 bg-yellow-400/10 p-6">
-            <h2 className="text-xl font-black">Que se puede publicar</h2>
+            <h2 className="text-xl font-black">Qué se puede publicar</h2>
             <div className="mt-4 space-y-3">
               {allowedProducts.map((item) => (
                 <p className="flex gap-2 text-sm font-semibold leading-6 text-blue-100" key={item}>
@@ -149,7 +151,7 @@ export default function RulesPage() {
         </div>
 
         <div className="mt-8 rounded-lg border border-white/10 bg-white/[0.06] p-6">
-          <h2 className="text-xl font-black">Que puede pasar si se incumplen</h2>
+          <h2 className="text-xl font-black">Qué puede pasar si se incumplen</h2>
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             {consequences.map((item) => (
               <p className="flex gap-2 text-sm font-semibold leading-6 text-blue-100" key={item}>
@@ -158,6 +160,16 @@ export default function RulesPage() {
               </p>
             ))}
           </div>
+        </div>
+
+        <div className="mt-8 flex flex-wrap items-center gap-3 rounded-lg border border-yellow-300/30 bg-yellow-400/10 p-6">
+          <Mail className="h-5 w-5 text-yellow-300" />
+          <p className="min-w-0 flex-1 text-sm font-semibold text-blue-100">
+            Si una situación no está contemplada, contactá a soporte temporal: {SUPPORT_EMAIL}
+          </p>
+          <ButtonLink href={SUPPORT_MAILTO} variant="light">
+            Escribir
+          </ButtonLink>
         </div>
       </section>
     </main>

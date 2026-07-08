@@ -6,6 +6,7 @@ import {
   Heart,
   Gift,
   Handshake,
+  LifeBuoy,
   ListChecks,
   MessagesSquare,
   Menu,
@@ -42,7 +43,8 @@ const links = [
     badge: "notifications"
   },
   { href: "/#comunidad", icon: Users, label: "Comunidad" },
-  { href: "/#seguridad", icon: ShieldCheck, label: "Seguridad" }
+  { href: "/#seguridad", icon: ShieldCheck, label: "Seguridad" },
+  { href: "/support", icon: LifeBuoy, label: "Soporte" }
 ];
 
 type MenuBadgeKey = "listings" | "messages" | "notifications";
