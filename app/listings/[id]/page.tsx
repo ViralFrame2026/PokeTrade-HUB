@@ -18,6 +18,7 @@ import {
 import { ListingGallery } from "@/components/listing-gallery";
 import { ListingRatingForm } from "@/components/listing-rating-form";
 import { DeleteListingButton } from "@/components/delete-listing-button";
+import { CheckoutButton } from "@/components/checkout-button";
 import { FavoriteButton } from "@/components/favorite-button";
 import { ReportListingForm } from "@/components/report-listing-form";
 import { ShareListingButton } from "@/components/share-listing-button";
@@ -586,6 +587,12 @@ export default async function ListingDetailPage({
 
             {!isListingOwner && isAvailable ? (
               <>
+                {listing.type === "sale" ? (
+                  <CheckoutButton
+                    isAuthenticated={Boolean(user)}
+                    listingId={listing.id}
+                  />
+                ) : null}
                 <StartConversationButton
                   isAuthenticated={Boolean(user)}
                   listingId={listing.id}

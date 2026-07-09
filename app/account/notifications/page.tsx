@@ -48,7 +48,7 @@ function notificationMeta(type: string) {
     return { className: "bg-red-100 text-red-700", icon: AlertCircle };
   }
 
-  if (type.startsWith("commission_")) {
+  if (type.startsWith("commission_") || type === "payment_approved" || type === "sale_paid") {
     return { className: "bg-emerald-100 text-emerald-700", icon: DollarSign };
   }
 
@@ -69,7 +69,9 @@ function notificationCategory(type: string) {
   if (type.startsWith("raffle_")) return "raffles";
   if (type === "rating_received") return "reputation";
   if (type === "operation_completed") return "operations";
-  if (type.startsWith("commission_")) return "finance";
+  if (type.startsWith("commission_") || type === "payment_approved" || type === "sale_paid") {
+    return "finance";
+  }
   if (type === "report_resolved") return "activity";
   return "activity";
 }
@@ -94,8 +96,12 @@ function notificationTarget(notification: NotificationRow) {
     return { href: `/listings/${listingId}`, label: "Ver valoracion" };
   }
 
-  if (notification.type.startsWith("commission_")) {
+  if (notification.type.startsWith("commission_") || notification.type === "sale_paid") {
     return { href: "/account/listings", label: "Ver mis publicaciones" };
+  }
+
+  if (notification.type === "payment_approved" && listingId) {
+    return { href: `/listings/${listingId}`, label: "Ver compra" };
   }
 
   if (notification.type === "report_resolved" && listingId) {
