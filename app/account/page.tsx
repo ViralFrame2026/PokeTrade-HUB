@@ -15,7 +15,8 @@ import {
   Sparkles,
   Store,
   Trophy,
-  UserRound
+  UserRound,
+  WalletCards
 } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button-link";
 import { SiteMenu } from "@/components/site-menu";
@@ -348,6 +349,7 @@ export default async function AccountPage() {
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           <QuickLink href="/account/profile" icon={UserRound} label="Editar perfil" />
+          <QuickLink href="/account/payments" icon={WalletCards} label="Pagos y cobros" />
           <QuickLink href={`/users/${user.id}`} icon={UserRound} label="Ver perfil público" />
           <QuickLink href="/account/password" icon={LockKeyhole} label="Cambiar contraseña" />
           <QuickLink href="/raffles/new" icon={Trophy} label="Crear sorteo" />

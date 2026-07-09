@@ -20,7 +20,6 @@ import {
 import Link from "next/link";
 import { AdminCommissions, type AdminCommission } from "@/components/admin-commissions";
 import { AdminListings, type AdminListing } from "@/components/admin-listings";
-import { AdminPayments, type AdminPayment } from "@/components/admin-payments";
 import { AdminRaffles, type AdminRaffle } from "@/components/admin-raffles";
 import { AdminReports, type AdminReport } from "@/components/admin-reports";
 import { AdminUsers, type AdminUser } from "@/components/admin-users";
@@ -259,19 +258,6 @@ type SaleCommissionRow = {
     | null;
 };
 
-type PaymentOrderRow = {
-  amount: number;
-  created_at: string;
-  id: string;
-  listing_id: string;
-  payment_id: string | null;
-  provider_status: string | null;
-  status: string;
-  buyer: { display_name: string } | { display_name: string }[] | null;
-  seller: { display_name: string } | { display_name: string }[] | null;
-  listings: { title: string } | { title: string }[] | null;
-};
-
 function listingTitle(listing: ReportRow["listings"]) {
   if (Array.isArray(listing)) {
     return listing[0]?.title ?? "Publicación no disponible";
@@ -348,7 +334,6 @@ export default async function AdminPage() {
     activeRafflesResult,
     userRolesResult,
     saleCommissionsResult,
-    paymentOrdersResult,
     auditLogsResult
   ] = await Promise.all([
     supabase
@@ -416,13 +401,6 @@ export default async function AdminPage() {
           .select("id, listing_id, gross_amount, commission_amount, seller_net_amount, status, created_at, listings!sale_commissions_listing_id_fkey(title, profiles!listings_seller_id_fkey(display_name), products!listings_product_id_fkey(cards!products_card_id_fkey(official_name, set_name)))")
           .order("created_at", { ascending: false })
       : Promise.resolve({ data: [], error: null }),
-    currentProfile?.is_super_admin
-      ? supabase
-          .from("payment_orders")
-          .select("id, listing_id, amount, status, provider_status, payment_id, created_at, buyer:profiles!payment_orders_buyer_id_fkey(display_name), seller:profiles!payment_orders_seller_id_fkey(display_name), listings!payment_orders_listing_id_fkey(title)")
-          .order("created_at", { ascending: false })
-          .limit(50)
-      : Promise.resolve({ data: [], error: null }),
     supabase
       .from("audit_logs")
       .select("id, action, entity_type, entity_id, metadata, created_at, profiles!audit_logs_actor_id_fkey(display_name)")
@@ -430,10 +408,6 @@ export default async function AdminPage() {
       .limit(8)
   ]);
   const closedSales = (closedSalesResult.data ?? []) as ClosedSaleRow[];
-  const paymentOrders =
-    !paymentOrdersResult.error && paymentOrdersResult.data
-      ? ((paymentOrdersResult.data ?? []) as PaymentOrderRow[])
-      : [];
   const recentClosedSales = (recentClosedSalesResult.data ?? []) as RecentClosedSaleRow[];
   const saleCommissions =
     !saleCommissionsResult.error && saleCommissionsResult.data
@@ -497,19 +471,6 @@ export default async function AdminPage() {
       status: "estimada"
     };
   });
-  const paymentRows: AdminPayment[] = paymentOrders.map((payment) => ({
-    amount: Number(payment.amount ?? 0),
-    buyer: sellerName(payment.buyer),
-    createdAt: payment.created_at,
-    id: payment.id,
-    listingId: payment.listing_id,
-    paymentId: payment.payment_id,
-    providerStatus: payment.provider_status,
-    seller: sellerName(payment.seller),
-    status: payment.status,
-    title: listingTitle(payment.listings)
-  }));
-
   const listings: AdminListing[] = ((pendingResult.data ?? []) as ListingRow[]).map(
     (listing) => {
       const product = firstRelated(listing.products);
@@ -977,7 +938,7 @@ export default async function AdminPage() {
               <p className="text-xs font-black uppercase tracking-[0.18em] text-yellow-300">
                 Solo dueño de la página
               </p>
-              <h2 className="mt-2 text-xl font-black text-white">Ingresos estimados</h2>
+              <h2 className="mt-2 text-xl font-black text-white">Pagos y comisiones</h2>
               <p className="mt-2 text-sm text-slate-400">
                 Métricas internas para sponsors, publicidad y comisión por ventas cerradas.
               </p>
@@ -1024,10 +985,10 @@ export default async function AdminPage() {
             <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
               <div>
                 <h3 className="text-sm font-black uppercase tracking-[0.16em] text-slate-300">
-                  Ventas cerradas recientes
+                  Registro de comisiones
                 </h3>
                 <p className="mt-2 text-sm text-slate-400">
-                  Referencia interna para controlar comisiones y ventas confirmadas.
+                  Control interno de comisiones generadas por ventas que los vendedores cobran directo.
                 </p>
               </div>
               <span className="rounded-full border border-yellow-300/30 px-3 py-1 text-xs font-black text-yellow-200">
@@ -1086,22 +1047,6 @@ export default async function AdminPage() {
                 Todavía no hay ventas cerradas para calcular comisiones.
               </div>
             )}
-          </div>
-          <div className="mt-5 border-t border-white/10 pt-5">
-            <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-              <div>
-                <h3 className="text-sm font-black uppercase tracking-[0.16em] text-slate-300">
-                  Órdenes de pago Mercado Pago
-                </h3>
-                <p className="mt-2 text-sm text-slate-400">
-                  Control de pagos iniciados, aprobados, pendientes o rechazados.
-                </p>
-              </div>
-              <span className="rounded-full border border-blue-300/30 px-3 py-1 text-xs font-black text-blue-100">
-                {paymentRows.length} órdenes
-              </span>
-            </div>
-            <AdminPayments payments={paymentRows} />
           </div>
         </section>
       ) : null}

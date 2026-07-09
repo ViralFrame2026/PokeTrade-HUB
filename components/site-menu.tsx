@@ -15,7 +15,8 @@ import {
   Store,
   Trophy,
   UserRound,
-  Users
+  Users,
+  WalletCards
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -33,6 +34,7 @@ const links = [
     badge: "listings"
   },
   { href: "/account/operations", icon: Handshake, label: "Mis operaciones" },
+  { href: "/account/payments", icon: WalletCards, label: "Pagos y cobros" },
   { href: "/account/messages", icon: MessagesSquare, label: "Mensajes", badge: "messages" },
   { href: "/account/profile", icon: UserRound, label: "Mi perfil" },
   { href: "/account/favorites", icon: Heart, label: "Favoritos" },
